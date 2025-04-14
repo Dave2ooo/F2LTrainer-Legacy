@@ -56,7 +56,6 @@ const ELEM_INFO_CONTAINER = document.getElementById("info-container");
 const ELEM_LOADING_SCREEN = document.getElementById("loading-screen");
 const ELEM_CHANGE_STATE_POPUP = document.getElementById("popup-change-state");
 const ELEM_FEEDBACK_CONTAINER = document.getElementById("feedback-container");
-const ELEM_FEEDBACK_FORM = document.getElementById("feedback-form");
 const ELEM_DIALOGS = document.querySelectorAll("dialog");
 
 const CATEGORY_NAMES = ["Unlearned", "Learning", "Finished", "All"];
@@ -1961,10 +1960,6 @@ function showFeedback() {
   openDialog(ELEM_FEEDBACK_CONTAINER);
   ELEM_FEEDBACK_NAME.focus();
 }
-
-window.onload = function() {
-  ELEM_FEEDBACK_FORM.reset();
-};
 
 function openDialog(ELEM) {
   ELEM.showModal();
