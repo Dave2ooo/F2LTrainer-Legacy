@@ -439,6 +439,7 @@ function addElementsToDOM() {
 
         GROUP.imgCase[indexCase] = document.createElement("img");
         GROUP.imgCase[indexCase].classList.add("img-case");
+        GROUP.imgCase[indexCase].classList.add("front");
 
         GROUP.algorithm[indexCase] = document.createElement("div");
         GROUP.algorithm[indexCase].classList.add("algorithm");
@@ -465,7 +466,7 @@ function addElementsToDOM() {
         GROUP.btnMirror[indexCase].title = "Mirror";
 
         GROUP.imgMirror[indexCase] = document.createElement("img");
-        GROUP.imgMirror[indexCase].classList.add("img-edit-trash");
+        GROUP.imgMirror[indexCase].classList.add("flip-image");
         GROUP.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
         GROUP.imgMirror[indexCase].alt = "mirror case " + (indexCase + 1);
         GROUP.imgMirror[indexCase].onclick = function () {
@@ -1758,15 +1759,10 @@ function mirrorCase(indexGroup, indexCase) {
     tempAlgLeft = GROUP.customAlgorithmsLeft[indexCase];
   }
 
-  if (GROUP.flagMirrored[indexCase]) {
-    GROUP.imgCase[indexCase].src = GROUP.imgPath + "right/F2L" + (indexCase + 1) + ".svg";
-    GROUP.flagMirrored[indexCase] = false;
-    GROUP.divAlgorithm[indexCase].innerHTML = tempAlgRight;
-  } else {
-    GROUP.imgCase[indexCase].src = GROUP.imgPath + "left/F2L" + (indexCase + 1) + ".svg";
-    GROUP.flagMirrored[indexCase] = true;
-    GROUP.divAlgorithm[indexCase].innerHTML = tempAlgLeft;
-  }
+  const mirrored = GROUP.flagMirrored[indexCase]
+  GROUP.flagMirrored[indexCase] = !GROUP.flagMirrored[indexCase]
+  GROUP.imgContainer[indexCase].style.transform = mirrored ? "rotateY(0deg)" : "rotateY(180deg)";
+  GROUP.divAlgorithm[indexCase].innerHTML = mirrored ? tempAlgRight : tempAlgLeft;
 }
 
 /**
