@@ -937,7 +937,7 @@ twisty-alg-viewer .wrapper {
   -webkit-transform: scale(1.04);
   -ms-transform: scale(1.04);
   transform: scale(1.04);
-  transition: 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .flip-image:hover {
