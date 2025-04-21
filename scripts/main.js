@@ -433,9 +433,9 @@ function addElementsToDOM() {
 
         GROUP.imgContainer[indexCase] = document.createElement("button");
         GROUP.imgContainer[indexCase].classList.add("img-case-container");
-        GROUP.imgContainer[indexCase].onclick = function () {
-          changeState(INDEX_GROUP, indexCategory, indexCase);
-        };
+        // GROUP.imgContainer[indexCase].onclick = function () {
+        //   changeState(INDEX_GROUP, indexCategory, indexCase);
+        // };
 
         GROUP.imgCase[indexCase] = document.createElement("img");
         GROUP.imgCase[indexCase].classList.add("img-case");
@@ -505,6 +505,13 @@ function addElementsToDOM() {
         GROUP.btnContainer[indexCase].appendChild(GROUP.btnMirror[indexCase]);
         GROUP.btnEdit[indexCase].appendChild(GROUP.imgEdit[indexCase]);
         GROUP.btnMirror[indexCase].appendChild(GROUP.imgMirror[indexCase]);
+
+        GROUP.divContainer[indexCase].addEventListener("click", (e) => {
+          console.log(e.target);
+          if (e.target !== GROUP.imgMirror[indexCase] && e.target !== GROUP.imgEdit[indexCase]) {
+            changeState(INDEX_GROUP, indexCategory, indexCase);
+          }
+        });
 
         GROUP.categoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
       }

@@ -195,6 +195,7 @@ a {
   max-width: 700px;
   border: solid;
   width: auto;
+  cursor: pointer;
 }
 
 .case-number {
@@ -928,8 +929,10 @@ twisty-alg-viewer .wrapper {
   transform: scale(1.03);
   transition: 0.2s ease;
 }
-.img-case-container:hover,
-.img-case-container:focus,
+/* .img-case-container:hover,
+.img-case-container:focus, */
+.case-container:hover,
+.case-container:focus,
 .img-edit-trash:hover {
   -webkit-transform: scale(1.04);
   -ms-transform: scale(1.04);
