@@ -139,6 +139,8 @@ let generatedScrambles = [];
 
 let flagdoublepress = false;
 
+let flagDialogOpen = false;
+
 const STRING_MIRRORED = ["Right", "Left"];
 
 const ELEM_LOADING_CASE = document.getElementById("loading-case");
@@ -507,7 +509,6 @@ function addElementsToDOM() {
         GROUP.btnMirror[indexCase].appendChild(GROUP.imgMirror[indexCase]);
 
         GROUP.divContainer[indexCase].addEventListener("click", (e) => {
-          console.log(e.target);
           if (e.target !== GROUP.imgMirror[indexCase] && e.target !== GROUP.imgEdit[indexCase]) {
             changeState(INDEX_GROUP, indexCategory, indexCase);
           }
@@ -864,11 +865,12 @@ function syncLeftRightAlgSelection() {
  * @param {Event} e - The event object containing information about the key pressed.
  */
 function keydown(e) {
-  /*
-  rechts: 39
-  links: 37
-  Leertaste: 32
-  */
+  // right arrow: 39
+  // left arrow: 37
+  // space: 32
+
+  if (flagDialogOpen) return;
+
   if (e.keyCode === 67) {
     // C
     if (flagdoublepress) {
@@ -1619,16 +1621,7 @@ let timeToString = function (time) {
  * @see nextScramble
  */
 function spaceDown() {
-  if (
-    ELEM_WELCOME_CONATINER.open ||
-    // ELEM_WELCOME_CONATINER_TRAIN.open ||
-    ELEM_INFO_CONTAINER.open ||
-    ELEM_EDITALG_CONTAINER.open ||
-    ELEM_CONTAINER_TRAIN_SETTINGS.open ||
-    //ELEM_CONTAINER_SELECT_SETTINGS.open ||
-    ELEM_CHANGE_STATE_POPUP.open
-  )
-    return;
+  if (flagDialogOpen) return;
 
   if (timerEnabled) {
     if (flagTimerRunning) {
@@ -1766,8 +1759,8 @@ function mirrorCase(indexGroup, indexCase) {
     tempAlgLeft = GROUP.customAlgorithmsLeft[indexCase];
   }
 
-  const mirrored = GROUP.flagMirrored[indexCase]
-  GROUP.flagMirrored[indexCase] = !GROUP.flagMirrored[indexCase]
+  const mirrored = GROUP.flagMirrored[indexCase];
+  GROUP.flagMirrored[indexCase] = !GROUP.flagMirrored[indexCase];
   GROUP.imgContainer[indexCase].style.transform = mirrored ? "rotateY(0deg)" : "rotateY(180deg)";
   GROUP.divAlgorithm[indexCase].innerHTML = mirrored ? tempAlgRight : tempAlgLeft;
 }
@@ -1916,6 +1909,7 @@ function closeOverlays() {
   // ELEM_CONTAINER_SELECT_SETTINGS.close();
   ELEM_CHANGE_STATE_POPUP.close();
   ELEM_FEEDBACK_CONTAINER.close();
+  flagDialogOpen = false;
 }
 
 function showWelcomePopup() {
@@ -1967,4 +1961,6 @@ function showFeedback() {
 function openDialog(ELEM) {
   ELEM.showModal();
   ELEM_BODY.style.overflow = "hidden";
+  flagDialogOpen = true;
+  console.log("dialog open");
 }
