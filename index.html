@@ -21,9 +21,6 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ENTD55V4SX"></script>
     <script>
-      window.onload = function() {
-      document.getElementById("feedback-form").reset();
-      };
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
@@ -446,7 +443,7 @@
         Send your feedback via this form or create an issue on
         <a href="https://github.com/Dave2ooo/F2LTrainer/issues" target="_blank" rel="noopener noreferrer">Github.</a>
       </p>
-      <form action="https://api.web3forms.com/submit" method="POST" id="feedback-form">
+      <form method="POST" id="feedback-form">
         <!-- Custom Access Key -->
         <input type="hidden" name="access_key" value="70f60afc-3ab0-4491-80be-e854832fddb9" />
         <!-- Subject of the email -->
@@ -459,6 +456,7 @@
         <input id="feedback-name-id" class="feedback-text" type="text" name="name" required placeholder="Your Name" />
         <input class="feedback-text" type="email" name="email" required placeholder="Your Email" />
         <textarea class="feedback-text" name="message" required placeholder="Your Feedback"></textarea>
+        <div id="feedback-result"></div>
 
         <div class="update-cancel-buttons">
           <button type="submit" class="btn-overlay">
@@ -622,6 +620,7 @@
     <script src="./scripts/string_manipulation.js"></script>
     <script src="./scripts/main.js" defer></script>
     <script src="./scripts/left_case_loader.js" defer></script>
+    <script src="./scripts/clear_feedback_form.js" defer></script>
 
     <!-- cubing.js -->
     <!-- <script src="https://cdn.cubing.net/js/cubing/twisty" type="module" defer></script> -->
