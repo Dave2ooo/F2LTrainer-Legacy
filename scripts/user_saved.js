@@ -65,6 +65,8 @@ let aufSelection = true;
 let considerAUFinAlg = true;
 let hintImageSelection = 2;
 let hintAlgSelection = 0;
+let stickeringSelection = 0
+// let crossColorSelection = 0;
 let timerEnabled = false;
 
 let firstVisit = true;
@@ -98,6 +100,8 @@ function saveUserData() {
   localStorage.setItem("considerAUFinAlg", considerAUFinAlg);
   localStorage.setItem("hintImageSelection", hintImageSelection);
   localStorage.setItem("hintAlgSelection", hintAlgSelection);
+  localStorage.setItem("stickeringSelection", stickeringSelection);
+  // localStorage.setItem("crossColorSelection", crossColorSelection);
   localStorage.setItem("timerEnabled", timerEnabled);
 
   // Saving that the user just visited the site
@@ -166,6 +170,12 @@ function loadUserData() {
   // Packing inside own function would not shrink the code here, since default value is defined above
   temp = localStorage.getItem("hintAlgSelection");
   if (temp != null) hintAlgSelection = parseInt(temp);
+
+  temp = localStorage.getItem("stickeringSelection");
+  if (temp != null) stickeringSelection = parseInt(temp);
+
+  // temp = localStorage.getItem("crossColorSelection");
+  // if (temp != null) crossColorSelection = parseInt(temp);
 
   // Load other settings
   leftSelection = loadBoolean("leftSelection", leftSelection);

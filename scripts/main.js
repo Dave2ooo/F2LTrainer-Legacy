@@ -93,6 +93,8 @@ const ELEM_CHECKBOX_CONSIDER_AUF = document.getElementById("checkboxConsiderAUFI
 
 const ELEM_SELECT_HINT_IMAGE = document.getElementById("select-hint-image");
 const ELEM_SELECT_HINT_ALG = document.getElementById("select-hint-alg");
+const ELEM_SELECT_STICKERING = document.getElementById("select-stickering");
+// const ELEM_SELECT_CROSS_COLOR = document.getElementById("select-cross-color");
 
 const ELEM_CHECKBOX_TIMER_ENABLE = document.getElementById("checkboxEnableTimerId");
 
@@ -954,6 +956,8 @@ function updateTrainCases() {
   considerAUFinAlg = ELEM_CHECKBOX_CONSIDER_AUF.checked;
   hintImageSelection = ELEM_SELECT_HINT_IMAGE.selectedIndex;
   hintAlgSelection = ELEM_SELECT_HINT_ALG.selectedIndex;
+  stickeringSelection = ELEM_SELECT_STICKERING.selectedIndex;
+  // crossColorSelection = ELEM_SELECT_CROSS_COLOR.selectedIndex;
   timerEnabled = ELEM_CHECKBOX_TIMER_ENABLE.checked;
 
   if (timerEnabled) {
@@ -1303,6 +1307,8 @@ function updateCheckboxStatus() {
 
   ELEM_SELECT_HINT_IMAGE.selectedIndex = hintImageSelection;
   ELEM_SELECT_HINT_ALG.selectedIndex = hintAlgSelection;
+  ELEM_SELECT_STICKERING.selectedIndex = stickeringSelection;
+  // ELEM_SELECT_CROSS_COLOR.selectedIndex = crossColorSelection;
   ELEM_CHECKBOX_TIMER_ENABLE.checked = timerEnabled;
 }
 
@@ -1830,6 +1836,12 @@ function resetTwistyPlayerView() {
  * @param {boolean} mirroring If true, the pieces are mirrored.
  */
 function hidePieces(piecesToHideArray, indexCase, mirroring) {
+  // Fully stickered selected
+  if (stickeringSelection == 1) {
+    ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:------------,CORNERS:--------,CENTERS:------"; // fully stickered
+    return;
+  }
+
   if (piecesToHideArray !== undefined) {
     const piecesToHide = piecesToHideArray[indexCase];
 
