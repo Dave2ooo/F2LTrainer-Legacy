@@ -223,7 +223,13 @@
       <div class="update-cancel-buttons">
         <button type="button" class="btn-overlay" onclick="copyUTLtoClipboard()">Copy to clipboard</button>
       </div>
-      <h2>Train settings</h2>
+      <h2>
+        Train settings
+        <button type="button" popovertarget="popover-train-settings">?</button>
+      </h2>
+      <div popover popover-position="bottom-center" id="popover-train-settings">
+        Select which cases you want to practice
+      </div>
       <div id="div-algs-to-learn" class="div-checkbox-container-container">
         <!-- Checkbox: Unlearned, Learning, Finished -->
         <div class="checkbox-container">
@@ -283,7 +289,13 @@
 
       <div class="div-checkbox-container-container">
         <div class="checkbox-container">
-          <h3>Left / Right Slot</h3>
+          <h3>
+            Left / Right Slot
+            <button type="button" popovertarget="popover-left-right">?</button>
+          </h3>
+          <div popover popover-position="bottom-center-right" id="popover-left-right">
+            Choose if you want to<br />train left or right slot
+          </div>
           <label class="checkbox" for="checkboxLeftId">
             <input type="checkbox" class="checkbox__input" name="checkboxLeft" id="checkboxLeftId" />
             <div class="checkbox__box"></div>
@@ -297,7 +309,14 @@
           </label>
         </div>
         <div class="checkbox-container">
-          <h3>AUF</h3>
+          <h3>
+            AUF
+            <button type="button" popovertarget="popover-add-auf">?</button>
+          </h3>
+          <div popover popover-position="bottom-center" id="popover-add-auf">
+            Add AUF:<br />Adds a random U move<br />to the end of the scramble <br /><br />
+            Consider AUF in hint:<br />Hint alg takes AUF<br />into account
+          </div>
           <label class="checkbox" for="checkboxAUFId">
             <input
               type="checkbox"

@@ -511,9 +511,9 @@ a {
 }
 
 /* Edit Algoritm */
-#editalg-container {
-  /* display: none; */
-}
+/* #editalg-container { */
+/* display: none; */
+/* } */
 
 #editalg-text {
   font-size: 1.7rem;
@@ -584,6 +584,12 @@ a {
   filter: var(--filter-black);
 }
 
+button[popovertarget] {
+  font: inherit;
+  color: var(--color-img);
+  cursor: pointer;
+}
+
 /* Train Settings */
 /* #div-algs-to-learn { */
 .div-checkbox-container-container {
@@ -604,15 +610,16 @@ a {
 }
 
 .checkbox-container > h3 {
+  text-wrap: balance;
   margin-bottom: 1px;
 }
 
-#train-cases-container {
-  /* display: none;
+/* #train-cases-container { */
+/* display: none;
   flex-direction: column;
   max-width: 400px;
   margin-inline: max(20px, 50svw - 400px/2); */
-}
+/* } */
 
 #select-settings-container > h2,
 #train-settings-container > h2,
@@ -1023,6 +1030,44 @@ twisty-alg-viewer .wrapper {
   padding: 10px;
   border-radius: 20px;
 }
+
+/* -----------------------------   Popover   --------------------------------- */
+
+[popover] {
+  /* position-anchor: --my-anchor; */
+  font: inherit;
+  position-anchor: inherit;
+  margin: 0;
+  padding: 1ch;
+  inset: auto;
+  /* top: anchor(bottom);
+  right: anchor(center); */
+
+  inline-size: max-content; /* shrink-to-fit its content */
+  border-radius: 10px;
+}
+
+[popover-position="bottom-left"] {
+  position-area: bottom left;
+}
+[popover-position="bottom-right"] {
+  position-area: bottom right;
+}
+[popover-position="bottom-center"] {
+  position-area: bottom center;
+}
+[popover-position="bottom-center-left"] {
+  top: anchor(bottom);
+  left: anchor(center);
+  transform: translateX(-65%);
+}
+[popover-position="bottom-center-right"] {
+  top: anchor(bottom);
+  left: anchor(center);
+  transform: translateX(-45%);
+}
+
+/* -----------------------------   Feedback   --------------------------------- */
 
 .feedback-text {
   display: flex;
