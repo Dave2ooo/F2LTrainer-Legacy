@@ -128,7 +128,6 @@ let mode = 0; // 0: select, 1: train
 
 // List that contains all the randomly selected cases
 let trainCaseList = [];
-let currentTrainCaseNumber = -1;
 
 // Dropdown box (Basic, Basic Back, Advanced, Exert)
 const ELEM_SELECT_GROUP = document.getElementById("select-group-id");
@@ -588,8 +587,8 @@ function updateAlg() {
   GROUP.divAlgorithm[INDEX_CASE].innerHTML = tempAlg;
 
   // Show selected alg in train mode
-  if (currentTrainCaseNumber >= 0 && mode == 1) {
-    const CURRENT_TRAIN_CASE = trainCaseList[currentTrainCaseNumber];
+  if (TrainCase.currentTrainCaseNumber >= 0 && mode == 1) {
+    const CURRENT_TRAIN_CASE = trainCaseList[TrainCase.currentTrainCaseNumber];
     if (!CURRENT_TRAIN_CASE.getMirroring()) {
       CURRENT_TRAIN_CASE.setAlgHint(tempAlgRight);
       // if (considerAUFinAlg) tempAlgRight = StringManipulation.addAUFtoHint(tempAlgRight, CURRENT_TRAIN_CASE.getAUFNum());
@@ -599,11 +598,11 @@ function updateAlg() {
       // if (considerAUFinAlg) tempAlgLeft = StringManipulation.addAUFtoHint(tempAlgLeft, CURRENT_TRAIN_CASE.getAUFNum());
       // ELEM_TWISTY_PLAYER.alg = tempAlgLeft;
     }
-    ELEM_SCRAMBLE.innerHTML = trainCaseList[currentTrainCaseNumber].getSelectedScrambleAUF();
+    ELEM_SCRAMBLE.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleAUF();
     ELEM_TWISTY_PLAYER.experimentalSetupAlg =
-      "z2 y' " + trainCaseList[currentTrainCaseNumber].getSelectedScrambleTwisty();
+      "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
     ELEM_TWISTY_PLAYER.alg = CURRENT_TRAIN_CASE.getAlgHintAUF();
-    ELEM_DEBUG_INFO.innerHTML = trainCaseList[currentTrainCaseNumber].getDebugInfo();
+    ELEM_DEBUG_INFO.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getDebugInfo();
   }
 
   // Reset Twisty Player progressbar
@@ -623,9 +622,9 @@ function updateAlg() {
  */
 function editCurrentAlg() {
   ELEM_BTN_CHANGE_ALG.blur();
-  const INDEX_GROUP = trainCaseList[currentTrainCaseNumber].getIndexGroup();
-  const INDEX_CASE = trainCaseList[currentTrainCaseNumber].getIndexCase();
-  const MIRRORED = trainCaseList[currentTrainCaseNumber].getMirroring();
+  const INDEX_GROUP = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexGroup();
+  const INDEX_CASE = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexCase();
+  const MIRRORED = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
 
   editAlgs(INDEX_GROUP, INDEX_CASE, MIRRORED);
 }
@@ -935,7 +934,7 @@ function keyup(e) {
  * - hintImageSelection
  * - hintAlgSelection
  * - timerEnabled
- * - currentTrainCaseNumber
+ * - TrainCase.currentTrainCaseNumber
  * - trainCaseList
  *
  * Then it generates a new list of cases to be trained and updates the hint visibility.
@@ -969,7 +968,7 @@ function updateTrainCases() {
     ELEM_TIMER.style.display = "none";
   }
 
-  currentTrainCaseNumber = -1;
+  TrainCase.currentTrainCaseNumber = -1;
   closeOverlays();
   // updateHintImgVisibility();
   generateTrainCaseList();
@@ -1008,7 +1007,7 @@ function showHintAlg() {
       if (hintAlgSelection == 2) {
         // "Show all time"
         ELEM_HINT_PLACEHOLDER.style.display = "none";
-        ELEM_HINT_ALG.innerText = trainCaseList[currentTrainCaseNumber].getAlgHint();
+        ELEM_HINT_ALG.innerText = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHint();
         ELEM_HINT_ALG.style.display = "flex";
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
@@ -1028,7 +1027,7 @@ function showHintAlg() {
     }
 
     // Get algorithm and convert to list
-    const ALG_LIST = trainCaseList[currentTrainCaseNumber].getAlgHint().split(" ");
+    const ALG_LIST = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHint().split(" ");
 
     if (twistyLoadFlag) {
       // Hide hint placeholder
@@ -1152,29 +1151,29 @@ function nextScramble(nextPrevious) {
   if (trainCaseList.length == 0) return;
 
   if (nextPrevious) {
-    if (currentTrainCaseNumber >= 0) trainCaseList[currentTrainCaseNumber].incrementSolveCounter();
-    currentTrainCaseNumber++;
-    if (currentTrainCaseNumber >= trainCaseList.length) {
+    if (TrainCase.currentTrainCaseNumber >= 0) trainCaseList[TrainCase.currentTrainCaseNumber].incrementSolveCounter();
+    TrainCase.currentTrainCaseNumber++;
+    if (TrainCase.currentTrainCaseNumber >= trainCaseList.length) {
       generateTrainCaseList();
       if (trainCaseList.length <= 0) return;
     }
-  } else if (currentTrainCaseNumber > 0) {
-    currentTrainCaseNumber--;
+  } else if (TrainCase.currentTrainCaseNumber > 0) {
+    TrainCase.currentTrainCaseNumber--;
   }
 
-  if (trainCaseList[currentTrainCaseNumber] == undefined) return;
+  if (trainCaseList[TrainCase.currentTrainCaseNumber] == undefined) return;
 
   // Update scramble text
-  ELEM_SCRAMBLE.innerHTML = trainCaseList[currentTrainCaseNumber].getSelectedScrambleAUF();
+  ELEM_SCRAMBLE.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleAUF();
 
   // Reset hint counter
   hintCounter = -1;
   showHintAlg();
 
   // Update hint image
-  const INDEX_GROUP = trainCaseList[currentTrainCaseNumber].getIndexGroup();
-  const INDEX_CASE = trainCaseList[currentTrainCaseNumber].getIndexCase();
-  const MIRRORING = trainCaseList[currentTrainCaseNumber].getMirroring();
+  const INDEX_GROUP = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexGroup();
+  const INDEX_CASE = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexCase();
+  const MIRRORING = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
   const GROUP = GROUPS[INDEX_GROUP];
 
   if (!MIRRORING) {
@@ -1184,9 +1183,9 @@ function nextScramble(nextPrevious) {
   }
 
   ELEM_TWISTY_PLAYER.experimentalSetupAlg =
-    "z2 y' " + trainCaseList[currentTrainCaseNumber].getSelectedScrambleTwisty();
+    "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
 
-  ELEM_TWISTY_PLAYER.alg = trainCaseList[currentTrainCaseNumber].getAlgHintAUF();
+  ELEM_TWISTY_PLAYER.alg = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHintAUF();
   resetTwistyPlayerView();
 
   ELEM_TWISTY_PLAYER.jumpToStart?.();
@@ -1195,7 +1194,7 @@ function nextScramble(nextPrevious) {
 
   hidePieces(GROUP.piecesToHide, INDEX_CASE, MIRRORING);
 
-  ELEM_DEBUG_INFO.innerHTML = trainCaseList[currentTrainCaseNumber].getDebugInfo();
+  ELEM_DEBUG_INFO.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getDebugInfo();
 
   currentTrainGroup = INDEX_GROUP;
   currentTrainCase = INDEX_CASE;
@@ -1737,7 +1736,7 @@ function hideResetButton() {
  */
 function resetTwistyPlayerView() {
   // Reset twisty player (3D cube in train mode)
-  const MIRRORING = trainCaseList[currentTrainCaseNumber].getMirroring();
+  const MIRRORING = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
 
   if (!MIRRORING) {
     ELEM_TWISTY_PLAYER.cameraLongitude = TWISTY_PLAYER_CAMERA.LONGITUDE;
