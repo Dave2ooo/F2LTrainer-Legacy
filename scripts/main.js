@@ -968,9 +968,9 @@ function updateTrainCases() {
     ELEM_TIMER.style.display = "none";
   }
 
-  TrainCase.currentTrainCaseNumber = -1;
   closeOverlays();
-  // updateHintImgVisibility();
+  trainCaseList = [];
+  TrainCase.currentTrainCaseNumber = -1;
   generateTrainCaseList();
   nextScramble(1);
 }
