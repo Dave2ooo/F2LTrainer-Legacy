@@ -569,6 +569,7 @@ a {
 
 .btn-overlay {
   display: flex;
+  align-items: center;
   font-size: 1.3rem;
   background: transparent;
   color: var(--color-text);
