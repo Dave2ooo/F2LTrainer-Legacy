@@ -1043,9 +1043,13 @@ function showHintAlg() {
         if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "hidden"));
 
         // Show one move at a time
-        if (hintCounter < ALG_LIST.length) {
+        const maxViewerMoves = ELEMS_TWISTY_ALG_MOVE.length;
+        const maxMoves = Math.max(ALG_LIST.length, maxViewerMoves);
+        if (hintCounter < maxMoves && ELEMS_TWISTY_ALG_MOVE[hintCounter]) {
           ELEMS_TWISTY_ALG_MOVE[hintCounter].style.visibility = "visible";
+          hintCounter++;
         }
+        return;
       } else if (hintAlgSelection == 1) {
         // "Reveal at once"
         ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
