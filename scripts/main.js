@@ -993,7 +993,7 @@ function showHintAlg() {
         // "Show all time"
         ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
         ELEM_HINT_PLACEHOLDER.style.display = "none";
-        ELEM_HINT_ALG.style.display        = "none";
+        ELEM_HINT_ALG.style.display = "none";
         ELEM_TWISTY_ALG_VIEWER.style.display = "block";
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
