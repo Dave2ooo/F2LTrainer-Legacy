@@ -985,7 +985,7 @@ function updateTrainCases() {
  */
 function showHintAlg() {
   const ELEM_TWISTY_ALG_VIEWER = document.querySelector("twisty-alg-viewer");
-  const ELEMS_TWISTY_ALG_MOVE = document.querySelectorAll(".twisty-alg-move");
+  const ELEMS_TWISTY_ALG_MOVE  = document.querySelectorAll(".twisty-alg-move");
 
   if (hintCounter == -1) {
     if (twistyLoadFlag) {
@@ -993,13 +993,13 @@ function showHintAlg() {
         // "Show all time"
         ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
         ELEM_HINT_PLACEHOLDER.style.display = "none";
-        ELEM_HINT_ALG.style.display = "none";
+        ELEM_HINT_ALG.style.display        = "none";
         ELEM_TWISTY_ALG_VIEWER.style.display = "block";
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
         ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "hidden"));
         ELEM_HINT_PLACEHOLDER.style.display = "flex";
-        ELEM_HINT_ALG.style.display = "none";
+        ELEM_HINT_ALG.style.display        = "none";
         ELEM_TWISTY_ALG_VIEWER.style.display = "none";
       }
     } else {
@@ -1012,7 +1012,7 @@ function showHintAlg() {
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
         ELEM_HINT_PLACEHOLDER.style.display = "flex";
-        ELEM_HINT_ALG.style.display = "none";
+        ELEM_HINT_ALG.style.display        = "none";
       }
     }
   } else {
@@ -1043,9 +1043,13 @@ function showHintAlg() {
         if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "hidden"));
 
         // Show one move at a time
-        if (hintCounter < ALG_LIST.length) {
+        const maxViewerMoves = ELEMS_TWISTY_ALG_MOVE.length;
+        const maxMoves = Math.min(ALG_LIST.length, maxViewerMoves);
+        if (hintCounter < maxMoves && ELEMS_TWISTY_ALG_MOVE[hintCounter]) {
           ELEMS_TWISTY_ALG_MOVE[hintCounter].style.visibility = "visible";
+          hintCounter++;
         }
+        return;
       } else if (hintAlgSelection == 1) {
         // "Reveal at once"
         ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
