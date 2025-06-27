@@ -1409,6 +1409,7 @@ function changeMode() {
     mode = 1;
     updateTrainCases();
     ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
     ELEM_WINDOW_SELECT.classList.add("display-none");
     ELEM_WINDOW_TRAIN.classList.remove("display-none");
     //ELEM_BUTTON_SETTING_SELECT.classList.add("display-none");
@@ -1422,6 +1423,7 @@ function changeMode() {
   } else {
     mode = 0;
     ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Start training");
     ELEM_WINDOW_SELECT.classList.remove("display-none");
     ELEM_WINDOW_TRAIN.classList.add("display-none");
     //ELEM_BUTTON_SETTING_SELECT.classList.remove("display-none");

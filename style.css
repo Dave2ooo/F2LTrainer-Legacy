@@ -1247,6 +1247,33 @@ textarea {
   }
 }
 
+/* -----------------------------   Data-tooltip   --------------------------------- */
+
+[data-tooltip] {
+  position: relative;
+  cursor: pointer;
+}
+
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-family: sans-serif;
+  pointer-events: none;
+  opacity: 0.9;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+  min-width: max-content;
+}
+
 /* -----------------------------   Media Query   --------------------------------- */
 
 /* Media Query */

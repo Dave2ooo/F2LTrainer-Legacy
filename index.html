@@ -514,22 +514,22 @@
     <div id="side-container">
       <div>
         <!-- Button Info -->
-        <button type="button" class="side-button" id="btn-info" onclick="showInfo()">
-          <img src="./images/info.svg" alt="Info" class="side-img" title="Info" />
+        <button type="button" class="side-button" id="btn-info" onclick="showInfo()" data-tooltip="Info">
+          <img src="./images/info.svg" alt="Info" class="side-img"/>
         </button>
 
         <!-- Button Settings Select -->
-        <div class="side-button btn-settings-select" , onclick="showSettingsTrain()">
-          <img src="./images/settings.svg" alt="Settings" class="side-img" title="Settings" />
+        <div class="side-button btn-settings-select" , onclick="showSettingsTrain()" data-tooltip="Settings">
+          <img src="./images/settings.svg" alt="Settings" class="side-img"/>
         </div>
 
         <!-- Button Feedback -->
-        <div class="side-button btn-settings-select" , onclick="showFeedback()">
-          <img src="./images/feedback.svg" alt="Feedback" class="side-img" title="Feedback" />
+        <div class="side-button btn-settings-select" , onclick="showFeedback()" data-tooltip="Feedback">
+          <img src="./images/feedback.svg" alt="Feedback" class="side-img"/>
         </div>
       </div>
 
-      <div class="container-select-group">
+      <div class="container-select-group" data-tooltip="Group Selection dropdown">
         <!-- <label for="select-group-id" class="acessibility-label">Choose a Group:</label> -->
         <!-- for accesibility -->
         <select id="select-group-id" class="select-group" onchange="showSelectedGroup()">
@@ -545,7 +545,7 @@
         <img src="./images/settings.svg" alt="Settings" class="side-img" title="Settings" />
       </div>
 
-      <button type="button" id="change-mode" onclick="changeMode()">Train</button>
+      <button type="button" id="change-mode" onclick="changeMode()" data-tooltip="Start training">Train</button>
     </div>
 
     <!-- All the Cases will be listed here -->
