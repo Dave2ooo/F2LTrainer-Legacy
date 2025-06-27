@@ -454,7 +454,8 @@ function addElementsToDOM() {
         // Edit
         GROUP.btnEdit[indexCase] = document.createElement("div");
         GROUP.btnEdit[indexCase].classList.add("btn-edit");
-        GROUP.btnEdit[indexCase].title = "Edit";
+        // GROUP.btnEdit[indexCase].title = "Edit";
+        GROUP.btnEdit[indexCase].setAttribute("data-tooltip", "Edit");
 
         GROUP.imgEdit[indexCase] = document.createElement("img");
         GROUP.imgEdit[indexCase].classList.add("img-edit-trash");
@@ -467,7 +468,8 @@ function addElementsToDOM() {
         // Mirror
         GROUP.btnMirror[indexCase] = document.createElement("div");
         GROUP.btnMirror[indexCase].classList.add("btn-edit");
-        GROUP.btnMirror[indexCase].title = "Mirror";
+        // GROUP.btnMirror[indexCase].title = "Mirror";
+        GROUP.btnMirror[indexCase].setAttribute("data-tooltip", "Mirror");
 
         GROUP.imgMirror[indexCase] = document.createElement("img");
         GROUP.imgMirror[indexCase].classList.add("flip-image");
@@ -1859,7 +1861,7 @@ function showWelcomePopup() {
   }
 }
 
-function  showWelcomePopover() {
+function showWelcomePopover() {
   if (firstVisit) {
     ELEM_POPOVER_INFO.popover = "manual";
     ELEM_BTN_INFO.popoverTargetElement = ELEM_POPOVER_INFO;
@@ -1867,7 +1869,7 @@ function  showWelcomePopover() {
     const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
     ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
     ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
-    ELEM_POPOVER_INFO.style.display = 'block';
+    ELEM_POPOVER_INFO.style.display = "block";
   }
 }
 
@@ -1882,9 +1884,8 @@ function showInfo() {
 
   if (ELEM_POPOVER_INFO.matches("[popover]:popover-open")) {
     ELEM_POPOVER_INFO.hidePopover();
-  }
-  else {
-    ELEM_POPOVER_INFO.style.display = 'none';
+  } else {
+    ELEM_POPOVER_INFO.style.display = "none";
   }
 
   ELEM_BTN_INFO.blur(); // Убираем фокус
