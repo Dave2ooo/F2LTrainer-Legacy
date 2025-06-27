@@ -53,6 +53,8 @@ const ELEM_OVERLAY = document.getElementById("overlay");
 const ELEM_WELCOME_CONATINER = document.getElementById("welcome-container");
 // const ELEM_WELCOME_CONATINER_TRAIN = document.getElementById("welcome-container-train");
 const ELEM_INFO_CONTAINER = document.getElementById("info-container");
+const ELEM_BTN_INFO = document.getElementById("btn-info");
+const ELEM_POPOVER_INFO = document.getElementById("popover-info");
 const ELEM_LOADING_SCREEN = document.getElementById("loading-screen");
 const ELEM_CHANGE_STATE_POPUP = document.getElementById("popup-change-state");
 const ELEM_FEEDBACK_CONTAINER = document.getElementById("feedback-container");
@@ -179,6 +181,7 @@ window.addEventListener("load", () => {
   loadUserData();
 
   showWelcomePopup();
+  showWelcomePopover();
 
   localStorage.clear();
   saveUserData();
@@ -451,7 +454,8 @@ function addElementsToDOM() {
         // Edit
         GROUP.btnEdit[indexCase] = document.createElement("div");
         GROUP.btnEdit[indexCase].classList.add("btn-edit");
-        GROUP.btnEdit[indexCase].title = "Edit";
+        // GROUP.btnEdit[indexCase].title = "Edit";
+        GROUP.btnEdit[indexCase].setAttribute("data-tooltip", "Edit");
 
         GROUP.imgEdit[indexCase] = document.createElement("img");
         GROUP.imgEdit[indexCase].classList.add("img-edit-trash");
@@ -464,7 +468,8 @@ function addElementsToDOM() {
         // Mirror
         GROUP.btnMirror[indexCase] = document.createElement("div");
         GROUP.btnMirror[indexCase].classList.add("btn-edit");
-        GROUP.btnMirror[indexCase].title = "Mirror";
+        // GROUP.btnMirror[indexCase].title = "Mirror";
+        GROUP.btnMirror[indexCase].setAttribute("data-tooltip", "Mirror");
 
         GROUP.imgMirror[indexCase] = document.createElement("img");
         GROUP.imgMirror[indexCase].classList.add("flip-image");
@@ -1409,6 +1414,7 @@ function changeMode() {
     mode = 1;
     updateTrainCases();
     ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
     ELEM_WINDOW_SELECT.classList.add("display-none");
     ELEM_WINDOW_TRAIN.classList.remove("display-none");
     //ELEM_BUTTON_SETTING_SELECT.classList.add("display-none");
@@ -1422,6 +1428,7 @@ function changeMode() {
   } else {
     mode = 0;
     ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Start training");
     ELEM_WINDOW_SELECT.classList.remove("display-none");
     ELEM_WINDOW_TRAIN.classList.add("display-none");
     //ELEM_BUTTON_SETTING_SELECT.classList.remove("display-none");
@@ -1854,6 +1861,18 @@ function showWelcomePopup() {
   }
 }
 
+function showWelcomePopover() {
+  if (firstVisit) {
+    ELEM_POPOVER_INFO.popover = "manual";
+    ELEM_BTN_INFO.popoverTargetElement = ELEM_POPOVER_INFO;
+    ELEM_BTN_INFO.popoverTargetAction = "toggle";
+    const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
+    ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
+    ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
+    ELEM_POPOVER_INFO.style.display = "block";
+  }
+}
+
 function showWelcomeTrainPopup() {
   setFirstVisitTrain();
   // openDialog(ELEM_WELCOME_CONATINER_TRAIN);
@@ -1862,6 +1881,14 @@ function showWelcomeTrainPopup() {
 function showInfo() {
   ELEM_IFRAME_VIDEO.src = "https://www.youtube-nocookie.com/embed/EQbZvKssp7s?si=tEuX7PxLo8i5UdiT&amp;start=20";
   openDialog(ELEM_INFO_CONTAINER);
+
+  if (ELEM_POPOVER_INFO.matches("[popover]:popover-open")) {
+    ELEM_POPOVER_INFO.hidePopover();
+  } else {
+    ELEM_POPOVER_INFO.style.display = "none";
+  }
+
+  ELEM_BTN_INFO.blur(); // Убираем фокус
   // ELEM_INFO_CONTAINER.scrollTo(0, 0);
 }
 
