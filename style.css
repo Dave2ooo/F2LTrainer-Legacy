@@ -1069,6 +1069,18 @@ twisty-alg-viewer .wrapper {
   left: anchor(center);
   transform: translateX(-45%);
 }
+#popover-info {
+    overflow: visible;
+}
+#popover-info::before {
+    content: "";
+    position: relative;
+    top: -15px;
+    left: 10px;
+    border-width: 10px 10px 0 0;
+    border-style: solid;
+    border-color: #ffffff transparent transparent transparent;
+}
 
 /* -----------------------------   Feedback   --------------------------------- */
 
