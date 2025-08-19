@@ -31,12 +31,10 @@ class TrainCase {
 
   //#region Private Functions
   #setMirrored() {
-    // Check if already set (recap mode)
+    // Check if already set (left and right)
     if (this.#mirroring !== undefined) return;
     
-    if (rightSelection && leftSelection) {
-      this.#mirroring = parseInt(Math.floor(Math.random() * 2));
-    } else if (rightSelection && !leftSelection) {
+    if (rightSelection && !leftSelection) {
       this.#mirroring = 0;
     } else if (!rightSelection && leftSelection) {
       this.#mirroring = 1;

@@ -1141,8 +1141,8 @@ function generateTrainCaseList() {
                 GROUP.scrambles
             );
 
-          if (recapEnabled && leftSelection && rightSelection) {
-            // Push unmirrored and mirrored case (recap mode)
+          if (leftSelection && rightSelection) {
+            // Push unmirrored and mirrored case
             trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 0));
             trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 1));
           } else {
