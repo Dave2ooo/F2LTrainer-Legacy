@@ -99,6 +99,7 @@ const ELEM_SELECT_STICKERING = document.getElementById("select-stickering");
 // const ELEM_SELECT_CROSS_COLOR = document.getElementById("select-cross-color");
 
 const ELEM_CHECKBOX_TIMER_ENABLE = document.getElementById("checkboxEnableTimerId");
+const ELEM_CHECKBOX_RECAP_ENABLE = document.getElementById("checkboxEnableRecapId");
 
 const ELEM_BUTTON_SETTINGS = document.querySelector(".btn-settings-train");
 const ELEM_CONTAINER_TRAIN_SETTINGS = document.getElementById("train-settings-container");
@@ -137,6 +138,9 @@ const ELEM_SELECT_GROUP = document.getElementById("select-group-id");
 let boolShowDebugInfo = true;
 const ELEM_BTN_SHOW_HIDE_DEBUG_INFO = document.getElementById("btn-show-hide-debug-info");
 const ELEM_DEBUG_INFO = document.getElementById("debug-info");
+
+const ELEM_RECAP_INFO = document.getElementById("recap-info");
+let recapDone = false;
 
 let flagdoublepress = false;
 
@@ -939,6 +943,7 @@ function keyup(e) {
  * - hintImageSelection
  * - hintAlgSelection
  * - timerEnabled
+ * - recapEnabled
  * - TrainCase.currentTrainCaseNumber
  * - trainCaseList
  *
@@ -966,11 +971,19 @@ function updateTrainCases() {
   stickeringSelection = ELEM_SELECT_STICKERING.selectedIndex;
   // crossColorSelection = ELEM_SELECT_CROSS_COLOR.selectedIndex;
   timerEnabled = ELEM_CHECKBOX_TIMER_ENABLE.checked;
+  recapEnabled = ELEM_CHECKBOX_RECAP_ENABLE.checked;
 
   if (timerEnabled) {
     ELEM_TIMER.style.display = "block";
   } else {
     ELEM_TIMER.style.display = "none";
+  }
+
+  if (recapEnabled) {
+    ELEM_RECAP_INFO.style.display = "block";
+    if (recapDone) recapDone = false;
+  } else {
+    ELEM_RECAP_INFO.style.display = "none";
   }
 
   closeOverlays();
@@ -1128,7 +1141,13 @@ function generateTrainCaseList() {
                 GROUP.scrambles
             );
 
-          trainCaseListTemp.push(new TrainCase(indexGroup, indexCase));
+          if (recapEnabled && leftSelection && rightSelection) {
+            // Push unmirrored and mirrored case (recap mode)
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 0));
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 1));
+          } else {
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase));
+          }
         }
       }
     }
@@ -1164,6 +1183,9 @@ function nextScramble(nextPrevious) {
     TrainCase.currentTrainCaseNumber++;
     if (TrainCase.currentTrainCaseNumber >= trainCaseList.length) {
       generateTrainCaseList();
+      if (recapEnabled && !recapDone) {
+        recapDone = true;
+      }
       if (trainCaseList.length <= 0) return;
     }
   } else if (TrainCase.currentTrainCaseNumber > 0) {
@@ -1212,6 +1234,30 @@ function nextScramble(nextPrevious) {
   // This hides the hint image
   updateHintImgVisibility();
   saveUserData();
+
+  // Update recap info
+  if (recapEnabled) {
+    ELEM_RECAP_INFO.innerHTML = getRecapInfo();
+  }
+}
+
+/**
+ * 
+ */
+function getRecapInfo() {
+  let summary = "";
+  if (recapDone) {
+    summary = "Recap done (F5/refresh to restart)";
+  } else if (leftSelection && rightSelection) {
+    let remainingCases = trainCaseList.slice(TrainCase.currentTrainCaseNumber);
+    let remainingLeftCases = remainingCases.filter(item => item.getMirroring() == 1).length;
+    let remainingRightCases = remainingCases.filter(item => item.getMirroring() == 0).length;
+    summary = `${remainingLeftCases} left cases & ${remainingRightCases} right cases, left`;
+  } else {
+    let remainingCases = trainCaseList.length - TrainCase.currentTrainCaseNumber;
+    summary = `${remainingCases} cases left`;
+  }
+  return `<h3>Recap mode: ${summary}</h3>`;
 }
 
 /**
@@ -1237,6 +1283,7 @@ function updateCheckboxStatus() {
   ELEM_SELECT_STICKERING.selectedIndex = stickeringSelection;
   // ELEM_SELECT_CROSS_COLOR.selectedIndex = crossColorSelection;
   ELEM_CHECKBOX_TIMER_ENABLE.checked = timerEnabled;
+  ELEM_CHECKBOX_RECAP_ENABLE.checked = recapEnabled;
 }
 
 function enableDisableCheckboxConsiderAUF() {
