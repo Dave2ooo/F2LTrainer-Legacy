@@ -1283,6 +1283,7 @@ function updateCheckboxStatus() {
   ELEM_SELECT_STICKERING.selectedIndex = stickeringSelection;
   // ELEM_SELECT_CROSS_COLOR.selectedIndex = crossColorSelection;
   ELEM_CHECKBOX_TIMER_ENABLE.checked = timerEnabled;
+  ELEM_CHECKBOX_RECAP_ENABLE.checked = recapEnabled;
 }
 
 function enableDisableCheckboxConsiderAUF() {

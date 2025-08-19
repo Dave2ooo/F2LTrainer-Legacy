@@ -65,7 +65,7 @@ let aufSelection = true;
 let considerAUFinAlg = true;
 let hintImageSelection = 2;
 let hintAlgSelection = 0;
-let stickeringSelection = 0
+let stickeringSelection = 0;
 // let crossColorSelection = 0;
 let timerEnabled = false;
 let recapEnabled = false;
@@ -185,6 +185,7 @@ function loadUserData() {
   aufSelection = loadBoolean("aufSelection", aufSelection);
   considerAUFinAlg = loadBoolean("considerAUFinAlg", considerAUFinAlg);
   timerEnabled = loadBoolean("timerEnabled", timerEnabled);
+  recapEnabled = loadBoolean("recapEnabled", recapEnabled);
 
   for (const GROUP of GROUPS) {
     // Load collapse state
