@@ -383,6 +383,12 @@
           Enable Timer (experimental)
         </label>
 
+        <label class="checkbox" for="checkboxEnableRecapId">
+          <input type="checkbox" class="checkbox__input" name="checkboxEnableRecap" id="checkboxEnableRecapId" />
+          <div class="checkbox__box"></div>
+          Enable Recap mode
+        </label>
+
         <button type="button" class="btn-delete btn-overlay" onclick="clearUserData()">Delete saved data</button>
       </div>
 
@@ -636,6 +642,7 @@
 
       <button id="btn-show-hide-debug-info" onclick="showHideDebugInfo()">> Hide details</button>
       <div id="debug-info"></div>
+      <div id="recap-info"></div>
     </div>
 
     <!-- Scripts -->

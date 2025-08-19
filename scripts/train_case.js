@@ -11,10 +11,10 @@ class TrainCase {
   #algHintAUF;
   #AUFNum;
 
-  constructor(indexGroup, indexCase) {
+  constructor(indexGroup, indexCase, mirroring = undefined) {
     this.#indexGroup = indexGroup;
     this.#indexCase = indexCase;
-    this.#mirroring = undefined;
+    this.#mirroring = mirroring;
     this.#algHint = undefined;
     this.#indexScramble = undefined;
     this.#scramble = undefined;
@@ -31,6 +31,9 @@ class TrainCase {
 
   //#region Private Functions
   #setMirrored() {
+    // Check if already set (recap mode)
+    if (this.#mirroring !== undefined) return;
+    
     if (rightSelection && leftSelection) {
       this.#mirroring = parseInt(Math.floor(Math.random() * 2));
     } else if (rightSelection && !leftSelection) {

@@ -68,6 +68,7 @@ let hintAlgSelection = 0;
 let stickeringSelection = 0
 // let crossColorSelection = 0;
 let timerEnabled = false;
+let recapEnabled = false;
 
 let firstVisit = true;
 let firstVisitTrain = true;
@@ -103,6 +104,7 @@ function saveUserData() {
   localStorage.setItem("stickeringSelection", stickeringSelection);
   // localStorage.setItem("crossColorSelection", crossColorSelection);
   localStorage.setItem("timerEnabled", timerEnabled);
+  localStorage.setItem("recapEnabled", recapEnabled);
 
   // Saving that the user just visited the site
   localStorage.setItem("firstVisit", false);
