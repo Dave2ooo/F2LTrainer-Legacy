@@ -994,6 +994,44 @@ function updateTrainCases() {
 }
 
 /**
+ * Count number of active cases
+ * @returns {number}
+ */
+function getActiveCasesCount() {
+  let trainStateSelectionTemp = [
+    ELEM_CHECKBOX_UNLEARNED.checked,
+    ELEM_CHECKBOX_LEARNING.checked,
+    ELEM_CHECKBOX_FINISHED.checked,
+  ];
+
+  let trainGroupSelectionTemp = [
+    ELEM_CHECKBOX_BASIC.checked,
+    ELEM_CHECKBOX_BASIC_BACK.checked,
+    ELEM_CHECKBOX_ADVANCED.checked,
+    ELEM_CHECKBOX_EXPERT.checked,
+  ];
+
+  let activeCases = 0;
+  for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
+    const GROUP = GROUPS[indexGroup];
+    // Skip if group is not selected in settings
+    if (!trainGroupSelectionTemp[indexGroup]) continue;
+    for (const categoryItems of GROUP.categoryCases) {
+      for (const categoryItem of categoryItems) {
+        let indexCase = categoryItem - 1;
+        for (let state = 0; state < trainStateSelectionTemp.length; state++) {
+          // Check if case is in selected state
+          if (!(trainStateSelectionTemp[state] && GROUP.caseSelection[indexCase] == state)) continue;
+          activeCases++;
+        }
+      }
+    }
+  }
+
+  return activeCases;
+}
+
+/**
  * Called when the Show Hint button is pressed when nextCase is executed.
  * Shows the hint for the current scramble.
  * If the hint setting is set to "Reveal step-by-step", it shows one move at a time.
