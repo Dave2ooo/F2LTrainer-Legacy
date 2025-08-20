@@ -294,8 +294,8 @@ function addTwistyPlayerEventListeners() {
     const ELEM_TWISTY_PLAYER_BODY = ELEM_TWISTY_PLAYER.contentWrapper.firstChild;
     ELEM_TWISTY_PLAYER_BODY.addEventListener("mousedown", (event) => twistyPlayerMouseDown(event));
     ELEM_TWISTY_PLAYER_BODY.addEventListener("mouseup", (event) => twistyPlayerMouseUp(event));
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("touchstart", (event) => twistyPlayerTouchStart(event));
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("touchend", (event) => twistyPlayerTouchEnd(event));
+    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchstart", (event) => twistyPlayerTouchStart(event));
+    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchend", (event) => twistyPlayerTouchEnd(event));
 
     // Called when cube is rotated. Hide reset button if camera latitude is default
     ELEM_TWISTY_PLAYER.experimentalModel.twistySceneModel.orbitCoordinatesRequest.addFreshListener((v) => {
@@ -324,21 +324,21 @@ function twistyPlayerMouseUp(event) {
   }
 }
 
-function twistyPlayerTouchStart(event) {
-  // Save the touch point.
-  const touch = event.touches[0];
-  clickCoordinatesStart = { x: touch.clientX, y: touch.clientY };
-}
+// function twistyPlayerTouchStart(event) {
+//   // Save the touch point.
+//   const touch = event.touches[0];
+//   clickCoordinatesStart = { x: touch.clientX, y: touch.clientY };
+// }
 
-function twistyPlayerTouchEnd(event) {
-  // Check if touchstart & touchend are on the same point.
-  const touch = event.changedTouches[0];
-  if (isSamePoint(clickCoordinatesStart, { x: touch.clientX, y: touch.clientY })) {
-    // Hide Press me text
-    hidePressMeTextTwisty;
-    nextScramble(1);
-  }
-}
+// function twistyPlayerTouchEnd(event) {
+//   // Check if touchstart & touchend are on the same point.
+//   const touch = event.changedTouches[0];
+//   if (isSamePoint(clickCoordinatesStart, { x: touch.clientX, y: touch.clientY })) {
+//     // Hide Press me text
+//     hidePressMeTextTwisty;
+//     nextScramble(1);
+//   }
+// }
 
 function isSamePoint(point1, point2) {
   return point1.x === point2.x && point1.y === point2.y;
@@ -1242,7 +1242,7 @@ function nextScramble(nextPrevious) {
 }
 
 /**
- * 
+ *
  */
 function getRecapInfo() {
   let summary = "";
@@ -1250,8 +1250,8 @@ function getRecapInfo() {
     summary = "Recap done (F5/refresh to restart)";
   } else if (leftSelection && rightSelection) {
     let remainingCases = trainCaseList.slice(TrainCase.currentTrainCaseNumber);
-    let remainingLeftCases = remainingCases.filter(item => item.getMirroring() == 1).length;
-    let remainingRightCases = remainingCases.filter(item => item.getMirroring() == 0).length;
+    let remainingLeftCases = remainingCases.filter((item) => item.getMirroring() == 1).length;
+    let remainingRightCases = remainingCases.filter((item) => item.getMirroring() == 0).length;
     summary = `${remainingLeftCases} left cases & ${remainingRightCases} right cases, left`;
   } else {
     let remainingCases = trainCaseList.length - TrainCase.currentTrainCaseNumber;
