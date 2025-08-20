@@ -860,6 +860,11 @@ twisty-alg-viewer .wrapper {
   align-items: baseline;
 }
 
+#training-active-cases-info {
+  cursor: pointer;
+  text-decoration-line: underline;
+}
+
 .animation-blink {
   animation: blinker 800ms linear infinite;
 }
@@ -1070,16 +1075,16 @@ twisty-alg-viewer .wrapper {
   transform: translateX(-45%);
 }
 #popover-info {
-    overflow: visible;
+  overflow: visible;
 }
 #popover-info::before {
-    content: "";
-    position: relative;
-    top: -15px;
-    left: 10px;
-    border-width: 10px 10px 0 0;
-    border-style: solid;
-    border-color: #ffffff transparent transparent transparent;
+  content: "";
+  position: relative;
+  top: -15px;
+  left: 10px;
+  border-width: 10px 10px 0 0;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
 }
 
 /* -----------------------------   Feedback   --------------------------------- */
@@ -1269,7 +1274,7 @@ textarea {
 [data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: 100%;
+  top: 115%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #333;
@@ -1277,11 +1282,10 @@ textarea {
   padding: 4px 8px;
   border-radius: 4px;
   white-space: nowrap;
-  font-size: 14px;
-  font-family: sans-serif;
+  font-size: 1.1rem;
   pointer-events: none;
   opacity: 0.9;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   min-width: max-content;
 }
@@ -1400,6 +1404,12 @@ textarea {
   .img-edit-trash {
     visibility: visible;
   }
+}
+
+#settings-active-cases-info {
+  margin: auto;
+  width: 50%;
+  padding-top: 10px;
 }
 
 /* --- Keep at the end of .css file --- */

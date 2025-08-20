@@ -142,6 +142,9 @@ const ELEM_DEBUG_INFO = document.getElementById("debug-info");
 const ELEM_RECAP_INFO = document.getElementById("recap-info");
 let recapDone = false;
 
+const ELEM_TRAINING_ACTIVE_CASES_INFO = document.getElementById("training-active-cases-info");
+const ELEM_SETTINGS_ACTIVE_CASES_INFO = document.getElementById("settings-active-cases-info");
+
 let flagdoublepress = false;
 
 let flagDialogOpen = false;
@@ -990,7 +993,55 @@ function updateTrainCases() {
   trainCaseList = [];
   TrainCase.currentTrainCaseNumber = -1;
   generateTrainCaseList();
+  //Set the active cases for training page
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
   nextScramble(1);
+}
+
+/**
+ * Get formatted HTML for active cases
+ * @returns {string}
+ */
+function getActiveCasesHTML(fromSettings = false) {
+  let activeCases = getActiveCasesCount(fromSettings);
+  return `<b>${activeCases} case${activeCases !== 1 ? "s" : ""} selected</b>`;
+}
+
+/**
+ * Count number of active cases
+ * @returns {number}
+ */
+function getActiveCasesCount(fromSettings = false) {
+  let trainStateSelectionTemp = fromSettings
+    ? [ELEM_CHECKBOX_UNLEARNED.checked, ELEM_CHECKBOX_LEARNING.checked, ELEM_CHECKBOX_FINISHED.checked]
+    : trainStateSelection;
+  let trainGroupSelectionTemp = fromSettings
+    ? [
+        ELEM_CHECKBOX_BASIC.checked,
+        ELEM_CHECKBOX_BASIC_BACK.checked,
+        ELEM_CHECKBOX_ADVANCED.checked,
+        ELEM_CHECKBOX_EXPERT.checked,
+      ]
+    : trainGroupSelection;
+
+  let activeCases = 0;
+  for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
+    const GROUP = GROUPS[indexGroup];
+    // Skip if group is not selected in settings
+    if (!trainGroupSelectionTemp[indexGroup]) continue;
+    for (const categoryItems of GROUP.categoryCases) {
+      for (const categoryItem of categoryItems) {
+        let indexCase = categoryItem - 1;
+        for (let state = 0; state < trainStateSelectionTemp.length; state++) {
+          // Check if case is in selected state
+          if (!(trainStateSelectionTemp[state] && GROUP.caseSelection[indexCase] == state)) continue;
+          activeCases++;
+        }
+      }
+    }
+  }
+
+  return activeCases;
 }
 
 /**
@@ -1944,9 +1995,18 @@ function showInfo() {
 //  openDialog(ELEM_CONTAINER_SELECT_SETTINGS);
 //}
 
+function updateSettingsActiveCases() {
+  //Set the active cases for settings page
+  ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML(true);
+}
+
 function showSettingsTrain() {
   exportToURL();
   updateCheckboxStatus();
+
+  //Set the active cases for settings page
+  ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
+
   openDialog(ELEM_CONTAINER_TRAIN_SETTINGS);
 }
 
