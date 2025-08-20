@@ -988,14 +988,23 @@ function updateTrainCases() {
     ELEM_RECAP_INFO.style.display = "none";
   }
 
-  let activeCases = getActiveCasesCount();
-  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = `<b>${activeCases} case${activeCases !== 1 ? "s" : ""} selected</b>`;
+  //Set the active cases for training page
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
 
   closeOverlays();
   trainCaseList = [];
   TrainCase.currentTrainCaseNumber = -1;
   generateTrainCaseList();
   nextScramble(1);
+}
+
+/**
+ * Get formatted HTML for active cases
+ * @returns {string}
+ */
+function getActiveCasesHTML() {
+  let activeCases = getActiveCasesCount();
+  return `<b>${activeCases} case${activeCases !== 1 ? "s" : ""} selected</b>`;
 }
 
 /**
