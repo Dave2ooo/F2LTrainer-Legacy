@@ -142,6 +142,8 @@ const ELEM_DEBUG_INFO = document.getElementById("debug-info");
 const ELEM_RECAP_INFO = document.getElementById("recap-info");
 let recapDone = false;
 
+const ELEM_TRAINING_ACTIVE_CASES_INFO = document.getElementById("training-active-cases-info");
+
 let flagdoublepress = false;
 
 let flagDialogOpen = false;
@@ -985,6 +987,9 @@ function updateTrainCases() {
   } else {
     ELEM_RECAP_INFO.style.display = "none";
   }
+
+  let activeCases = getActiveCasesCount();
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = `<b>${activeCases} case${activeCases !== 1 ? "s" : ""} selected</b>`;
 
   closeOverlays();
   trainCaseList = [];
