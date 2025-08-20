@@ -235,19 +235,37 @@
         <div class="checkbox-container">
           <h3>Status</h3>
           <label class="checkbox" for="checkboxUnlearnedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxUnlearned" id="checkboxUnlearnedId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxUnlearned"
+              id="checkboxUnlearnedId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box"></div>
             Unlearned
           </label>
 
           <label class="checkbox checkbox-learning" for="checkboxLearningId">
-            <input type="checkbox" class="checkbox__input" name="checkboxLearning" id="checkboxLearningId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxLearning"
+              id="checkboxLearningId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box checkbox__box_learning"></div>
             Learning
           </label>
 
           <label class="checkbox checkbox-finished" for="checkboxFinishedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxFinished" id="checkboxFinishedId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxFinished"
+              id="checkboxFinishedId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box checkbox__box_finished"></div>
             Finished
           </label>
@@ -257,7 +275,13 @@
         <div class="checkbox-container">
           <h3>Group</h3>
           <label class="checkbox" for="checkboxGroupBasicId">
-            <input type="checkbox" class="checkbox__input" name="checkboxGroupBasic" id="checkboxGroupBasicId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxGroupBasic"
+              id="checkboxGroupBasicId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box"></div>
             Basic
           </label>
@@ -275,13 +299,25 @@
           </label>
 
           <label class="checkbox" for="checkboxGroupAdvancedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxGroupAdvanced" id="checkboxGroupAdvancedId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxGroupAdvanced"
+              id="checkboxGroupAdvancedId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box"></div>
             Advanced
           </label>
 
           <label class="checkbox" for="checkboxGroupExpertId">
-            <input type="checkbox" class="checkbox__input" name="checkboxExpertAdvanced" id="checkboxGroupExpertId" onclick="updateSettingsActiveCases()" />
+            <input
+              type="checkbox"
+              class="checkbox__input"
+              name="checkboxExpertAdvanced"
+              id="checkboxGroupExpertId"
+              onclick="updateSettingsActiveCases()"
+            />
             <div class="checkbox__box"></div>
             Expert
           </label>
@@ -524,20 +560,18 @@
       <div>
         <!-- Button Info -->
         <button type="button" class="side-button" id="btn-info" onclick="showInfo()" data-tooltip="Info">
-          <img src="./images/info.svg" alt="Info" class="side-img"/>
+          <img src="./images/info.svg" alt="Info" class="side-img" />
         </button>
-        <div popover="manual" popover-position="bottom" id="popover-info">
-            Press here to get more info.
-        </div>
+        <div popover="manual" popover-position="bottom" id="popover-info">Press here to get more info.</div>
 
         <!-- Button Settings Select -->
         <div class="side-button btn-settings-select" , onclick="showSettingsTrain()" data-tooltip="Settings">
-          <img src="./images/settings.svg" alt="Settings" class="side-img"/>
+          <img src="./images/settings.svg" alt="Settings" class="side-img" />
         </div>
 
         <!-- Button Feedback -->
         <div class="side-button btn-settings-select" , onclick="showFeedback()" data-tooltip="Feedback">
-          <img src="./images/feedback.svg" alt="Feedback" class="side-img"/>
+          <img src="./images/feedback.svg" alt="Feedback" class="side-img" />
         </div>
       </div>
 
@@ -643,7 +677,7 @@
         </button>
       </div>
 
-      <div id="training-active-cases-info"></div>
+      <div id="training-active-cases-info" onclick="showSettingsTrain()" data-tooltip="Open Settings"></div>
       <button id="btn-show-hide-debug-info" onclick="showHideDebugInfo()">> Hide details</button>
       <div id="debug-info"></div>
       <div id="recap-info"></div>

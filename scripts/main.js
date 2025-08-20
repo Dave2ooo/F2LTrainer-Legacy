@@ -993,6 +993,8 @@ function updateTrainCases() {
   trainCaseList = [];
   TrainCase.currentTrainCaseNumber = -1;
   generateTrainCaseList();
+  //Set the active cases for training page
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
   nextScramble(1);
 }
 
@@ -1010,8 +1012,17 @@ function getActiveCasesHTML(fromSettings = false) {
  * @returns {number}
  */
 function getActiveCasesCount(fromSettings = false) {
-  let trainStateSelectionTemp = fromSettings ? [ELEM_CHECKBOX_UNLEARNED.checked, ELEM_CHECKBOX_LEARNING.checked, ELEM_CHECKBOX_FINISHED.checked] : trainStateSelection;
-  let trainGroupSelectionTemp = fromSettings ? [ELEM_CHECKBOX_BASIC.checked, ELEM_CHECKBOX_BASIC_BACK.checked, ELEM_CHECKBOX_ADVANCED.checked, ELEM_CHECKBOX_EXPERT.checked] : trainGroupSelection;
+  let trainStateSelectionTemp = fromSettings
+    ? [ELEM_CHECKBOX_UNLEARNED.checked, ELEM_CHECKBOX_LEARNING.checked, ELEM_CHECKBOX_FINISHED.checked]
+    : trainStateSelection;
+  let trainGroupSelectionTemp = fromSettings
+    ? [
+        ELEM_CHECKBOX_BASIC.checked,
+        ELEM_CHECKBOX_BASIC_BACK.checked,
+        ELEM_CHECKBOX_ADVANCED.checked,
+        ELEM_CHECKBOX_EXPERT.checked,
+      ]
+    : trainGroupSelection;
 
   let activeCases = 0;
   for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
@@ -1940,9 +1951,6 @@ function closeOverlays() {
   ELEM_CHANGE_STATE_POPUP.close();
   ELEM_FEEDBACK_CONTAINER.close();
   flagDialogOpen = false;
-
-  //Set the active cases for training page
-  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
 }
 
 function showWelcomePopup() {
