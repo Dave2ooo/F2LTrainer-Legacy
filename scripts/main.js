@@ -143,6 +143,7 @@ const ELEM_RECAP_INFO = document.getElementById("recap-info");
 let recapDone = false;
 
 const ELEM_TRAINING_ACTIVE_CASES_INFO = document.getElementById("training-active-cases-info");
+const ELEM_SETTINGS_ACTIVE_CASES_INFO = document.getElementById("settings-active-cases-info");
 
 let flagdoublepress = false;
 
@@ -988,9 +989,6 @@ function updateTrainCases() {
     ELEM_RECAP_INFO.style.display = "none";
   }
 
-  //Set the active cases for training page
-  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
-
   closeOverlays();
   trainCaseList = [];
   TrainCase.currentTrainCaseNumber = -1;
@@ -1002,8 +1000,8 @@ function updateTrainCases() {
  * Get formatted HTML for active cases
  * @returns {string}
  */
-function getActiveCasesHTML() {
-  let activeCases = getActiveCasesCount();
+function getActiveCasesHTML(fromSettings = false) {
+  let activeCases = getActiveCasesCount(fromSettings);
   return `<b>${activeCases} case${activeCases !== 1 ? "s" : ""} selected</b>`;
 }
 
@@ -1011,19 +1009,9 @@ function getActiveCasesHTML() {
  * Count number of active cases
  * @returns {number}
  */
-function getActiveCasesCount() {
-  let trainStateSelectionTemp = [
-    ELEM_CHECKBOX_UNLEARNED.checked,
-    ELEM_CHECKBOX_LEARNING.checked,
-    ELEM_CHECKBOX_FINISHED.checked,
-  ];
-
-  let trainGroupSelectionTemp = [
-    ELEM_CHECKBOX_BASIC.checked,
-    ELEM_CHECKBOX_BASIC_BACK.checked,
-    ELEM_CHECKBOX_ADVANCED.checked,
-    ELEM_CHECKBOX_EXPERT.checked,
-  ];
+function getActiveCasesCount(fromSettings = false) {
+  let trainStateSelectionTemp = fromSettings ? [ELEM_CHECKBOX_UNLEARNED.checked, ELEM_CHECKBOX_LEARNING.checked, ELEM_CHECKBOX_FINISHED.checked] : trainStateSelection;
+  let trainGroupSelectionTemp = fromSettings ? [ELEM_CHECKBOX_BASIC.checked, ELEM_CHECKBOX_BASIC_BACK.checked, ELEM_CHECKBOX_ADVANCED.checked, ELEM_CHECKBOX_EXPERT.checked] : trainGroupSelection;
 
   let activeCases = 0;
   for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
@@ -1952,6 +1940,9 @@ function closeOverlays() {
   ELEM_CHANGE_STATE_POPUP.close();
   ELEM_FEEDBACK_CONTAINER.close();
   flagDialogOpen = false;
+
+  //Set the active cases for training page
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
 }
 
 function showWelcomePopup() {
@@ -1996,9 +1987,18 @@ function showInfo() {
 //  openDialog(ELEM_CONTAINER_SELECT_SETTINGS);
 //}
 
+function updateSettingsActiveCases() {
+  //Set the active cases for settings page
+  ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML(true);
+}
+
 function showSettingsTrain() {
   exportToURL();
   updateCheckboxStatus();
+
+  //Set the active cases for settings page
+  ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
+
   openDialog(ELEM_CONTAINER_TRAIN_SETTINGS);
 }
 

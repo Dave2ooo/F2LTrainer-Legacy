@@ -235,19 +235,19 @@
         <div class="checkbox-container">
           <h3>Status</h3>
           <label class="checkbox" for="checkboxUnlearnedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxUnlearned" id="checkboxUnlearnedId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxUnlearned" id="checkboxUnlearnedId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box"></div>
             Unlearned
           </label>
 
           <label class="checkbox checkbox-learning" for="checkboxLearningId">
-            <input type="checkbox" class="checkbox__input" name="checkboxLearning" id="checkboxLearningId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxLearning" id="checkboxLearningId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box checkbox__box_learning"></div>
             Learning
           </label>
 
           <label class="checkbox checkbox-finished" for="checkboxFinishedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxFinished" id="checkboxFinishedId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxFinished" id="checkboxFinishedId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box checkbox__box_finished"></div>
             Finished
           </label>
@@ -257,7 +257,7 @@
         <div class="checkbox-container">
           <h3>Group</h3>
           <label class="checkbox" for="checkboxGroupBasicId">
-            <input type="checkbox" class="checkbox__input" name="checkboxGroupBasic" id="checkboxGroupBasicId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxGroupBasic" id="checkboxGroupBasicId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box"></div>
             Basic
           </label>
@@ -268,24 +268,27 @@
               class="checkbox__input"
               name="checkboxGroupBasicBack"
               id="checkboxGroupBasicBackId"
+              onclick="updateSettingsActiveCases()"
             />
             <div class="checkbox__box"></div>
             Basic Back
           </label>
 
           <label class="checkbox" for="checkboxGroupAdvancedId">
-            <input type="checkbox" class="checkbox__input" name="checkboxGroupAdvanced" id="checkboxGroupAdvancedId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxGroupAdvanced" id="checkboxGroupAdvancedId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box"></div>
             Advanced
           </label>
 
           <label class="checkbox" for="checkboxGroupExpertId">
-            <input type="checkbox" class="checkbox__input" name="checkboxExpertAdvanced" id="checkboxGroupExpertId" />
+            <input type="checkbox" class="checkbox__input" name="checkboxExpertAdvanced" id="checkboxGroupExpertId" onclick="updateSettingsActiveCases()" />
             <div class="checkbox__box"></div>
             Expert
           </label>
         </div>
       </div>
+
+      <div id="settings-active-cases-info"></div>
 
       <div class="div-checkbox-container-container">
         <div class="checkbox-container">

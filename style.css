@@ -1402,6 +1402,12 @@ textarea {
   }
 }
 
+#settings-active-cases-info {
+  margin: auto;
+  width: 50%;
+  padding-top: 10px;
+}
+
 /* --- Keep at the end of .css file --- */
 .display-none {
   display: none;
