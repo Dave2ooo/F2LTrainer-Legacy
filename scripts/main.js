@@ -1247,7 +1247,7 @@ function nextScramble(nextPrevious) {
 function getRecapInfo() {
   let summary = "";
   if (recapDone) {
-    summary = "Recap done (F5/refresh to restart)";
+    summary = `Recap done (<a href="#" onclick="updateTrainCases();">Press to reset</a>)`;
   } else if (leftSelection && rightSelection) {
     let remainingCases = trainCaseList.slice(TrainCase.currentTrainCaseNumber);
     let remainingLeftCases = remainingCases.filter((item) => item.getMirroring() == 1).length;
