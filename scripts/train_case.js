@@ -78,12 +78,18 @@ class TrainCase {
   }
 
   #addAuf() {
-    [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = StringManipulation.addAUF(
-      this.#scramble,
-      aufSelection,
-      considerAUFinAlg,
-      this.#algHint
-    );
+    const GROUP = GROUPS[this.#indexGroup];
+    if (GROUP.ignoreAUF.includes(this.#indexCase + 1)) {//Add one to get the actual index
+      //No AUF
+      [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = [this.#scramble, this.#scramble, considerAUFinAlg, 0]
+    } else {
+      [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = StringManipulation.addAUF(
+        this.#scramble,
+        aufSelection,
+        considerAUFinAlg,
+        this.#algHint
+      );
+    }
   }
   //#endregion Private Functions
 

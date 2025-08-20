@@ -74,6 +74,7 @@ const BASIC_COLLECTION = {
   imgContainerTrash: [],
   imgCaseTrash: [],
   btnRecover: [],
+  ignoreAUF: [38, 39, 40, 41, 42],
 };
 
 const BASIC_BACK_COLLECTION = {
@@ -150,6 +151,7 @@ const BASIC_BACK_COLLECTION = {
   imgContainerTrash: [],
   imgCaseTrash: [],
   btnRecover: [],
+  ignoreAUF: [38, 39, 40, 41, 42],
 };
 
 const ADVANCED_COLLECTION = {
@@ -230,6 +232,7 @@ const ADVANCED_COLLECTION = {
   // 3: hide blue-orange
   // 4: hide green-orange
   // default: show all F2L
+  ignoreAUF: [],
 };
 
 const EXPERT_COLLECTION = {
@@ -299,6 +302,7 @@ const EXPERT_COLLECTION = {
   // 3: hide blue-orange
   // 4: hide green-orange
   // default: show all F2L
+  ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 };
 
 const GROUPS = [BASIC_COLLECTION, BASIC_BACK_COLLECTION, ADVANCED_COLLECTION, EXPERT_COLLECTION];
