@@ -33,7 +33,7 @@ class TrainCase {
   #setMirrored() {
     // Check if already set (left and right)
     if (this.#mirroring !== undefined) return;
-    
+
     if (rightSelection && !leftSelection) {
       this.#mirroring = 0;
     } else if (!rightSelection && leftSelection) {
@@ -79,9 +79,15 @@ class TrainCase {
 
   #addAuf() {
     const GROUP = GROUPS[this.#indexGroup];
-    if (GROUP.ignoreAUF.includes(this.#indexCase + 1)) {//Add one to get the actual index
+    if (GROUP.ignoreAUF.includes(this.#indexCase + 1)) {
+      //Add one to get the actual index
       //No AUF
-      [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = [this.#scramble, this.#scramble, considerAUFinAlg, 0]
+      [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = [
+        this.#scramble,
+        this.#scramble,
+        this.#algHint,
+        0,
+      ];
     } else {
       [this.#scrambleAUF, this.#scrambleTwisty, this.#algHintAUF, this.#AUFNum] = StringManipulation.addAUF(
         this.#scramble,

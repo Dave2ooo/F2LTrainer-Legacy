@@ -275,23 +275,52 @@ window.addEventListener("load", () => {
   showHideDebugInfo();
 });
 
-function loadTwistyAlgViewer() {
-  import("https://cdn.cubing.net/v0/js/cubing/twisty")
-    .then(({ TwistyAlgViewer }) => {
-      const ELEM_HINT_CONTAINER = document.getElementById("hint-container");
-      ELEM_HINT_CONTAINER.appendChild(new TwistyAlgViewer({ twistyPlayer: ELEM_TWISTY_PLAYER }));
+// function loadTwistyAlgViewer() {
+//   import("https://cdn.cubing.net/v0/js/cubing/twisty")
+//     .then(({ TwistyAlgViewer }) => {
+//       const ELEM_HINT_CONTAINER = document.getElementById("hint-container");
+//       ELEM_HINT_CONTAINER.appendChild(new TwistyAlgViewer({ twistyPlayer: ELEM_TWISTY_PLAYER }));
 
-      // Twisty Player loaded correctly
-      twistyLoadFlag = true;
-    })
-    .catch((error) => {
-      // If Twisty Player cannot be loaded, default to 2D image
-      ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
-      // Disable option to select Twisty Player
-      ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
-      console.error("Failed to load TwistyAlgViewer module:", error);
-    });
+//       // Twisty Player loaded correctly
+//       twistyLoadFlag = true;
+//       console.log("Twisty Player loaded");
+//     })
+//     .catch((error) => {
+//       // If Twisty Player cannot be loaded, default to 2D image
+//       ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
+//       // Disable option to select Twisty Player
+//       ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
+//       console.error("Failed to load TwistyAlgViewer module:", error);
+//     });
+// }
+
+async function loadTwistyAlgViewer() {
+  try {
+    const [
+      { TwistyAlgViewer }, // from cubing/twisty
+      { Alg }, // from cubing/alg
+    ] = await Promise.all([
+      import("https://cdn.cubing.net/v0/js/cubing/twisty"),
+      import("https://cdn.cubing.net/v0/js/cubing/alg"),
+    ]);
+
+    // stash Alg somewhere global if you need it later
+    window.Alg = Alg;
+    const ELEM_HINT_CONTAINER = document.getElementById("hint-container");
+    ELEM_HINT_CONTAINER.appendChild(new TwistyAlgViewer({ twistyPlayer: ELEM_TWISTY_PLAYER }));
+
+    // Twisty Player loaded correctly
+    twistyLoadFlag = true;
+    console.log("Twisty Player + Alg loaded");
+  } catch (err) {
+    // If Twisty Player cannot be loaded, default to 2D image
+    ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
+    // Disable option to select Twisty Player
+    ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
+    console.error("Failed to load TwistyAlgViewer module:", error);
+  }
 }
+
 function addTwistyPlayerEventListeners() {
   try {
     const ELEM_TWISTY_PLAYER_BODY = ELEM_TWISTY_PLAYER.contentWrapper.firstChild;
@@ -1264,10 +1293,14 @@ function nextScramble(nextPrevious) {
     ELEM_HINT_IMG.src = GROUP.imgPath + "left/F2L" + (INDEX_CASE + 1) + ".svg";
   }
 
-  ELEM_TWISTY_PLAYER.experimentalSetupAlg =
-    "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
+  let tempAlg = "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
+  try {
+    ELEM_TWISTY_PLAYER.experimentalSetupAlg = new window.Alg(tempAlg.toString());
+    ELEM_TWISTY_PLAYER.alg = new window.Alg(trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHintAUF());
+  } catch (error) {
+    console.log(error);
+  }
 
-  ELEM_TWISTY_PLAYER.alg = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHintAUF();
   resetTwistyPlayerView();
 
   ELEM_TWISTY_PLAYER.jumpToStart?.();
