@@ -1237,10 +1237,21 @@ function generateTrainCaseList() {
   if (trainCaseListTemp.length == 0) ELEM_SCRAMBLE.innerHTML = "no case selected";
 
   // Randomize Cases
-  trainCaseListTemp.sort(() => Math.random() - 0.5);
+  shuffleArray(trainCaseListTemp);
 
   // Add new cases to current list
   trainCaseList = trainCaseList.concat(trainCaseListTemp);
+}
+
+/**
+ * https://stackoverflow.com/a/12646864
+ * Less biased shuffle
+ */
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
 /**
