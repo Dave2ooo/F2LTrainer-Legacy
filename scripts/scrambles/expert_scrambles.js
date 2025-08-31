@@ -166,7 +166,7 @@ const expertScrambles = {
   ],
   16: [
     "R' D' F D R2 U R'",
-    "U' R' D' F D R2 U R'",
+    "R' D' F D R2 U R'",
     "L' F' U F L R U R'",
     "R' D' U' F' U F2 D R",
     "L' F' U F2 R' F' L R",
