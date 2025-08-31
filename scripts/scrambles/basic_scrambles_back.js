@@ -799,7 +799,7 @@ const basicScramblesBack = {
     "B U2 L' B L2 U L' U' B2",
     "B U' B D F' L' F D' B2",
   ],
-  38: [
+  37: [
     "R' B' R B U2 R' U' R' U R2",
     "F R' U R2 U' R' F' R' U' R",
     "B U' L U2 L' U' B' R' U' R",
@@ -821,7 +821,7 @@ const basicScramblesBack = {
     "B2 U B' U' B' U2 R B R' B'",
     "B R B' R' U2 B U B U' B2",
   ],
-  39: [
+  38: [
     "R' B L' B L B2 R' U2 R2",
     "R' U2 R' U2 B' R' B U2 R2",
     "R' U2 R' F2 L F L' F R2",
@@ -844,7 +844,7 @@ const basicScramblesBack = {
     "B U' B' U B U2 B2 R B R'",
     "D L' B2 L D' R' U2 R' U' R2",
   ],
-  40: [
+  39: [
     "R' U2 R' U' R U' R' U2 R2",
     "B2 U L U' L' B2 R' U' R",
     "R2 U2 B' R B U2 R U2 R",
@@ -874,7 +874,7 @@ const basicScramblesBack = {
     "B R U' L U R' U2 L' U B'",
     "B2 L' B' L U' B' U' B U B'",
   ],
-  41: [
+  40: [
     "R' U2 F' U' F2 R' F' R2",
     "R' U R' U' F' U F R2",
     "B L U2 L' B' R' U' R",
@@ -887,7 +887,7 @@ const basicScramblesBack = {
     "B U' L2 F' L' F L' U2 B'",
     "B U R B U B' U' R' B'",
   ],
-  42: [
+  41: [
     "R2 F' U' F U R U' R",
     "R2 F R F2 U F U2 R",
     "R' F' U2 F R B U B'",

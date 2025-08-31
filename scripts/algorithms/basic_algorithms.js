@@ -280,13 +280,13 @@ const basicAlgorithms = {
     "U2 (R' F R F') U2 (R U R')",
     "y' U (R' U' R U') y (R U R')",
   ],
-  38: [
+  37: [
     "(R U' R') d (R' U2 R) U2' (R' U R)",
     "(R' F R F') (R U' R' U) (R U' R' U2) (R U' R')",
     "(R U R') U2 (R U2 R') d (R' U' R)",
     "(R2 U2) (F R2 F') (U2 R' U R')",
   ],
-  39: [
+  38: [
     "(R U R' U') (R U2 R') U' (R U R')",
     "(R U' R') U' (R U R') U2 (R U' R')",
     "y' (R' U' R) U2 (R' U R U') (R' U' R)",
@@ -296,13 +296,13 @@ const basicAlgorithms = {
     "(R2 U2) (R' U' R U') (R' U2 R')",
     "y' R' U2 R' U' R U' R' U2 R2",
   ],
-  40: [
+  39: [
     "(R U' R' U) (R U2' R') U (R U' R')",
     "(R U R') U2 (R U' R' U) (R U R')",
     "(R U2) (R U R' U) (R U2 R2')",
     "y' R2 U2 R U R' U R U2 R",
   ],
-  41: [
+  40: [
     "(r U' r' U2 r U r') (R U R')",
     "(R U' R') d (R' U' R U') (R' U' R)",
     "R U' R' U' R U' R' d R' U' R",
@@ -311,7 +311,7 @@ const basicAlgorithms = {
     "F2 (L' U' L U) y (L U' L)",
     "R (F U R U' R' F') U' R'",
   ],
-  42: [
+  41: [
     "(R U' R') (r U' r' U2 r U r')",
     "(R U' R' U) d (R' U' R U') (R' U R)",
     "(R U' R' U2) y' (R' U' R U' R' U R)",

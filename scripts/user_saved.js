@@ -136,6 +136,9 @@ function loadUserData() {
   console.log("Loading User Data");
   let temp;
 
+  // Do migraiton of case numbers if needed
+  migrateCaseNumbers();
+
   // Load viewSelection
   temp = localStorage.getItem("viewSelection");
   if (temp != null) viewSelection = parseInt(temp);
@@ -255,7 +258,7 @@ function loadBoolean(saveName, defaultValue) {
  * @returns {Array} The list stored in local storage if it exists, otherwise a
  *   list of the correct length filled with the defaultValue.
  */
-function loadList(group, saveName, defaultValue) {
+function loadList(group, saveName, defaultValue, sliceEnd = true) {
   let out;
   let temp = localStorage.getItem(group.saveName + saveName);
   if (temp !== null) {
@@ -276,8 +279,11 @@ function loadList(group, saveName, defaultValue) {
   // In previous versions the localstorage save had an issue where some entries
   // would be added to the end of the array. This made the lists immensly large.
   // To fix this, the list is sliced to the correct length.
-  return out.slice(0, group.numberCases);
-  // return out;
+  if (sliceEnd) {
+    // Only slice end if requested
+    out = out.slice(0, group.numberCases);
+  }
+  return out;
 }
 
 /**
@@ -419,4 +425,68 @@ function decodeBase62ToBase3(base62String) {
   } while (decimalValue > 0);
 
   return base3Number;
+}
+
+/**
+ * Migrate case numbers if needed
+ * 
+ * Basic group has 42 length array stored
+ * BasicBack group has 42 length array stored
+ */
+function migrateCaseNumbers() {
+  const EXPECTED_ARRAY_LENGTH = 42;
+  
+  // We could probably just use index 0,1 since they most likely will not change, but just to be sure use idName
+  let groupBasic = GROUPS[GROUPS.findIndex((g) => g.idName === "Basic")];
+  let groupBasicBack = GROUPS[GROUPS.findIndex((g) => g.idName === "BasicBack")];
+
+  // Load solveCounter for each group and check length
+  [groupBasic, groupBasicBack].forEach((g) =>
+  {
+    // We need to NOT slice the end because we need to check the actual length
+    let groupSolveCounter = loadList(g, "solveCounter", 0, false);
+    if (groupSolveCounter.length === EXPECTED_ARRAY_LENGTH) {
+      migrateCaseNumberGroup(g);
+    }
+  });
+}
+
+/**
+ * Migrate group
+ */
+function migrateCaseNumberGroup(g) {
+  const EXPECTED_ARRAY_LENGTH = 42;
+  const START_MIGRATE_INDEX = 36;
+
+  console.log("Doing migration of group: " + g.name);
+  
+  let lists = [];
+  // Pass sliceEnd = false to ensure we get the actual length
+  lists.push({key: "collapse", value: loadList(g, "collapse", false, false)});
+  lists.push({key: "caseSelection", value: loadList(g, "caseSelection", 0, false)});
+  lists.push({key: "customAlgorithms", value: loadList(g, "customAlgorithms", "", false)});
+  lists.push({key: "customAlgorithmsLeft", value: loadList(g, "customAlgorithmsLeft", "", false)});
+  lists.push({key: "identicalAlgorithm", value: loadList(g, "identicalAlgorithm", true, false)});
+  lists.push({key: "algorithmSelection", value: loadList(g, "algorithmSelection", 0, false)});
+  lists.push({key: "algorithmSelectionLeft", value: loadList(g, "algorithmSelectionLeft", 0, false)});
+  lists.push({key: "solveCounter", value: loadList(g, "solveCounter", 0, false)});
+
+  lists.forEach((kvp) =>
+  {
+    let name = kvp.key;
+    let list = kvp.value;
+
+    // Skip if length doesn't match
+    if (list.length !== EXPECTED_ARRAY_LENGTH) return;
+
+    // Move each element 1 down
+    for (let i = START_MIGRATE_INDEX; i < EXPECTED_ARRAY_LENGTH - 1; i++) {
+      list[i] = list[i + 1];
+    }
+    // Remove last element
+    list.pop();
+
+    // Save
+    localStorage.setItem(g.saveName + name, JSON.stringify(list));
+  });
 }
