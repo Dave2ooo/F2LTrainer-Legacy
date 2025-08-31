@@ -507,6 +507,7 @@ const advancedScrambles = {
     "F' U2 B U B' F",
     "F' U B U B' F",
     "B U R U R' B'",
+    "B F' U F U B' U'",
     "B U2 B' U' R U R'",
     // "R' D' F' U F D R",
     // "B U' F' U' B' U' F",
