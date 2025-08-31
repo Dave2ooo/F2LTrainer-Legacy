@@ -4,9 +4,6 @@ const advancedScrambles = {
   1: [
     "F R2 F' R2 U",
     "R F R2 F' R'",
-    "F R2 F' R2 U",
-    "F R2 F' R2 U",
-    "F R2 F' R2 U",
     "R U2 R2 U2 R U",
     "B F' U2 B' F U",
     "F' U' B U' B' F",
@@ -510,7 +507,6 @@ const advancedScrambles = {
     "F' U2 B U B' F",
     "F' U B U B' F",
     "B U R U R' B'",
-    "B F' U F U B' U'",
     "B U2 B' U' R U R'",
     // "R' D' F' U F D R",
     // "B U' F' U' B' U' F",
@@ -682,7 +678,6 @@ const advancedScrambles = {
     "B R2 D B' D' R2 B'",
     "R' B' F R2 B F' R U'",
     "F R F' R F R' F' U'",
-    "B U' B' F' U' F U2",
     "R' U2 R F2 L F L' F",
     "B F' L U2 L' F U2 B'",
   ],
@@ -693,7 +688,6 @@ const advancedScrambles = {
     "R' U2 F R F2 U' F U2",
     "R' U R2 U2 R' F' U2 F",
     "F' R' U R B F U2 B'",
-    "B' D' R D B2 U2 B'",
     "R' U2 F' U' F2 R F' U",
   ],
   41: [
