@@ -444,6 +444,8 @@ function migrateCaseNumbers() {
   [groupBasic, groupBasicBack].forEach((g) =>
   {
     // We need to NOT slice the end because we need to check the actual length
+    // Migrate if list length is expected length -> list has old numbering
+    // Does not need to be "solveCounter" specifically. Just needs to be a list
     let groupSolveCounter = loadList(g, "solveCounter", 0, false);
     if (groupSolveCounter.length === EXPECTED_ARRAY_LENGTH) {
       migrateCaseNumberGroup(g);
