@@ -21,7 +21,7 @@ const BASIC_COLLECTION = {
   solveCounter: basicSolveCounter,
   //
   imgPath: "./images/basic_cases/",
-  numberCases: 42,
+  numberCases: 41,
 
   categoryNames: [
     "Basic Inserts",
@@ -44,8 +44,8 @@ const BASIC_COLLECTION = {
     [6, 8, 16],
     [17, 19, 21, 23],
     [18, 20, 22, 24],
-    [32, 33, 34, 39, 40],
-    [31, 35, 36, 41, 42, 38],
+    [32, 33, 34, 38, 39],
+    [31, 35, 36, 40, 41, 37],
     [27, 30, 25],
     [29, 28, 26],
   ],
@@ -74,7 +74,7 @@ const BASIC_COLLECTION = {
   imgContainerTrash: [],
   imgCaseTrash: [],
   btnRecover: [],
-  ignoreAUF: [38, 39, 40, 41, 42],
+  ignoreAUF: [37, 38, 39, 40, 41],
 };
 
 const BASIC_BACK_COLLECTION = {
@@ -98,7 +98,7 @@ const BASIC_BACK_COLLECTION = {
   solveCounter: basicBackSolveCounter,
   //
   imgPath: "./images/basic_cases_back/",
-  numberCases: 42,
+  numberCases: 41,
 
   categoryNames: [
     "Basic Inserts",
@@ -121,8 +121,8 @@ const BASIC_BACK_COLLECTION = {
     [5, 7, 15],
     [18, 20, 22, 24],
     [17, 19, 21, 23],
-    [32, 34, 33, 40, 39],
-    [31, 36, 35, 42, 41, 38],
+    [32, 34, 33, 39, 38],
+    [31, 36, 35, 41, 40, 37],
     [28, 29, 26],
     [30, 27, 25],
   ],
@@ -151,7 +151,7 @@ const BASIC_BACK_COLLECTION = {
   imgContainerTrash: [],
   imgCaseTrash: [],
   btnRecover: [],
-  ignoreAUF: [38, 39, 40, 41, 42],
+  ignoreAUF: [37, 38, 39, 40, 41],
 };
 
 const ADVANCED_COLLECTION = {

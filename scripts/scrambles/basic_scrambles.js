@@ -375,7 +375,7 @@ const basicScrambles = {
     "F' U F U' F' L' U' L F",
     "B' R F R' F' U' R' U B",
   ],
-  38: [
+  37: [
     "R2 U2 F R2 F' U2 R' U R'",
     "R U' R U2 F R2 F' U2 R2",
     "B' R U' R2 U R B R U R'",
@@ -383,23 +383,23 @@ const basicScrambles = {
     "R2 U R' U' R' U2 F R F' R'",
     "R F R' F' U2 R U R U' R2",
   ],
-  39: [
+  38: [
     "R2 U2 F R' F' U2 R' U2 R'",
     "F' U F R2 B U B' U' R2",
     "R U2 R U R' U R U2 R2",
   ],
-  40: [
+  39: [
     "R2 U2 R' U' R U' R' U2 R'",
     "R U2 R U2 F R F' U2 R2",
     "R U2 R B2 L' B' L B' R2",
     "R2 U B U' B' R2 F' U' F",
   ],
-  41: [
+  40: [
     "R2 B U B' U' R' U R'",
     "R B U2 B' R' F' U' F",
     "R U' R' F' L' U2 L F",
   ],
-  42: [
+  41: [
     "F' L' U2 L F R U R'",
     "F' U F R B U2 B' R'",
     "R U' R U B U' B' R2",
