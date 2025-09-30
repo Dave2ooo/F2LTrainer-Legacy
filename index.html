@@ -400,9 +400,9 @@
             <option value="fully">Fully Stickered</option>
           </select>
         </div>
-        <!-- <div class="div-select-hint">
+        <div class="div-select-hint">
           <p>Cross color:</p>
-          <select id="select-cross-color" class="select-hint">
+          <select id="select-cross-color" class="select-hint" onchange="updateFrontColorOptions()">
             <option value="white" selected>White</option>
             <option value="yellow">Yellow</option>
             <option value="red">Red</option>
@@ -411,7 +411,19 @@
             <option value="green">Green</option>
             <option value="random">Random</option>
           </select>
-        </div> -->
+        </div>
+        <div class="div-select-hint">
+          <p>Front color:</p>
+          <select id="select-front-color" class="select-hint">
+            <option value="white">White</option>
+            <option value="yellow">Yellow</option>
+            <option value="red" selected>Red</option>
+            <option value="orange">Orange</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="random">Random</option>
+          </select>
+        </div>
       </div>
 
       <h2>Additional</h2>

@@ -96,7 +96,8 @@ const ELEM_CHECKBOX_CONSIDER_AUF = document.getElementById("checkboxConsiderAUFI
 const ELEM_SELECT_HINT_IMAGE = document.getElementById("select-hint-image");
 const ELEM_SELECT_HINT_ALG = document.getElementById("select-hint-alg");
 const ELEM_SELECT_STICKERING = document.getElementById("select-stickering");
-// const ELEM_SELECT_CROSS_COLOR = document.getElementById("select-cross-color");
+const ELEM_SELECT_CROSS_COLOR = document.getElementById("select-cross-color");
+const ELEM_SELECT_FRONT_COLOR = document.getElementById("select-front-color");
 
 const ELEM_CHECKBOX_TIMER_ENABLE = document.getElementById("checkboxEnableTimerId");
 const ELEM_CHECKBOX_RECAP_ENABLE = document.getElementById("checkboxEnableRecapId");
@@ -640,8 +641,8 @@ function updateAlg() {
       // ELEM_TWISTY_PLAYER.alg = tempAlgLeft;
     }
     ELEM_SCRAMBLE.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleAUF();
-    ELEM_TWISTY_PLAYER.experimentalSetupAlg =
-      "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
+    const SETUP_ALG = trainCaseList[TrainCase.currentTrainCaseNumber].getSetupAlg();
+    ELEM_TWISTY_PLAYER.experimentalSetupAlg = SETUP_ALG;
     ELEM_TWISTY_PLAYER.alg = CURRENT_TRAIN_CASE.getAlgHintAUF();
     ELEM_DEBUG_INFO.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getDebugInfo();
   }
@@ -1001,7 +1002,9 @@ function updateTrainCases() {
   hintImageSelection = ELEM_SELECT_HINT_IMAGE.selectedIndex;
   hintAlgSelection = ELEM_SELECT_HINT_ALG.selectedIndex;
   stickeringSelection = ELEM_SELECT_STICKERING.selectedIndex;
-  // crossColorSelection = ELEM_SELECT_CROSS_COLOR.selectedIndex;
+  crossColorSelection = ELEM_SELECT_CROSS_COLOR.value;
+  frontColorSelection = ELEM_SELECT_FRONT_COLOR.value;
+  console.log(crossColorSelection, frontColorSelection);
   timerEnabled = ELEM_CHECKBOX_TIMER_ENABLE.checked;
   recapEnabled = ELEM_CHECKBOX_RECAP_ENABLE.checked;
 
@@ -1223,10 +1226,12 @@ function generateTrainCaseList() {
 
           if (leftSelection && rightSelection) {
             // Push unmirrored and mirrored case
-            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 0));
-            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 1));
-          } else {
-            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase));
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 0, crossColorSelection, frontColorSelection));
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 1, crossColorSelection, frontColorSelection));
+          } else if (rightSelection) {
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 0, crossColorSelection, frontColorSelection));
+          } else if (leftSelection) {
+            trainCaseListTemp.push(new TrainCase(indexGroup, indexCase, 1, crossColorSelection, frontColorSelection));
           }
         }
       }
@@ -1296,6 +1301,12 @@ function nextScramble(nextPrevious) {
   const INDEX_GROUP = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexGroup();
   const INDEX_CASE = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexCase();
   const MIRRORING = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
+  const SETUP_ALG = trainCaseList[TrainCase.currentTrainCaseNumber].getSetupAlg();
+  const ALG_AUF = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHintAUF();
+  const CROSS_COLOR = trainCaseList[TrainCase.currentTrainCaseNumber].getCrossColor();
+  const FRONT_COLOR = trainCaseList[TrainCase.currentTrainCaseNumber].getFrontColor();
+  const PIECES_TO_HIDE = trainCaseList[TrainCase.currentTrainCaseNumber].getPiecesToHide();
+
   const GROUP = GROUPS[INDEX_GROUP];
 
   if (!MIRRORING) {
@@ -1304,10 +1315,9 @@ function nextScramble(nextPrevious) {
     ELEM_HINT_IMG.src = GROUP.imgPath + "left/F2L" + (INDEX_CASE + 1) + ".svg";
   }
 
-  let tempAlg = "z2 y' " + trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleTwisty();
   try {
-    ELEM_TWISTY_PLAYER.experimentalSetupAlg = new window.Alg(tempAlg.toString());
-    ELEM_TWISTY_PLAYER.alg = new window.Alg(trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHintAUF());
+    ELEM_TWISTY_PLAYER.experimentalSetupAlg = SETUP_ALG;
+    ELEM_TWISTY_PLAYER.alg = ALG_AUF;
   } catch (error) {
     console.log(error);
   }
@@ -1318,7 +1328,7 @@ function nextScramble(nextPrevious) {
   ELEM_TWISTY_PLAYER.flash?.();
   ELEM_TWISTY_PLAYER.blur?.();
 
-  hidePieces(GROUP.piecesToHide, INDEX_CASE, MIRRORING);
+  hidePieces(CROSS_COLOR, FRONT_COLOR, PIECES_TO_HIDE, MIRRORING);
 
   ELEM_DEBUG_INFO.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getDebugInfo();
 
@@ -1376,13 +1386,65 @@ function updateCheckboxStatus() {
   ELEM_SELECT_HINT_IMAGE.selectedIndex = hintImageSelection;
   ELEM_SELECT_HINT_ALG.selectedIndex = hintAlgSelection;
   ELEM_SELECT_STICKERING.selectedIndex = stickeringSelection;
-  // ELEM_SELECT_CROSS_COLOR.selectedIndex = crossColorSelection;
+  ELEM_SELECT_CROSS_COLOR.value = crossColorSelection;
+  ELEM_SELECT_FRONT_COLOR.value = frontColorSelection;
+  updateFrontColorOptions();
   ELEM_CHECKBOX_TIMER_ENABLE.checked = timerEnabled;
   ELEM_CHECKBOX_RECAP_ENABLE.checked = recapEnabled;
+
+  console.log(crossColorSelection, frontColorSelection);
 }
 
 function enableDisableCheckboxConsiderAUF() {
   ELEM_CHECKBOX_CONSIDER_AUF.disabled = !ELEM_CHECKBOX_AUF.checked;
+}
+
+function updateFrontColorOptions() {
+  // Opposite face mapping
+  const opposites = {
+    white: "yellow",
+    yellow: "white",
+    red: "orange",
+    orange: "red",
+    blue: "green",
+    green: "blue",
+  };
+
+  const crossColor = ELEM_SELECT_CROSS_COLOR.value;
+
+  // Reset: enable all options in front color select
+  for (const option of ELEM_SELECT_FRONT_COLOR.options) {
+    option.disabled = false;
+  }
+
+  if (crossColor !== "random") {
+    // Disable cross color
+    for (const option of ELEM_SELECT_FRONT_COLOR.options) {
+      if (option.value === crossColor) {
+        option.disabled = true;
+      }
+    }
+
+    // Disable opposite color
+    const oppositeColor = opposites[crossColor];
+    if (oppositeColor) {
+      for (const option of ELEM_SELECT_FRONT_COLOR.options) {
+        if (option.value === oppositeColor) {
+          option.disabled = true;
+        }
+      }
+    }
+
+    // If current selection is invalid → reset to first enabled
+    if (ELEM_SELECT_FRONT_COLOR.options[ELEM_SELECT_FRONT_COLOR.selectedIndex].disabled) {
+      for (const option of ELEM_SELECT_FRONT_COLOR.options) {
+        if (!option.disabled) {
+          option.selected = true;
+          break;
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -1901,67 +1963,67 @@ function resetTwistyPlayerView() {
   // hideResetButton();
 }
 
-/**
- * This function sets the pieces in Twisty player (3D cube in train mode) to be shown/hidden
- * In some cases three slots are solves. In some cases only two slots are solved. For the user to know which case is to be solved, the pieces of the other F2L slot need to be hidden.
- * @param {number[]} piecesToHideArray An array of numbers indicating which pieces to hide for each case.
- * @param {number} indexCase The index of the case to be shown.
- * @param {boolean} mirroring If true, the pieces are mirrored.
- */
-function hidePieces(piecesToHideArray, indexCase, mirroring) {
-  // Fully stickered selected
-  if (stickeringSelection == 1) {
-    ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:------------,CORNERS:--------,CENTERS:------"; // fully stickered
-    return;
-  }
+function hidePieces(crossColor, frontColor, pieceToHide, mirroring) {
+  let edgesArr, cornersArr;
 
-  if (piecesToHideArray !== undefined) {
-    const piecesToHide = piecesToHideArray[indexCase];
-
-    if (!mirroring) {
-      switch (piecesToHide) {
-        case 1:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIIII---,CORNERS:I---IIII,CENTERS:------"; // hide red-green
-          break;
-        case 2:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII--I-,CORNERS:-I--IIII,CENTERS:------"; // hide red-blue
-          break;
-        case 3:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII---I,CORNERS:--I-IIII,CENTERS:------"; // hide blue-orange
-          break;
-        case 4:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII-I--,CORNERS:---IIIII,CENTERS:------"; // hide green-orange
-          break;
-        default:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII----,CORNERS:----IIII,CENTERS:------"; // show all F2L
-      }
-    } else {
-      switch (piecesToHide) {
-        case 1:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII--I-,CORNERS:-I--IIII,CENTERS:------"; // hide red-blue
-          break;
-        case 2:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIIII---,CORNERS:I---IIII,CENTERS:------"; // hide red-green
-          break;
-        case 3:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII-I--,CORNERS:---IIIII,CENTERS:------"; // hide green-orange
-          break;
-        case 4:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII---I,CORNERS:--I-IIII,CENTERS:------"; // hide blue-orange
-          break;
-        default:
-          ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII----,CORNERS:----IIII,CENTERS:------"; // show all F2L
-      }
-    }
+  // If selection is 1, show the whole cube (no hidden stickers)
+  if (typeof stickeringSelection !== "undefined" && stickeringSelection === 1) {
+    edgesArr = Array(12).fill("-");
+    cornersArr = Array(8).fill("-");
   } else {
-    ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII----,CORNERS:----IIII,CENTERS:------"; // show all F2L
+    edgesArr = Array(12).fill("-");
+    cornersArr = Array(8).fill("-");
+
+    // Hide F2L slot *only if pieceToHide is set*
+    if (pieceToHide !== undefined && pieceToHide !== null && pieceToHide !== "") {
+      let side, facing;
+      // fr: front-right, fl: front-left, br: back-right, bl: back-left
+      if (pieceToHide === "fr") {
+        facing = "front";
+        side = "right";
+      } else if (pieceToHide === "fl") {
+        facing = "front";
+        side = "left";
+      } else if (pieceToHide === "br") {
+        facing = "back";
+        side = "left";
+      } else if (pieceToHide === "bl") {
+        facing = "back";
+        side = "right";
+      } else throw new Error("Invalid pieceToHide: " + pieceToHide);
+
+      // If mirroring, swap left and right
+      if (mirroring) {
+        side = side === "left" ? "right" : "left";
+      }
+
+      const backColor = TrainCase.oppositeColorDict[frontColor];
+
+      let f2lFace, f2lSideColor;
+      if (facing === "front") {
+        f2lFace = frontColor;
+        f2lSideColor = TrainCase.sideColorDict[crossColor][frontColor][side];
+      } else if (facing === "back") {
+        f2lFace = backColor;
+        f2lSideColor = TrainCase.sideColorDict[crossColor][backColor][side];
+      }
+
+      edgesArr[TrainCase.stickeringDict.edges[f2lFace][f2lSideColor]] = "I";
+      cornersArr[TrainCase.stickeringDict.corners[crossColor][f2lFace][f2lSideColor]] = "I";
+    }
+
+    // Hide top layer
+    const topColor = TrainCase.oppositeColorDict[crossColor];
+    const edgeIndices = Object.values(TrainCase.stickeringDict.edges[topColor]);
+    for (const i of edgeIndices) edgesArr[i] = "I";
+    const colorObjs = Object.values(TrainCase.stickeringDict.corners[topColor]);
+    for (const obj of colorObjs) for (const idx of Object.values(obj)) cornersArr[idx] = "I";
   }
 
-  // Stickering code fom issue: https://github.com/cubing/cubing.js/issues/324#issuecomment-2002467085
-  // ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIIII---,CORNERS:I---IIII,CENTERS:------"; // red-green
-  // ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII-I--,CORNERS:---IIIII,CENTERS:------"; // green-orange
-  // ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII--I-,CORNERS:-I--IIII,CENTERS:------"; // red-blue
-  // ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = "EDGES:----IIII---I,CORNERS:--I-IIII,CENTERS:------"; // blue-orange
+  // --- Apply mask to the player ---
+  const edges = edgesArr.join("");
+  const corners = cornersArr.join("");
+  ELEM_TWISTY_PLAYER.experimentalStickeringMaskOrbits = `EDGES:${edges},CORNERS:${corners},CENTERS:------`;
 }
 
 function mousedown(e) {
@@ -2077,3 +2139,4 @@ function openDialog(ELEM) {
   ELEM_BODY.style.overflow = "hidden";
   flagDialogOpen = true;
 }
+flagDialogOpen = true;

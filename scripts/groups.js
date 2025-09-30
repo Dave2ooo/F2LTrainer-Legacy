@@ -224,14 +224,50 @@ const ADVANCED_COLLECTION = {
   imgCaseTrash: [],
   btnRecover: [],
   piecesToHide: [
-    4, 4, 2, 2, 1, 1, 4, 4, 2, 2, 2, 2, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1,
+    "br",
+    "br",
+    "fl",
+    "fl",
+    "fr",
+    "fr",
+    "br",
+    "br",
+    "fl",
+    "fl",
+    "fl",
+    "fl",
+    "br",
+    "br",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
+    "fr",
   ],
-  // 1: hide red-green
-  // 2: hide red-blue
-  // 3: hide blue-orange
-  // 4: hide green-orange
-  // default: show all F2L
+  // fr: front-right, fl: front-left, br: back-right, bl: back-left
   ignoreAUF: [],
 };
 
@@ -296,12 +332,8 @@ const EXPERT_COLLECTION = {
   imgContainerTrash: [],
   imgCaseTrash: [],
   btnRecover: [],
-  piecesToHide: [4, 4, 2, 2, 2, 2, 2, 4, 1, 2, 4, 2, 4, 2, 4, 2, 4],
-  // 1: hide red-green
-  // 2: hide red-blue
-  // 3: hide blue-orange
-  // 4: hide green-orange
-  // default: show all F2L
+  piecesToHide: ["br", "br", "fl", "fl", "fl", "fl", "fl", "br", "fr", "fl", "br", "fl", "br", "fl", "br", "fl", "br"],
+  // fr: front-right, fl: front-left, br: back-right, bl: back-left
   ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 };
 

@@ -66,7 +66,8 @@ let considerAUFinAlg = true;
 let hintImageSelection = 2;
 let hintAlgSelection = 0;
 let stickeringSelection = 0;
-// let crossColorSelection = 0;
+let crossColorSelection = "white";
+let frontColorSelection = "red";
 let timerEnabled = false;
 let recapEnabled = false;
 
@@ -102,7 +103,8 @@ function saveUserData() {
   localStorage.setItem("hintImageSelection", hintImageSelection);
   localStorage.setItem("hintAlgSelection", hintAlgSelection);
   localStorage.setItem("stickeringSelection", stickeringSelection);
-  // localStorage.setItem("crossColorSelection", crossColorSelection);
+  localStorage.setItem("crossColorSelection", crossColorSelection);
+  localStorage.setItem("frontColorSelection", frontColorSelection);
   localStorage.setItem("timerEnabled", timerEnabled);
   localStorage.setItem("recapEnabled", recapEnabled);
 
@@ -179,8 +181,11 @@ function loadUserData() {
   temp = localStorage.getItem("stickeringSelection");
   if (temp != null) stickeringSelection = parseInt(temp);
 
-  // temp = localStorage.getItem("crossColorSelection");
-  // if (temp != null) crossColorSelection = parseInt(temp);
+  temp = localStorage.getItem("crossColorSelection");
+  if (temp != null) crossColorSelection = temp;
+
+  temp = localStorage.getItem("frontColorSelection");
+  if (temp != null) frontColorSelection = temp;
 
   // Load other settings
   leftSelection = loadBoolean("leftSelection", leftSelection);
@@ -429,20 +434,19 @@ function decodeBase62ToBase3(base62String) {
 
 /**
  * Migrate case numbers if needed
- * 
+ *
  * Basic group has 42 length array stored
  * BasicBack group has 42 length array stored
  */
 function migrateCaseNumbers() {
   const EXPECTED_ARRAY_LENGTH = 42;
-  
+
   // We could probably just use index 0,1 since they most likely will not change, but just to be sure use idName
   let groupBasic = GROUPS[GROUPS.findIndex((g) => g.idName === "Basic")];
   let groupBasicBack = GROUPS[GROUPS.findIndex((g) => g.idName === "BasicBack")];
 
   // Load solveCounter for each group and check length
-  [groupBasic, groupBasicBack].forEach((g) =>
-  {
+  [groupBasic, groupBasicBack].forEach((g) => {
     // We need to NOT slice the end because we need to check the actual length
     // Migrate if list length is expected length -> list has old numbering
     // Does not need to be "solveCounter" specifically. Just needs to be a list
@@ -461,20 +465,19 @@ function migrateCaseNumberGroup(g) {
   const START_MIGRATE_INDEX = 36;
 
   console.log("Doing migration of group: " + g.name);
-  
+
   let lists = [];
   // Pass sliceEnd = false to ensure we get the actual length
-  lists.push({key: "collapse", value: loadList(g, "collapse", false, false)});
-  lists.push({key: "caseSelection", value: loadList(g, "caseSelection", 0, false)});
-  lists.push({key: "customAlgorithms", value: loadList(g, "customAlgorithms", "", false)});
-  lists.push({key: "customAlgorithmsLeft", value: loadList(g, "customAlgorithmsLeft", "", false)});
-  lists.push({key: "identicalAlgorithm", value: loadList(g, "identicalAlgorithm", true, false)});
-  lists.push({key: "algorithmSelection", value: loadList(g, "algorithmSelection", 0, false)});
-  lists.push({key: "algorithmSelectionLeft", value: loadList(g, "algorithmSelectionLeft", 0, false)});
-  lists.push({key: "solveCounter", value: loadList(g, "solveCounter", 0, false)});
+  lists.push({ key: "collapse", value: loadList(g, "collapse", false, false) });
+  lists.push({ key: "caseSelection", value: loadList(g, "caseSelection", 0, false) });
+  lists.push({ key: "customAlgorithms", value: loadList(g, "customAlgorithms", "", false) });
+  lists.push({ key: "customAlgorithmsLeft", value: loadList(g, "customAlgorithmsLeft", "", false) });
+  lists.push({ key: "identicalAlgorithm", value: loadList(g, "identicalAlgorithm", true, false) });
+  lists.push({ key: "algorithmSelection", value: loadList(g, "algorithmSelection", 0, false) });
+  lists.push({ key: "algorithmSelectionLeft", value: loadList(g, "algorithmSelectionLeft", 0, false) });
+  lists.push({ key: "solveCounter", value: loadList(g, "solveCounter", 0, false) });
 
-  lists.forEach((kvp) =>
-  {
+  lists.forEach((kvp) => {
     let name = kvp.key;
     let list = kvp.value;
 
