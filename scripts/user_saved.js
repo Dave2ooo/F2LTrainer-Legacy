@@ -495,3 +495,14 @@ function migrateCaseNumberGroup(g) {
     localStorage.setItem(g.saveName + name, JSON.stringify(list));
   });
 }
+
+function getAlgorithmSelection(GROUP, indexCase, side) {
+  // const GROUP = GROUPS[indexGroup];
+  if (side === "left") {
+    if (GROUP.algorithmSelectionLeft === undefined) return 0;
+    return GROUP.algorithmSelectionLeft[indexCase];
+  } else {
+    if (GROUP.algorithmSelectionRight === undefined) return 0;
+    return GROUP.algorithmSelectionRight[indexCase];
+  }
+}

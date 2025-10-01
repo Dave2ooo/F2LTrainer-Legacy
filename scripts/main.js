@@ -181,10 +181,10 @@ const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
 
 // ----------------------------------------- LOADING -------------------------------------------------------
 window.addEventListener("load", () => {
-  window.onerror = function (msg, url, linenumber) {
-    alert("Error message: " + msg + "\nURL: " + url + "\nLine Number: " + linenumber);
-    return true;
-  };
+  // window.onerror = function (msg, url, linenumber) {
+  //   alert("Error message: " + msg + "\nURL: " + url + "\nLine Number: " + linenumber);
+  //   return true;
+  // };
   importFromURL();
   loadUserData();
 
@@ -532,15 +532,12 @@ function addElementsToDOM() {
         GROUP.imgCase[indexCase].loading = "lazy";
 
         // Set shown alg
-        if (GROUP.algorithmSelectionRight[indexCase] === undefined){
-          GROUP.algorithmSelectionRight[indexCase] = 0;
+        const algSelection = getAlgorithmSelection(GROUP, indexCase, "right");
+        if (algSelection < GROUP.algorithms[indexCase + 1].length) {
+          GROUP.divAlgorithm[indexCase].innerHTML = GROUP.algorithms[indexCase + 1][algSelection];
+        } else {
+          GROUP.divAlgorithm[indexCase].innerHTML = GROUP.customAlgorithmsRight[indexCase];
         }
-          if (GROUP.algorithmSelectionRight[indexCase] < GROUP.algorithms[indexCase + 1].length) {
-            GROUP.divAlgorithm[indexCase].innerHTML =
-              GROUP.algorithms[indexCase + 1][GROUP.algorithmSelectionRight[indexCase]];
-          } else {
-            GROUP.divAlgorithm[indexCase].innerHTML = GROUP.customAlgorithmsRight[indexCase];
-          }
 
         GROUP.imgMirror[indexCase].src = "./images/mirror1.svg";
         GROUP.imgEdit[indexCase].src = "./images/edit.svg";

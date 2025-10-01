@@ -147,22 +147,22 @@ class TrainCase {
     const GROUP = GROUPS[this.#indexGroup];
     let tempAlgHintRight,
       tempAlgHintLeft = "";
+      const algSelectionRight = getAlgorithmSelection(GROUP, this.#indexCase, "right");
+      const algSelectionLeft = getAlgorithmSelection(GROUP, this.#indexCase, "right");
     // Get hint algorithm for current case (left and right, select later)
-    if (GROUP.algorithmSelectionRight[this.#indexCase] >= GROUP.algorithms[this.#indexCase + 1].length) {
+    if (algSelectionRight >= GROUP.algorithms[this.#indexCase + 1].length) {
       // Custom algorithm
       tempAlgHintRight = GROUP.customAlgorithmsRight[this.#indexCase];
     } else {
       // Default algorithm
-      tempAlgHintRight = GROUP.algorithms[this.#indexCase + 1][GROUP.algorithmSelectionRight[this.#indexCase]];
+      tempAlgHintRight = GROUP.algorithms[this.#indexCase + 1][algSelectionRight];
     }
-    if (GROUP.algorithmSelectionLeft[this.#indexCase] >= GROUP.algorithms[this.#indexCase + 1].length) {
+    if (algSelectionLeft >= GROUP.algorithms[this.#indexCase + 1].length) {
       // Custom algorithm
       tempAlgHintLeft = GROUP.customAlgorithmsLeft[this.#indexCase];
     } else {
       // Default algorithm
-      tempAlgHintLeft = StringManipulation.mirrorAlg(
-        GROUP.algorithms[this.#indexCase + 1][GROUP.algorithmSelectionLeft[this.#indexCase]]
-      );
+      tempAlgHintLeft = StringManipulation.mirrorAlg(GROUP.algorithms[this.#indexCase + 1][algSelectionLeft]);
     }
 
     // Set left or right algorithm
