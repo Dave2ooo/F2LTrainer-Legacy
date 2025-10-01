@@ -317,10 +317,16 @@ class TrainCase {
     let indexAlgSelection = GROUP.algorithmSelectionRight[this.#indexCase];
     if (this.#mirroring) indexAlgSelection = GROUP.algorithmSelectionLeft[this.#indexCase];
 
+    let caseName = "";
+    if (GROUP.caseNumberMapping && GROUP.caseNumberMapping.hasOwnProperty(this.#indexCase + 1)) {
+      caseName = "-" + GROUP.caseNumberMapping[this.#indexCase + 1];
+    }
+
     return (
       GROUP.name +
       ", Case " +
       (this.#indexCase + 1) +
+      caseName +
       ", Scramble " +
       +this.#indexScramble +
       ", AUF " +

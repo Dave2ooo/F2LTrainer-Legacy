@@ -519,7 +519,14 @@ function addElementsToDOM() {
         GROUP.divAlgorithm[indexCase] = document.createElement("div");
         GROUP.divAlgorithm[indexCase].classList.add("div-algorithm");
 
-        GROUP.caseNumber[indexCase].innerHTML = indexCase + 1;
+        if (GROUP.caseNumberMapping && GROUP.caseNumberMapping.hasOwnProperty(indexCase + 1)) {
+          GROUP.caseNumber[indexCase].innerHTML = GROUP.caseNumberMapping[indexCase + 1];
+          GROUP.caseNumber[indexCase].classList.add("case-number-wide");
+        } else {
+          GROUP.caseNumber[indexCase].innerHTML = indexCase + 1;
+        }
+
+        // -------------------------------------------------------------- Case Number ---------------------------
         GROUP.imgCase[indexCase].src = IMG_CASE_PATH;
         GROUP.imgCase[indexCase].alt = GROUP.name + ", Case " + (indexCase + 1);
         GROUP.imgCase[indexCase].loading = "lazy";
@@ -1391,8 +1398,6 @@ function updateCheckboxStatus() {
   updateFrontColorOptions();
   ELEM_CHECKBOX_TIMER_ENABLE.checked = timerEnabled;
   ELEM_CHECKBOX_RECAP_ENABLE.checked = recapEnabled;
-
-  console.log(crossColorSelection, frontColorSelection);
 }
 
 function enableDisableCheckboxConsiderAUF() {
