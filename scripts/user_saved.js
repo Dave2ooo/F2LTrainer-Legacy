@@ -287,6 +287,11 @@ function loadList(group, saveName, defaultValue, sliceEnd = true) {
   if (sliceEnd) {
     // Only slice end if requested
     out = out.slice(0, group.numberCases);
+    
+    if (out.length < group.numberCases) {
+      const missingEntries = group.numberCases - out.length;
+      out = out.concat(Array(missingEntries).fill(defaultValue));
+    }
   }
   return out;
 }
