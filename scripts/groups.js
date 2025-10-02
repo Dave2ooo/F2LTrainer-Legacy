@@ -1,6 +1,168 @@
 // Source https://github.com/Dave2ooo/F2LTrainer
 
-const BASIC_COLLECTION = {
+class Group {
+  constructor(config) {
+    this.saveName = config.saveName;
+    this.saveNameCasesURL = config.saveNameCasesURL;
+    this.saveNameAlgURL = config.saveNameAlgURL;
+    this.name = config.name;
+    this.idName = config.idName;
+    this.scrambles = config.scrambles;
+    this.algorithms = config.algorithms;
+    this.algorithmSelectionRight = config.algorithmSelectionRight;
+    this.algorithmSelectionLeft = config.algorithmSelectionLeft;
+    this.identicalAlgorithm = config.identicalAlgorithm;
+    this.caseSelection = config.caseSelection;
+    this.customAlgorithmsRight = config.customAlgorithmsRight;
+    this.customAlgorithmsLeft = config.customAlgorithmsLeft;
+    this.trash = config.trash;
+    this.collapse = config.collapse;
+    this.solveCounter = config.solveCounter;
+    this.imgPath = config.imgPath;
+    this.numberCases = config.numberCases;
+    this.categoryNames = config.categoryNames;
+    this.categoryCases = config.categoryCases;
+    this.caseNumberMapping = config.caseNumberMapping;
+    this.piecesToHide = config.piecesToHide;
+    this.ignoreAUF = config.ignoreAUF ?? [];
+    this.resetDomState();
+  }
+
+  resetDomState() {
+    this.categoryContainer = [];
+    this.collapseContainer = [];
+    this.categoryCollapseImg = [];
+    this.headingCategoryName = [];
+    this.btnChangeLearningState = [[], [], []];
+    this.divContainer = [];
+    this.caseNumber = [];
+    this.imgContainer = [];
+    this.imgCase = [];
+    this.imgCaseLeft = [];
+    this.algorithm = [];
+    this.divAlgorithm = [];
+    this.btnContainer = [];
+    this.btnMirror = [];
+    this.imgMirror = [];
+    this.flagMirrored = [];
+    this.btnEdit = [];
+    this.imgEdit = [];
+    this.btnDelete = [];
+    this.imgTrash = [];
+    this.trashElementContainer = [];
+    this.caseNumberTrash = [];
+    this.imgContainerTrash = [];
+    this.imgCaseTrash = [];
+    this.btnRecover = [];
+  }
+
+  getId() {
+    return this.idName;
+  }
+
+  getCaseState(indexCase) {
+    return this.caseSelection[indexCase];
+  }
+
+  setCaseState(indexCase, state) {
+    this.caseSelection[indexCase] = state;
+    return this.caseSelection[indexCase];
+  }
+
+  cycleCaseState(indexCase) {
+    const nextState = (this.getCaseState(indexCase) + 1) % 3;
+    return this.setCaseState(indexCase, nextState);
+  }
+
+  toggleCategory(indexCategory) {
+    this.collapse[indexCategory] = !this.collapse[indexCategory];
+    return this.collapse[indexCategory];
+  }
+
+  isCategoryCollapsed(indexCategory) {
+    return this.collapse[indexCategory];
+  }
+
+  getScramblesForCase(indexCase) {
+    return this.scrambles[indexCase + 1] ?? [];
+  }
+
+  getRandomScrambleForCase(indexCase) {
+    const scrambles = this.getScramblesForCase(indexCase);
+    if (!scrambles.length) {
+      return { index: 0, scramble: "" };
+    }
+    const index = Math.floor(Math.random() * scrambles.length);
+    return { index, scramble: scrambles[index] };
+  }
+
+  getAlgorithmPool(indexCase) {
+    return this.algorithms[indexCase + 1] ?? [];
+  }
+
+  getAlgorithmSelection(side, indexCase) {
+    if (side === "left") {
+      return this.algorithmSelectionLeft[indexCase];
+    }
+    return this.algorithmSelectionRight[indexCase];
+  }
+
+  setAlgorithmSelection(side, indexCase, value) {
+    if (side === "left") {
+      this.algorithmSelectionLeft[indexCase] = value;
+    } else {
+      this.algorithmSelectionRight[indexCase] = value;
+    }
+  }
+
+  getCustomAlgorithm(side, indexCase) {
+    if (side === "left") {
+      return this.customAlgorithmsLeft[indexCase];
+    }
+    return this.customAlgorithmsRight[indexCase];
+  }
+
+  setCustomAlgorithm(side, indexCase, value) {
+    if (side === "left") {
+      this.customAlgorithmsLeft[indexCase] = value;
+      return this.customAlgorithmsLeft[indexCase];
+    }
+    this.customAlgorithmsRight[indexCase] = value;
+    return this.customAlgorithmsRight[indexCase];
+  }
+
+  getAlgorithmForSide(indexCase, side) {
+    const selection = this.getAlgorithmSelection(side, indexCase);
+    const algorithms = this.getAlgorithmPool(indexCase);
+    if (selection >= algorithms.length) {
+      return this.getCustomAlgorithm(side, indexCase);
+    }
+    const baseAlg = algorithms[selection];
+    if (side === "left") {
+      if (typeof StringManipulation !== "undefined" && typeof StringManipulation.mirrorAlg === "function") {
+        return StringManipulation.mirrorAlg(baseAlg);
+      }
+      return baseAlg;
+    }
+    return baseAlg;
+  }
+
+  shouldIgnoreAUF(caseNumber) {
+    return this.ignoreAUF.includes(caseNumber);
+  }
+
+  getPiecesToHide(indexCase) {
+    if (!Array.isArray(this.piecesToHide)) return undefined;
+    return this.piecesToHide[indexCase];
+  }
+
+  getCaseLabel(indexCase) {
+    if (!this.caseNumberMapping) return undefined;
+    return this.caseNumberMapping[indexCase + 1];
+  }
+}
+
+const BASIC_COLLECTION = new Group({
   // renamed!!!!! from basicCollection
   saveName: "basic_",
   saveNameCasesURL: "bc",
@@ -49,35 +211,10 @@ const BASIC_COLLECTION = {
     [27, 30, 25],
     [29, 28, 26],
   ],
-  categoryContainer: [],
-  collapseContainer: [],
-  categoryCollapseImg: [],
-  headingCategoryName: [],
-  btnChangeLearningState: [[], [], []],
-  divContainer: [],
-  caseNumber: [],
-  imgContainer: [],
-  imgCase: [],
-  imgCaseLeft: [],
-  algorithm: [],
-  divAlgorithm: [],
-  btnContainer: [],
-  btnMirror: [],
-  imgMirror: [],
-  flagMirrored: [],
-  btnEdit: [],
-  imgEdit: [],
-  btnDelete: [],
-  imgTrash: [],
-  trashElementContainer: [],
-  caseNumberTrash: [],
-  imgContainerTrash: [],
-  imgCaseTrash: [],
-  btnRecover: [],
   ignoreAUF: [37, 38, 39, 40, 41],
-};
+});
 
-const BASIC_BACK_COLLECTION = {
+const BASIC_BACK_COLLECTION = new Group({
   // renamed!!!!! from basicBackCollection
   saveName: "basicBack_",
   saveNameCasesURL: "bbc",
@@ -126,35 +263,10 @@ const BASIC_BACK_COLLECTION = {
     [28, 29, 26],
     [30, 27, 25],
   ],
-  categoryContainer: [],
-  collapseContainer: [],
-  categoryCollapseImg: [],
-  headingCategoryName: [],
-  btnChangeLearningState: [[], [], []],
-  divContainer: [],
-  caseNumber: [],
-  imgContainer: [],
-  imgCase: [],
-  imgCaseLeft: [],
-  algorithm: [],
-  divAlgorithm: [],
-  btnContainer: [],
-  btnMirror: [],
-  imgMirror: [],
-  flagMirrored: [],
-  btnEdit: [],
-  imgEdit: [],
-  btnDelete: [],
-  imgTrash: [],
-  trashElementContainer: [],
-  caseNumberTrash: [],
-  imgContainerTrash: [],
-  imgCaseTrash: [],
-  btnRecover: [],
   ignoreAUF: [37, 38, 39, 40, 41],
-};
+});
 
-const ADVANCED_COLLECTION = {
+const ADVANCED_COLLECTION = new Group({
   // renamed!!!!! from advancedCollection
   saveName: "advanced_",
   saveNameCasesURL: "ac",
@@ -221,32 +333,6 @@ const ADVANCED_COLLECTION = {
     59: "39B",
     60: "39F",
   },
-
-  categoryContainer: [],
-  collapseContainer: [],
-  categoryCollapseImg: [],
-  headingCategoryName: [],
-  btnChangeLearningState: [[], [], []],
-  divContainer: [],
-  caseNumber: [],
-  imgContainer: [],
-  imgCase: [],
-  imgCaseLeft: [],
-  algorithm: [],
-  divAlgorithm: [],
-  btnContainer: [],
-  btnMirror: [],
-  imgMirror: [],
-  flagMirrored: [],
-  btnEdit: [],
-  imgEdit: [],
-  btnDelete: [],
-  imgTrash: [],
-  trashElementContainer: [],
-  caseNumberTrash: [],
-  imgContainerTrash: [],
-  imgCaseTrash: [],
-  btnRecover: [],
   piecesToHide: [
     "br",
     "br",
@@ -311,9 +397,9 @@ const ADVANCED_COLLECTION = {
   ],
   // fr: front-right, fl: front-left, br: back-right, bl: back-left
   ignoreAUF: [],
-};
+});
 
-const EXPERT_COLLECTION = {
+const EXPERT_COLLECTION = new Group({
   // renamed!!!!! from expertCollection
   saveName: "expert_",
   saveNameCasesURL: "ec",
@@ -348,35 +434,42 @@ const EXPERT_COLLECTION = {
     [10, 11, 12, 13, 14, 15],
     [16, 17],
   ],
-
-  categoryContainer: [],
-  collapseContainer: [],
-  categoryCollapseImg: [],
-  headingCategoryName: [],
-  btnChangeLearningState: [[], [], []],
-  divContainer: [],
-  caseNumber: [],
-  imgContainer: [],
-  imgCase: [],
-  imgCaseLeft: [],
-  algorithm: [],
-  divAlgorithm: [],
-  btnContainer: [],
-  btnMirror: [],
-  imgMirror: [],
-  flagMirrored: [],
-  btnEdit: [],
-  imgEdit: [],
-  btnDelete: [],
-  imgTrash: [],
-  trashElementContainer: [],
-  caseNumberTrash: [],
-  imgContainerTrash: [],
-  imgCaseTrash: [],
-  btnRecover: [],
   piecesToHide: ["br", "br", "fl", "fl", "fl", "fl", "fl", "br", "fr", "fl", "br", "fl", "br", "fl", "br", "fl", "br"],
   // fr: front-right, fl: front-left, br: back-right, bl: back-left
   ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-};
+});
 
-const GROUPS = [BASIC_COLLECTION, BASIC_BACK_COLLECTION, ADVANCED_COLLECTION, EXPERT_COLLECTION];
+const GROUPS = new Map([
+  [BASIC_COLLECTION.idName, BASIC_COLLECTION],
+  [BASIC_BACK_COLLECTION.idName, BASIC_BACK_COLLECTION],
+  [ADVANCED_COLLECTION.idName, ADVANCED_COLLECTION],
+  [EXPERT_COLLECTION.idName, EXPERT_COLLECTION],
+]);
+
+const GROUP_ID_LIST = Array.from(GROUPS.keys());
+
+function getGroupIds() {
+  return GROUP_ID_LIST.slice();
+}
+
+function getGroupCount() {
+  return GROUP_ID_LIST.length;
+}
+
+function getGroupIdByIndex(index) {
+  return GROUP_ID_LIST[index];
+}
+
+function getGroupByIndex(index) {
+  return GROUPS.get(getGroupIdByIndex(index));
+}
+
+function getGroupIndexById(id) {
+  return GROUP_ID_LIST.indexOf(id);
+}
+
+function forEachGroup(callback) {
+  GROUP_ID_LIST.forEach((id, index) => {
+    callback(GROUPS.get(id), index, id);
+  });
+}
