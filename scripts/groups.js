@@ -122,6 +122,15 @@ class Group {
     return this.customAlgorithmsRight[indexCase];
   }
 
+  setCustomAlgorithm(side, indexCase, value) {
+    if (side === "left") {
+      this.customAlgorithmsLeft[indexCase] = value;
+      return this.customAlgorithmsLeft[indexCase];
+    }
+    this.customAlgorithmsRight[indexCase] = value;
+    return this.customAlgorithmsRight[indexCase];
+  }
+
   getAlgorithmForSide(indexCase, side) {
     const selection = this.getAlgorithmSelection(side, indexCase);
     const algorithms = this.getAlgorithmPool(indexCase);

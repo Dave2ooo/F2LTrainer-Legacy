@@ -610,8 +610,8 @@ function updateAlg() {
   }
 
   // "Save" custom algs from global variable
-  GROUP.customAlgorithmsRight[INDEX_CASE] = editAlgGlobal.customAlgRight;
-  GROUP.customAlgorithmsLeft[INDEX_CASE] = editAlgGlobal.customAlgLeft;
+  GROUP.setCustomAlgorithm("right", INDEX_CASE, editAlgGlobal.customAlgRight);
+  GROUP.setCustomAlgorithm("left", INDEX_CASE, editAlgGlobal.customAlgLeft);
 
   // "Save" alg selection from global variable
   GROUP.setAlgorithmSelection("right", INDEX_CASE, editAlgGlobal.selectedAlgNumberRight);
@@ -775,6 +775,7 @@ function customAlgSelected() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
   const GROUP = getGroupByIndex(INDEX_GROUP);
+  const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
