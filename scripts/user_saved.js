@@ -287,7 +287,7 @@ function loadList(group, saveName, defaultValue, sliceEnd = true) {
   if (sliceEnd) {
     // Only slice end if requested
     out = out.slice(0, group.numberCases);
-    
+
     if (out.length < group.numberCases) {
       const missingEntries = group.numberCases - out.length;
       out = out.concat(Array(missingEntries).fill(defaultValue));
@@ -499,15 +499,4 @@ function migrateCaseNumberGroup(g) {
     // Save
     localStorage.setItem(g.saveName + name, JSON.stringify(list));
   });
-}
-
-function getAlgorithmSelection(GROUP, indexCase, side) {
-  // const GROUP = GROUPS[indexGroup];
-  if (side === "left") {
-    if (GROUP.algorithmSelectionLeft === undefined) return 0;
-    return GROUP.algorithmSelectionLeft[indexCase];
-  } else {
-    if (GROUP.algorithmSelectionRight === undefined) return 0;
-    return GROUP.algorithmSelectionRight[indexCase];
-  }
 }

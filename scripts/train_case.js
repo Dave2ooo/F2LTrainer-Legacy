@@ -147,8 +147,8 @@ class TrainCase {
     const GROUP = GROUPS[this.#indexGroup];
     let tempAlgHintRight,
       tempAlgHintLeft = "";
-      const algSelectionRight = getAlgorithmSelection(GROUP, this.#indexCase, "right");
-      const algSelectionLeft = getAlgorithmSelection(GROUP, this.#indexCase, "right");
+      const algSelectionRight = GROUP.algorithmSelectionRight[this.#indexCase];
+      const algSelectionLeft = GROUP.algorithmSelectionLeft[this.#indexCase];
     // Get hint algorithm for current case (left and right, select later)
     if (algSelectionRight >= GROUP.algorithms[this.#indexCase + 1].length) {
       // Custom algorithm

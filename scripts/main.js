@@ -532,7 +532,7 @@ function addElementsToDOM() {
         GROUP.imgCase[indexCase].loading = "lazy";
 
         // Set shown alg
-        const algSelection = getAlgorithmSelection(GROUP, indexCase, "right");
+        const algSelection = GROUP.algorithmSelectionRight[indexCase];
         if (algSelection < GROUP.algorithms[indexCase + 1].length) {
           GROUP.divAlgorithm[indexCase].innerHTML = GROUP.algorithms[indexCase + 1][algSelection];
         } else {
