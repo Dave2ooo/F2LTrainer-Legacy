@@ -1,11 +1,11 @@
 window.addEventListener("load", () => {
-    if (typeof GROUPS !== "undefined" && GROUPS.length) {
+    if (typeof GROUPS !== "undefined" && getGroupCount()) {
         addLeftImages();
     }
 });
 
 function addLeftImages() {
-    GROUPS.forEach((GROUP, groupIndex) => {
+    forEachGroup((GROUP) => {
         if (!GROUP.imgCase || !GROUP.imgCase.length) return;
 
         if (!GROUP.imgCaseLeft) GROUP.imgCaseLeft = [];

@@ -111,7 +111,7 @@ function saveUserData() {
   // Saving that the user just visited the site
   localStorage.setItem("firstVisit", false);
 
-  for (const GROUP of GROUPS) {
+  for (const GROUP of GROUPS.values()) {
     // Save Collapse
     localStorage.setItem(GROUP.saveName + "collapse", JSON.stringify(GROUP.collapse));
     // Save Case Selection
@@ -195,7 +195,7 @@ function loadUserData() {
   timerEnabled = loadBoolean("timerEnabled", timerEnabled);
   recapEnabled = loadBoolean("recapEnabled", recapEnabled);
 
-  for (const GROUP of GROUPS) {
+  for (const GROUP of GROUPS.values()) {
     // Load collapse state
     GROUP.collapse = loadList(GROUP, "collapse", false);
     // Load Case Selection
@@ -222,9 +222,10 @@ function loadUserData() {
 
   // Set learning state of some cases on first visit, so that the user can see the options
   if (firstVisit) {
-    GROUPS[0].caseSelection[0] = 1;
-    GROUPS[0].caseSelection[1] = 1;
-    GROUPS[0].caseSelection[2] = 2;
+    const BASIC_GROUP = getGroupByIndex(0);
+    BASIC_GROUP.setCaseState(0, 1);
+    BASIC_GROUP.setCaseState(1, 1);
+    BASIC_GROUP.setCaseState(2, 2);
   }
 
   updateCheckboxStatus();
@@ -335,7 +336,7 @@ function exportToURL() {
   if (baseURL == "http://127.0.0.1:5500") baseURL = "http://127.0.0.1:5500/F2LTrainer/index.html";
 
   exportURL = baseURL + "?";
-  GROUPS.forEach((group, i) => {
+  forEachGroup((group, i) => {
     // Case selection
     const caseSelection = group.caseSelection;
     const caseSelectionString = caseSelection.join("");
@@ -360,7 +361,7 @@ function importFromURL() {
   if (!urlParams.size) return;
 
   if (confirm("Import data from URL?")) {
-    GROUPS.forEach((group, i) => {
+    forEachGroup((group, i) => {
       const saveName = group.saveNameCasesURL;
       const base62String = urlParams.get(group.saveNameCasesURL);
       if (base62String === null) return;
@@ -447,8 +448,8 @@ function migrateCaseNumbers() {
   const EXPECTED_ARRAY_LENGTH = 42;
 
   // We could probably just use index 0,1 since they most likely will not change, but just to be sure use idName
-  let groupBasic = GROUPS[GROUPS.findIndex((g) => g.idName === "Basic")];
-  let groupBasicBack = GROUPS[GROUPS.findIndex((g) => g.idName === "BasicBack")];
+  let groupBasic = GROUPS.get("Basic");
+  let groupBasicBack = GROUPS.get("BasicBack");
 
   // Load solveCounter for each group and check length
   [groupBasic, groupBasicBack].forEach((g) => {

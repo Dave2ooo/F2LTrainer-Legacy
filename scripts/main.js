@@ -46,7 +46,7 @@ const COLORS_ALG = ["transparent", "#009900"];
 const ELEM_WINDOW_SELECT = document.getElementById("window-select");
 const ELEM_WINDOW_TRAIN = document.querySelector(".window-train");
 
-const ELEM_GROUP_CONTAINER = Array(GROUPS.length);
+const ELEM_GROUP_CONTAINER = Array(getGroupCount());
 const ELEM_SIDE_CONTAINER = document.getElementById("side-container");
 const ELEM_BTN_CHANGE_MODE = document.getElementById("change-mode");
 const ELEM_OVERLAY = document.getElementById("overlay");
@@ -383,7 +383,7 @@ function isSamePoint(point1, point2) {
  */
 function addElementsToDOM() {
   // Iterate over all groups (basic, basic back, advanced, expert)
-  GROUPS.forEach((GROUP, INDEX_GROUP) => {
+  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     ELEM_GROUP_CONTAINER[INDEX_GROUP] = document.createElement("div");
     ELEM_GROUP_CONTAINER[INDEX_GROUP].classList.add("group-container");
 
@@ -401,11 +401,11 @@ function addElementsToDOM() {
       GROUP.categoryCollapseImg[indexCategory].classList.add("img-collapse-category");
       GROUP.categoryCollapseImg[indexCategory].alt = "collapse category";
       GROUP.categoryCollapseImg[indexCategory].onclick = function () {
-        collapseCategory(INDEX_GROUP, indexCategory);
+        collapseCategory(GROUP_ID, indexCategory);
       };
 
       GROUP.categoryCollapseImg[indexCategory].src = IMG_PATH_RIGHT_ARROW;
-      if (GROUP.collapse[indexCategory]) {
+      if (GROUP.isCategoryCollapsed(indexCategory)) {
         GROUP.categoryContainer[indexCategory].classList.add("display-none");
       } else {
         GROUP.categoryCollapseImg[indexCategory].classList.add("rotate-arrow");
@@ -415,7 +415,7 @@ function addElementsToDOM() {
       GROUP.headingCategoryName[indexCategory].classList.add("heading-category-name");
       GROUP.headingCategoryName[indexCategory].innerHTML = GROUP.categoryNames[indexCategory];
       GROUP.headingCategoryName[indexCategory].onclick = function () {
-        collapseCategory(INDEX_GROUP, indexCategory);
+        collapseCategory(GROUP_ID, indexCategory);
       };
 
       GROUP.btnChangeLearningState[0].push(document.createElement("img"));
@@ -424,7 +424,7 @@ function addElementsToDOM() {
       GROUP.btnChangeLearningState[0][indexCategory].classList.add("filter-unlearned");
       GROUP.btnChangeLearningState[0][indexCategory].src = IMG_PATH_CHANGE_LEARNING_STATE_HOLLOW;
       GROUP.btnChangeLearningState[0][indexCategory].onclick = function () {
-        changeLearningStateBulk(INDEX_GROUP, indexCategory, 0);
+        changeLearningStateBulk(GROUP_ID, indexCategory, 0);
       };
       GROUP.btnChangeLearningState[1].push(document.createElement("img"));
       GROUP.btnChangeLearningState[1][indexCategory].title = "Change state to Learning";
@@ -432,7 +432,7 @@ function addElementsToDOM() {
       GROUP.btnChangeLearningState[1][indexCategory].classList.add("filter-learning");
       GROUP.btnChangeLearningState[1][indexCategory].src = IMG_PATH_CHANGE_LEARNING_STATE;
       GROUP.btnChangeLearningState[1][indexCategory].onclick = function () {
-        changeLearningStateBulk(INDEX_GROUP, indexCategory, 1);
+        changeLearningStateBulk(GROUP_ID, indexCategory, 1);
       };
       GROUP.btnChangeLearningState[2].push(document.createElement("img"));
       GROUP.btnChangeLearningState[2][indexCategory].title = "Change state to Finished";
@@ -440,7 +440,7 @@ function addElementsToDOM() {
       GROUP.btnChangeLearningState[2][indexCategory].classList.add("filter-finished");
       GROUP.btnChangeLearningState[2][indexCategory].src = IMG_PATH_CHANGE_LEARNING_STATE;
       GROUP.btnChangeLearningState[2][indexCategory].onclick = function () {
-        changeLearningStateBulk(INDEX_GROUP, indexCategory, 2);
+        changeLearningStateBulk(GROUP_ID, indexCategory, 2);
       };
 
       GROUP.collapseContainer[indexCategory].appendChild(GROUP.categoryCollapseImg[indexCategory]);
@@ -456,7 +456,8 @@ function addElementsToDOM() {
       for (const categoryItem of categoryItems) {
         let indexCase = categoryItem - 1;
         // Check if selected algorithm is valid
-        if (GROUP.algorithms[indexCase + 1] == undefined) {
+        const algorithmPool = GROUP.getAlgorithmPool(indexCase);
+        if (!algorithmPool.length) {
           console.warn("Trying to access invalid Case\nindexGroup: " + INDEX_GROUP + "\nindexCase: " + indexCase);
           continue;
         }
@@ -465,9 +466,6 @@ function addElementsToDOM() {
 
         GROUP.divContainer[indexCase] = document.createElement("div");
         GROUP.divContainer[indexCase].classList.add("case-container");
-        GROUP.divContainer[indexCase].style.background = CATEGORY_COLORS[GROUP.caseSelection[indexCase]];
-        GROUP.divContainer[indexCase].style.color = CATEGORY_TEXT_COLOR[GROUP.caseSelection[indexCase]];
-        GROUP.divContainer[indexCase].style.borderStyle = CATEGORY_BORDERS[GROUP.caseSelection[indexCase]];
 
         GROUP.caseNumber[indexCase] = document.createElement("div");
         GROUP.caseNumber[indexCase].classList.add("case-number");
@@ -496,7 +494,6 @@ function addElementsToDOM() {
 
         GROUP.imgEdit[indexCase] = document.createElement("img");
         GROUP.imgEdit[indexCase].classList.add("img-edit-trash");
-        GROUP.imgEdit[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
         GROUP.imgEdit[indexCase].alt = "edit case " + (indexCase + 1);
         GROUP.imgEdit[indexCase].onclick = function () {
           editAlgs(INDEX_GROUP, indexCase, GROUP.flagMirrored[indexCase]);
@@ -510,7 +507,6 @@ function addElementsToDOM() {
 
         GROUP.imgMirror[indexCase] = document.createElement("img");
         GROUP.imgMirror[indexCase].classList.add("flip-image");
-        GROUP.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
         GROUP.imgMirror[indexCase].alt = "mirror case " + (indexCase + 1);
         GROUP.imgMirror[indexCase].onclick = function () {
           mirrorCase(INDEX_GROUP, indexCase);
@@ -532,9 +528,9 @@ function addElementsToDOM() {
         GROUP.imgCase[indexCase].loading = "lazy";
 
         // Set shown alg
-        const algSelection = GROUP.algorithmSelectionRight[indexCase];
-        if (algSelection < GROUP.algorithms[indexCase + 1].length) {
-          GROUP.divAlgorithm[indexCase].innerHTML = GROUP.algorithms[indexCase + 1][algSelection];
+        const algSelection = GROUP.getAlgorithmSelection("right", indexCase);
+        if (algSelection < algorithmPool.length) {
+          GROUP.divAlgorithm[indexCase].innerHTML = algorithmPool[algSelection];
         } else {
           GROUP.divAlgorithm[indexCase].innerHTML = GROUP.customAlgorithmsRight[indexCase];
         }
@@ -542,7 +538,7 @@ function addElementsToDOM() {
         GROUP.imgMirror[indexCase].src = "./images/mirror1.svg";
         GROUP.imgEdit[indexCase].src = "./images/edit.svg";
 
-        GROUP.divContainer[indexCase].style.background = CATEGORY_COLORS[GROUP.caseSelection[indexCase]];
+        applyCaseStateStyling(GROUP, indexCase);
 
         GROUP.divContainer[indexCase].appendChild(GROUP.caseNumber[indexCase]); // Don't show case number
 
@@ -565,9 +561,24 @@ function addElementsToDOM() {
         GROUP.categoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
       }
       ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.categoryContainer[indexCategory]);
-    });
-    ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
   });
+  ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
+  });
+}
+
+function applyCaseStateStyling(group, indexCase) {
+  const state = group.getCaseState(indexCase);
+  if (group.divContainer[indexCase]) {
+    group.divContainer[indexCase].style.background = CATEGORY_COLORS[state];
+    group.divContainer[indexCase].style.color = CATEGORY_TEXT_COLOR[state];
+    group.divContainer[indexCase].style.borderStyle = CATEGORY_BORDERS[state];
+  }
+  if (group.imgEdit[indexCase]) {
+    group.imgEdit[indexCase].style.filter = COLORS_BTN_EDIT[state];
+  }
+  if (group.imgMirror[indexCase]) {
+    group.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[state];
+  }
 }
 
 /**
@@ -579,7 +590,8 @@ function addElementsToDOM() {
 function updateAlg() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = GROUPS[INDEX_GROUP];
+  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   let tempAlgRight,
     tempAlgLeft = "";
@@ -602,27 +614,22 @@ function updateAlg() {
   GROUP.customAlgorithmsLeft[INDEX_CASE] = editAlgGlobal.customAlgLeft;
 
   // "Save" alg selection from global variable
-  GROUP.algorithmSelectionRight[INDEX_CASE] = editAlgGlobal.selectedAlgNumberRight;
-  GROUP.algorithmSelectionLeft[INDEX_CASE] = editAlgGlobal.selectedAlgNumberLeft;
+  GROUP.setAlgorithmSelection("right", INDEX_CASE, editAlgGlobal.selectedAlgNumberRight);
+  GROUP.setAlgorithmSelection("left", INDEX_CASE, editAlgGlobal.selectedAlgNumberLeft);
 
   // "Save" identical alg
   GROUP.identicalAlgorithm[INDEX_CASE] = ELEM_IDENTICAL_ALG.checked;
 
   // Check if selected right alg is default or custom
-  if (editAlgGlobal.selectedAlgNumberRight < GROUP.algorithms[INDEX_CASE + 1].length) {
-    // If selected Alg is default
-    tempAlgRight = GROUP.algorithms[INDEX_CASE + 1][editAlgGlobal.selectedAlgNumberRight];
+  if (editAlgGlobal.selectedAlgNumberRight < algorithmPool.length) {
+    tempAlgRight = algorithmPool[editAlgGlobal.selectedAlgNumberRight];
   } else {
-    // If selected Alg is custom
     tempAlgRight = editAlgGlobal.customAlgRight;
   }
 
-  // Check if selected left alg is default or custom
-  if (editAlgGlobal.selectedAlgNumberLeft < GROUP.algorithms[INDEX_CASE + 1].length) {
-    // If selected Alg is default
-    tempAlgLeft = StringManipulation.mirrorAlg(GROUP.algorithms[INDEX_CASE + 1][editAlgGlobal.selectedAlgNumberLeft]);
+  if (editAlgGlobal.selectedAlgNumberLeft < algorithmPool.length) {
+    tempAlgLeft = StringManipulation.mirrorAlg(algorithmPool[editAlgGlobal.selectedAlgNumberLeft]);
   } else {
-    // If selected Alg is custom
     tempAlgLeft = editAlgGlobal.customAlgLeft;
   }
 
@@ -697,24 +704,25 @@ function editAlgs(indexGroup, indexCase, mirrored) {
   editAlgGlobal.indexCase = indexCase;
 
   const INDEX_CASE = indexCase;
-  const GROUP = GROUPS[indexGroup];
+  const GROUP = getGroupByIndex(indexGroup);
 
   // Set switch to default state (right)
   ELEM_SWITCH_RIGHT.checked = true;
   ELEM_SWITCH_LEFT.checked = false;
 
   // Set global variables for alg selection
-  editAlgGlobal.selectedAlgNumberRight = GROUP.algorithmSelectionRight[INDEX_CASE];
-  editAlgGlobal.selectedAlgNumberLeft = GROUP.algorithmSelectionLeft[INDEX_CASE];
+  editAlgGlobal.selectedAlgNumberRight = GROUP.getAlgorithmSelection("right", INDEX_CASE);
+  editAlgGlobal.selectedAlgNumberLeft = GROUP.getAlgorithmSelection("left", INDEX_CASE);
 
   // Set image
   ELEM_EDITALG_IMG.src = GROUP.imgPath + "right/F2L" + (INDEX_CASE + 1) + ".svg";
 
   // Iterate through all algorithms
+  const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
   for (let alg = 0; alg < NUM_ALG; alg++) {
-    if (alg < GROUP.algorithms[INDEX_CASE + 1].length) {
+    if (alg < algorithmPool.length) {
       // Set Text to Alg
-      ELEM_EDITALG_LISTENTRY[alg].innerHTML = GROUP.algorithms[INDEX_CASE + 1][alg];
+      ELEM_EDITALG_LISTENTRY[alg].innerHTML = algorithmPool[alg];
       // Make all used elements visible
       ELEM_EDITALG_LISTENTRY[alg].style.display = "block";
     } else {
@@ -726,9 +734,9 @@ function editAlgs(indexGroup, indexCase, mirrored) {
   }
 
   // Check if previously saved alg is default or custom
-  if (editAlgGlobal.selectedAlgNumberRight < GROUP.algorithms[INDEX_CASE + 1].length) {
+  if (editAlgGlobal.selectedAlgNumberRight < algorithmPool.length) {
     // If alg is default set color of selected alg
-    ELEM_EDITALG_LISTENTRY[GROUP.algorithmSelectionRight[INDEX_CASE]].style.background = COLORS_ALG[1];
+    ELEM_EDITALG_LISTENTRY[GROUP.getAlgorithmSelection("right", INDEX_CASE)].style.background = COLORS_ALG[1];
     // and reset color of custom
     ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[0];
   } else {
@@ -766,7 +774,7 @@ function editAlgs(indexGroup, indexCase, mirrored) {
 function customAlgSelected() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = GROUPS[INDEX_GROUP];
+  const GROUP = getGroupByIndex(INDEX_GROUP);
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
@@ -778,7 +786,7 @@ function customAlgSelected() {
   ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[1];
 
   // Save selected alg globally
-  const selectedAlgTemp = GROUP.algorithms[INDEX_CASE + 1].length;
+  const selectedAlgTemp = algorithmPool.length;
   if (ELEM_IDENTICAL_ALG.checked) {
     editAlgGlobal.selectedAlgNumberRight = selectedAlgTemp;
     editAlgGlobal.selectedAlgNumberLeft = selectedAlgTemp;
@@ -802,7 +810,8 @@ function customAlgSelected() {
 function switchLeftRight() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = GROUPS[INDEX_GROUP];
+  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
@@ -818,8 +827,8 @@ function switchLeftRight() {
     ELEM_EDITALG_IMG.src = GROUP.imgPath + "right/F2L" + (INDEX_CASE + 1) + ".svg";
 
     // Fill textboxes with algorithms for right case
-    for (let index = 0; index < GROUP.algorithms[INDEX_CASE + 1].length; index++) {
-      ELEM_EDITALG_LISTENTRY[index].innerHTML = GROUP.algorithms[INDEX_CASE + 1][index];
+    for (let index = 0; index < algorithmPool.length; index++) {
+      ELEM_EDITALG_LISTENTRY[index].innerHTML = algorithmPool[index];
     }
 
     // Save current left alg globally
@@ -841,8 +850,8 @@ function switchLeftRight() {
     ELEM_EDITALG_IMG.src = GROUP.imgPath + "left/F2L" + (INDEX_CASE + 1) + ".svg";
 
     // Fill textboxes with algorithms for left case
-    for (let index = 0; index < GROUP.algorithms[INDEX_CASE + 1].length; index++) {
-      ELEM_EDITALG_LISTENTRY[index].innerHTML = StringManipulation.mirrorAlg(GROUP.algorithms[INDEX_CASE + 1][index]);
+    for (let index = 0; index < algorithmPool.length; index++) {
+      ELEM_EDITALG_LISTENTRY[index].innerHTML = StringManipulation.mirrorAlg(algorithmPool[index]);
     }
 
     // Save current right alg globally
@@ -860,7 +869,7 @@ function switchLeftRight() {
   }
 
   // Check if custom or default alg is selected
-  if (selectedAlgTemp < GROUP.algorithms[INDEX_CASE + 1].length) {
+  if (selectedAlgTemp < algorithmPool.length) {
     // If alg is default, set color of selected alg
     ELEM_EDITALG_LISTENTRY[selectedAlgTemp].style.background = COLORS_ALG[1];
   } else {
@@ -879,7 +888,7 @@ function syncLeftRightAlgSelection() {
 
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = GROUPS[INDEX_GROUP];
+  const GROUP = getGroupByIndex(INDEX_GROUP);
 
   // Sync selected algs
   if (ELEM_SWITCH_RIGHT.checked) {
@@ -889,12 +898,13 @@ function syncLeftRightAlgSelection() {
   }
 
   // Sync custom algs, if custom alg is selected
+  const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
   if (ELEM_SWITCH_RIGHT.checked) {
-    if (editAlgGlobal.selectedAlgNumberRight >= GROUP.algorithms[INDEX_CASE + 1].length) {
+    if (editAlgGlobal.selectedAlgNumberRight >= algorithmPool.length) {
       editAlgGlobal.customAlgLeft = StringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
     }
   } else {
-    if (editAlgGlobal.selectedAlgNumberLeft >= GROUP.algorithms[INDEX_CASE + 1].length) {
+    if (editAlgGlobal.selectedAlgNumberLeft >= algorithmPool.length) {
       editAlgGlobal.customAlgRight = StringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
     }
   }
@@ -1064,8 +1074,8 @@ function getActiveCasesCount(fromSettings = false) {
     : trainGroupSelection;
 
   let activeCases = 0;
-  for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
-    const GROUP = GROUPS[indexGroup];
+  for (let indexGroup = 0; indexGroup < getGroupCount(); indexGroup++) {
+    const GROUP = getGroupByIndex(indexGroup);
     // Skip if group is not selected in settings
     if (!trainGroupSelectionTemp[indexGroup]) continue;
     for (const categoryItems of GROUP.categoryCases) {
@@ -1073,7 +1083,7 @@ function getActiveCasesCount(fromSettings = false) {
         let indexCase = categoryItem - 1;
         for (let state = 0; state < trainStateSelectionTemp.length; state++) {
           // Check if case is in selected state
-          if (!(trainStateSelectionTemp[state] && GROUP.caseSelection[indexCase] == state)) continue;
+          if (!(trainStateSelectionTemp[state] && GROUP.getCaseState(indexCase) == state)) continue;
           activeCases++;
         }
       }
@@ -1186,7 +1196,7 @@ function showHintAlg() {
  * Scrolls to the top of the page and saves the selection to local storage.
  */
 function showSelectedGroup() {
-  GROUPS.forEach((GROUP, INDEX_GROUP) => {
+  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     if (ELEM_SELECT_GROUP.selectedIndex === INDEX_GROUP) {
       ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "flex";
     } else {
@@ -1210,8 +1220,8 @@ function showSelectedGroup() {
 function generateTrainCaseList() {
   let trainCaseListTemp = [];
   // Add all cases that shall be learned to trainCaseListTemp
-  for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
-    const GROUP = GROUPS[indexGroup];
+  for (let indexGroup = 0; indexGroup < getGroupCount(); indexGroup++) {
+    const GROUP = getGroupByIndex(indexGroup);
     // Skip if group is not selected in settings
     if (!trainGroupSelection[indexGroup]) continue;
     for (const categoryItems of GROUP.categoryCases) {
@@ -1219,9 +1229,9 @@ function generateTrainCaseList() {
         let indexCase = categoryItem - 1;
         for (let state = 0; state < trainStateSelection.length; state++) {
           // Check if case is in selected state
-          if (!(trainStateSelection[state] && GROUP.caseSelection[indexCase] == state)) continue;
+          if (!(trainStateSelection[state] && GROUP.getCaseState(indexCase) == state)) continue;
 
-          if (GROUP.scrambles[indexCase + 1] == undefined)
+          if (GROUP.getScramblesForCase(indexCase) == undefined)
             console.warn(
               "GROUP.scrambles[indexCase + 1] == undefined\nindexGroup: " +
                 indexGroup +
@@ -1314,7 +1324,7 @@ function nextScramble(nextPrevious) {
   const FRONT_COLOR = trainCaseList[TrainCase.currentTrainCaseNumber].getFrontColor();
   const PIECES_TO_HIDE = trainCaseList[TrainCase.currentTrainCaseNumber].getPiecesToHide();
 
-  const GROUP = GROUPS[INDEX_GROUP];
+  const GROUP = getGroupByIndex(INDEX_GROUP);
 
   if (!MIRRORING) {
     ELEM_HINT_IMG.src = GROUP.imgPath + "right/F2L" + (INDEX_CASE + 1) + ".svg";
@@ -1504,16 +1514,9 @@ function showHideDebugInfo() {
  * @param {number} indexCase - Index of the case.
  */
 function changeState(indexGroup, indexCategory, indexCase) {
-  const GROUP = GROUPS[indexGroup];
-  GROUP.caseSelection[indexCase]++;
-  if (GROUP.caseSelection[indexCase] >= 3) {
-    GROUP.caseSelection[indexCase] = 0;
-  }
-  GROUP.divContainer[indexCase].style.background = CATEGORY_COLORS[GROUP.caseSelection[indexCase]];
-  GROUP.divContainer[indexCase].style.color = CATEGORY_TEXT_COLOR[GROUP.caseSelection[indexCase]];
-  GROUP.divContainer[indexCase].style.borderStyle = CATEGORY_BORDERS[GROUP.caseSelection[indexCase]];
-  GROUP.imgEdit[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
-  GROUP.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
+  const GROUP = getGroupByIndex(indexGroup);
+  GROUP.cycleCaseState(indexCase);
+  applyCaseStateStyling(GROUP, indexCase);
   highlightBulkChangeTrainingStateButton(indexGroup, indexCategory, indexCase);
   saveUserData();
 
@@ -1526,23 +1529,25 @@ function changeState(indexGroup, indexCategory, indexCase) {
  * Updates the visual state of the category container and arrow icon,
  * and saves the updated user data.
  *
- * @param {number} indexGroup - Index of the group.
+ * @param {string} groupId - Id of the group.
  * @param {number} indexCategory - Index of the category within the group.
  */
-function collapseCategory(indexGroup, indexCategory) {
-  const GROUP = GROUPS[indexGroup];
+function collapseCategory(groupId, indexCategory) {
+  const GROUP = GROUPS.get(groupId);
+  if (!GROUP) return;
   const CATEGORY_CONATINER = GROUP.categoryContainer[indexCategory];
-  if (GROUP.collapse[indexCategory] == true) {
+  if (!CATEGORY_CONATINER) return;
+  const wasCollapsed = GROUP.isCategoryCollapsed(indexCategory);
+  if (wasCollapsed == true) {
     // expand
     GROUP.categoryCollapseImg[indexCategory].classList.add("rotate-arrow");
     expand(CATEGORY_CONATINER, 300);
-    GROUP.collapse[indexCategory] = false;
   } else {
     // colapse
     GROUP.categoryCollapseImg[indexCategory].classList.remove("rotate-arrow");
     collapse(CATEGORY_CONATINER, 300);
-    GROUP.collapse[indexCategory] = true;
   }
+  GROUP.toggleCategory(indexCategory);
   saveUserData();
 }
 
@@ -1649,15 +1654,13 @@ function changeMode() {
 }
 
 /**
- * Checks for duplicate cases within each group in the GROUPS array.
+ * Checks for duplicate cases within each group in the groups registry.
  * Iterates through all cases in each group's categoryCases and logs a warning
  * in the console if any duplicate cases are found.
  */
 // function checkForDuplicates() {
-//   // Check if there are any duplicate cases in GROUPS
-//   // for (let indexGroup = 0; indexGroup < GROUPS.length; indexGroup++) {
-//   // const GROUP = GROUPS[indexGroup];
-//   for (const GROUP of GROUPS) {
+//   // Check if there are any duplicate cases in the groups map
+//   for (const GROUP of GROUPS.values()) {
 //     const FLATTENED_LIST = GROUP.categoryCases.flat();
 //     for (let i = 0; i < FLATTENED_LIST.length; i++) {
 //       const CASE_I = FLATTENED_LIST[i];
@@ -1675,18 +1678,12 @@ function changeMode() {
  * (Executed when learning state is changed in train mode)
  */
 function changeStateRadio() {
-  const GROUP = GROUPS[currentTrainGroup];
+  const GROUP = getGroupByIndex(currentTrainGroup);
   if (GROUP == undefined) return;
-  // console.log(GROUP.caseSelection[currentTrainCase]);
-  if (ELEM_RADIO_UNLEARNED.checked == true) GROUP.caseSelection[currentTrainCase] = 0;
-  if (ELEM_RADIO_LEARNING.checked == true) GROUP.caseSelection[currentTrainCase] = 1;
-  if (ELEM_RADIO_FINISHED.checked == true) GROUP.caseSelection[currentTrainCase] = 2;
-  // console.log(GROUP.caseSelection[currentTrainCase]);
-  GROUP.divContainer[currentTrainCase].style.background = CATEGORY_COLORS[GROUP.caseSelection[currentTrainCase]];
-  GROUP.divContainer[currentTrainCase].style.color = CATEGORY_TEXT_COLOR[GROUP.caseSelection[currentTrainCase]];
-  GROUP.divContainer[currentTrainCase].style.borderStyle = CATEGORY_BORDERS[GROUP.caseSelection[currentTrainCase]];
-  GROUP.imgEdit[currentTrainCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[currentTrainCase]];
-  GROUP.imgMirror[currentTrainCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[currentTrainCase]];
+  if (ELEM_RADIO_UNLEARNED.checked == true) GROUP.setCaseState(currentTrainCase, 0);
+  if (ELEM_RADIO_LEARNING.checked == true) GROUP.setCaseState(currentTrainCase, 1);
+  if (ELEM_RADIO_FINISHED.checked == true) GROUP.setCaseState(currentTrainCase, 2);
+  applyCaseStateStyling(GROUP, currentTrainCase);
 
   saveUserData();
   highlightAllBulkChangeTrainingStateButtons();
@@ -1807,13 +1804,13 @@ function spaceUp() {
  * Adjusts the visual elements associated with each case to reflect the new state.
  * Resizes the button corresponding to the selected state to indicate active selection.
  *
- * @param {number} indexGroup - The index of the group containing the category.
+ * @param {string} groupId - The id of the group containing the category.
  * @param {number} indexCategory - The index of the category within the group.
  * @param {number} state - The new learning state to set for all cases in the category.
  */
-function changeLearningStateBulk(indexGroup, indexCategory, state) {
-  // console.log("indexGroup: " + indexGroup + ", indexCategory: " + indexCategory + ", state: " + state);
-  const GROUP = GROUPS[indexGroup];
+function changeLearningStateBulk(groupId, indexCategory, state) {
+  const GROUP = GROUPS.get(groupId);
+  if (!GROUP) return;
   let categoryItems = GROUP.categoryCases[indexCategory];
 
   GROUP.btnChangeLearningState[0][indexCategory].style.height = SIZE_BTN_CHANGE_LEARNING_STATE_SMALL;
@@ -1824,13 +1821,8 @@ function changeLearningStateBulk(indexGroup, indexCategory, state) {
   for (let indexCategoryItem = 0; indexCategoryItem < categoryItems.length; indexCategoryItem++) {
     let indexCase = categoryItems[indexCategoryItem] - 1;
 
-    GROUP.caseSelection[indexCase] = state;
-
-    GROUP.divContainer[indexCase].style.background = CATEGORY_COLORS[GROUP.caseSelection[indexCase]];
-    GROUP.divContainer[indexCase].style.color = CATEGORY_TEXT_COLOR[GROUP.caseSelection[indexCase]];
-    GROUP.divContainer[indexCase].style.borderStyle = CATEGORY_BORDERS[GROUP.caseSelection[indexCase]];
-    GROUP.imgEdit[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
-    GROUP.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]];
+    GROUP.setCaseState(indexCase, state);
+    applyCaseStateStyling(GROUP, indexCase);
     // console.log(COLORS_BTN_EDIT[GROUP.caseSelection[indexCase]]);
   }
   saveUserData();
@@ -1843,16 +1835,17 @@ function changeLearningStateBulk(indexGroup, indexCategory, state) {
  */
 function highlightBulkChangeTrainingStateButton(indexGroup, indexCategory) {
   // Make the button bigger if all cases in category are in the same learning state
-  const GROUP = GROUPS[indexGroup];
+  const GROUP = getGroupByIndex(indexGroup);
   let categoryItems = GROUP.categoryCases[indexCategory];
   let numUnlearned = 0,
     numLearning = 0,
     numFinished = 0;
   for (let indexCategoryItem = 0; indexCategoryItem < categoryItems.length; indexCategoryItem++) {
     let indexCase = categoryItems[indexCategoryItem] - 1;
-    if (GROUP.caseSelection[indexCase] == 0) numUnlearned++;
-    if (GROUP.caseSelection[indexCase] == 1) numLearning++;
-    if (GROUP.caseSelection[indexCase] == 2) numFinished++;
+    const state = GROUP.getCaseState(indexCase);
+    if (state == 0) numUnlearned++;
+    if (state == 1) numLearning++;
+    if (state == 2) numFinished++;
   }
 
   GROUP.btnChangeLearningState[0][indexCategory].style.height = SIZE_BTN_CHANGE_LEARNING_STATE_SMALL;
@@ -1873,7 +1866,7 @@ function highlightBulkChangeTrainingStateButton(indexGroup, indexCategory) {
  * adjusting button size based on the learning state of all cases within the category.
  */
 function highlightAllBulkChangeTrainingStateButtons() {
-  GROUPS.forEach((GROUP, INDEX_GROUP) => {
+  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     GROUP.categoryCases.forEach((categoryItems, indexCategory) => {
       highlightBulkChangeTrainingStateButton(INDEX_GROUP, indexCategory);
     });
@@ -1887,23 +1880,9 @@ function highlightAllBulkChangeTrainingStateButtons() {
  * @param {number} indexCase - The index of the case within the group.
  */
 function mirrorCase(indexGroup, indexCase) {
-  const GROUP = GROUPS[indexGroup];
-  let tempAlgRight,
-    tempAlgLeft = "";
-
-  if (GROUP.algorithmSelectionRight[indexCase] < GROUP.algorithms[indexCase + 1].length) {
-    tempAlgRight = GROUP.algorithms[indexCase + 1][GROUP.algorithmSelectionRight[indexCase]];
-  } else {
-    tempAlgRight = GROUP.customAlgorithmsRight[indexCase];
-  }
-
-  if (GROUP.algorithmSelectionLeft[indexCase] < GROUP.algorithms[indexCase + 1].length) {
-    tempAlgLeft = StringManipulation.mirrorAlg(
-      GROUP.algorithms[indexCase + 1][GROUP.algorithmSelectionLeft[indexCase]]
-    );
-  } else {
-    tempAlgLeft = GROUP.customAlgorithmsLeft[indexCase];
-  }
+  const GROUP = getGroupByIndex(indexGroup);
+  const tempAlgRight = GROUP.getAlgorithmForSide(indexCase, "right");
+  const tempAlgLeft = GROUP.getAlgorithmForSide(indexCase, "left");
 
   const mirrored = GROUP.flagMirrored[indexCase];
   GROUP.flagMirrored[indexCase] = !GROUP.flagMirrored[indexCase];
@@ -1922,7 +1901,7 @@ function showPressMeText() {
     divPressMe = document.createElement("div");
     divPressMe.classList.add("div-press-me");
     divPressMe.innerHTML = "Press<br>me";
-    GROUPS[0].imgContainer[3].appendChild(divPressMe);
+    getGroupByIndex(0).imgContainer[3].appendChild(divPressMe);
   }
 }
 
@@ -2122,7 +2101,8 @@ function showSettingsTrain() {
 }
 
 function showSetStateMenu() {
-  const STATE = GROUPS[currentTrainGroup].caseSelection[currentTrainCase];
+  const GROUP = getGroupByIndex(currentTrainGroup);
+  const STATE = GROUP.getCaseState(currentTrainCase);
   if (STATE == 0 || STATE == "0") {
     ELEM_RADIO_UNLEARNED.checked = true;
   } else if (STATE == 1 || STATE == "1") {
