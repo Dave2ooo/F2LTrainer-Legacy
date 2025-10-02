@@ -138,34 +138,17 @@ class TrainCase {
   }
 
   #setRandomScramble() {
-    const GROUP = GROUPS[this.#indexGroup];
-    this.#indexScramble = parseInt(Math.random() * GROUP.scrambles[this.#indexCase + 1].length);
-    this.#scramble = GROUP.scrambles[this.#indexCase + 1][this.#indexScramble];
+    const GROUP = getGroupByIndex(this.#indexGroup);
+    const { index, scramble } = GROUP.getRandomScrambleForCase(this.#indexCase);
+    this.#indexScramble = index;
+    this.#scramble = scramble;
   }
 
   #setAlgHint() {
-    const GROUP = GROUPS[this.#indexGroup];
-    let tempAlgHintRight,
-      tempAlgHintLeft = "";
-      const algSelectionRight = GROUP.algorithmSelectionRight[this.#indexCase];
-      const algSelectionLeft = GROUP.algorithmSelectionLeft[this.#indexCase];
-    // Get hint algorithm for current case (left and right, select later)
-    if (algSelectionRight >= GROUP.algorithms[this.#indexCase + 1].length) {
-      // Custom algorithm
-      tempAlgHintRight = GROUP.customAlgorithmsRight[this.#indexCase];
-    } else {
-      // Default algorithm
-      tempAlgHintRight = GROUP.algorithms[this.#indexCase + 1][algSelectionRight];
-    }
-    if (algSelectionLeft >= GROUP.algorithms[this.#indexCase + 1].length) {
-      // Custom algorithm
-      tempAlgHintLeft = GROUP.customAlgorithmsLeft[this.#indexCase];
-    } else {
-      // Default algorithm
-      tempAlgHintLeft = StringManipulation.mirrorAlg(GROUP.algorithms[this.#indexCase + 1][algSelectionLeft]);
-    }
+    const GROUP = getGroupByIndex(this.#indexGroup);
+    const tempAlgHintRight = GROUP.getAlgorithmForSide(this.#indexCase, "right") ?? "";
+    const tempAlgHintLeft = GROUP.getAlgorithmForSide(this.#indexCase, "left") ?? "";
 
-    // Set left or right algorithm
     this.#algHint = tempAlgHintRight;
     if (this.#mirroring) {
       this.#scramble = StringManipulation.mirrorAlg(this.#scramble);
@@ -174,8 +157,8 @@ class TrainCase {
   }
 
   #addAuf() {
-    const GROUP = GROUPS[this.#indexGroup];
-    if (GROUP.ignoreAUF.includes(this.#indexCase + 1)) {
+    const GROUP = getGroupByIndex(this.#indexGroup);
+    if (GROUP.shouldIgnoreAUF(this.#indexCase + 1)) {
       //Add one to get the actual index
       //No AUF
       [this.#scrambleAUF, this.#setupAlg, this.#algHintAUF, this.#AUFNum] = [
@@ -248,10 +231,10 @@ class TrainCase {
   }
 
   #setPiecesToHide() {
-    const GROUP = GROUPS[this.#indexGroup];
-    const piecesToHideArray = GROUP.piecesToHide;
-    if (piecesToHideArray !== undefined) {
-      this.#piecesToHide = piecesToHideArray[this.#indexCase];
+    const GROUP = getGroupByIndex(this.#indexGroup);
+    const piece = GROUP.getPiecesToHide(this.#indexCase);
+    if (piece !== undefined) {
+      this.#piecesToHide = piece;
     } else this.#piecesToHide = undefined;
   }
   //#endregion Private Functions
@@ -307,19 +290,20 @@ class TrainCase {
 
   //#region Additional
   incrementSolveCounter() {
-    const GROUP = GROUPS[this.#indexGroup];
+    const GROUP = getGroupByIndex(this.#indexGroup);
     GROUP.solveCounter[this.#indexCase]++;
   }
   getDebugInfo() {
-    const GROUP = GROUPS[this.#indexGroup];
+    const GROUP = getGroupByIndex(this.#indexGroup);
 
     // Get index of selected hint algorithm
-    let indexAlgSelection = GROUP.algorithmSelectionRight[this.#indexCase];
-    if (this.#mirroring) indexAlgSelection = GROUP.algorithmSelectionLeft[this.#indexCase];
+    let indexAlgSelection = GROUP.getAlgorithmSelection("right", this.#indexCase);
+    if (this.#mirroring) indexAlgSelection = GROUP.getAlgorithmSelection("left", this.#indexCase);
 
     let caseName = "";
-    if (GROUP.caseNumberMapping && GROUP.caseNumberMapping.hasOwnProperty(this.#indexCase + 1)) {
-      caseName = "-" + GROUP.caseNumberMapping[this.#indexCase + 1];
+    const mappedName = GROUP.getCaseLabel(this.#indexCase);
+    if (mappedName) {
+      caseName = "-" + mappedName;
     }
 
     return (
@@ -332,7 +316,7 @@ class TrainCase {
       ", AUF " +
       StringManipulation.u_moves[this.#AUFNum] +
       ", " +
-      CATEGORY_NAMES[GROUP.caseSelection[this.#indexCase]] +
+      CATEGORY_NAMES[GROUP.getCaseState(this.#indexCase)] +
       ", Algorithm " +
       indexAlgSelection +
       ", " +
