@@ -177,6 +177,16 @@ const ELEM_BTN_CHANGE_ALG = document.getElementById("btn-change-alg-id");
 const ELEM_FEEDBACK_NAME = document.getElementById("feedback-name-id");
 
 const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
+
+// Store the last known settings (initialize with sensible defaults)
+let lastSettings = {
+  leftSelection: null,
+  rightSelection: null,
+  aufSelection: null,
+  considerAUFinAlg: null,
+  trainStateSelection: null,
+  trainGroupSelection: null,
+};
 //#endregion
 
 // ----------------------------------------- LOADING -------------------------------------------------------
@@ -274,7 +284,23 @@ window.addEventListener("load", () => {
   // const autoLoadTimeout = setTimeout(loadTwistyAlgViewer, 1000);
 
   showHideDebugInfo();
+  setSettingsElementsVisibility();
 });
+
+function setSettingsElementsVisibility() {
+  if (timerEnabled) {
+    ELEM_TIMER.style.display = "block";
+  } else {
+    ELEM_TIMER.style.display = "none";
+  }
+
+  if (recapEnabled) {
+    ELEM_RECAP_INFO.style.display = "block";
+    if (recapDone) recapDone = false;
+  } else {
+    ELEM_RECAP_INFO.style.display = "none";
+  }
+}
 
 // function loadTwistyAlgViewer() {
 //   import("https://cdn.cubing.net/v0/js/cubing/twisty")
@@ -561,8 +587,8 @@ function addElementsToDOM() {
         GROUP.categoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
       }
       ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.categoryContainer[indexCategory]);
-  });
-  ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
+    });
+    ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
   });
 }
 
@@ -1001,51 +1027,76 @@ function keyup(e) {
  * Then it generates a new list of cases to be trained and updates the hint visibility.
  * Finally, it displays the next scramble.
  */
-function updateTrainCases() {
-  trainStateSelection = [
+function confirmSettings() {
+  // Read settings from UI:
+  const newTrainStateSelection = [
     ELEM_CHECKBOX_UNLEARNED.checked,
     ELEM_CHECKBOX_LEARNING.checked,
     ELEM_CHECKBOX_FINISHED.checked,
   ];
-  trainGroupSelection = [
+  const newTrainGroupSelection = [
     ELEM_CHECKBOX_BASIC.checked,
     ELEM_CHECKBOX_BASIC_BACK.checked,
     ELEM_CHECKBOX_ADVANCED.checked,
     ELEM_CHECKBOX_EXPERT.checked,
   ];
-  leftSelection = ELEM_CHECKBOX_LEFT.checked;
-  rightSelection = ELEM_CHECKBOX_RIGHT.checked;
-  aufSelection = ELEM_CHECKBOX_AUF.checked;
-  considerAUFinAlg = ELEM_CHECKBOX_CONSIDER_AUF.checked;
+  const newLeftSelection = ELEM_CHECKBOX_LEFT.checked;
+  const newRightSelection = ELEM_CHECKBOX_RIGHT.checked;
+  const newAufSelection = ELEM_CHECKBOX_AUF.checked;
+  const newConsiderAUFinAlg = ELEM_CHECKBOX_CONSIDER_AUF.checked;
+
+  // Compare to previous values
+  const isChanged =
+    lastSettings.leftSelection !== newLeftSelection ||
+    lastSettings.rightSelection !== newRightSelection ||
+    lastSettings.aufSelection !== newAufSelection ||
+    lastSettings.considerAUFinAlg !== newConsiderAUFinAlg ||
+    !arraysEqual(lastSettings.trainStateSelection, newTrainStateSelection) ||
+    !arraysEqual(lastSettings.trainGroupSelection, newTrainGroupSelection);
+
+  // Update the global variables
+  lastSettings.trainStateSelection = newTrainStateSelection;
+  lastSettings.trainGroupSelection = newTrainGroupSelection;
+  lastSettings.leftSelection = newLeftSelection;
+  lastSettings.rightSelection = newRightSelection;
+  lastSettings.aufSelection = newAufSelection;
+  lastSettings.considerAUFinAlg = newConsiderAUFinAlg;
+
+  // Other UI settings
   hintImageSelection = ELEM_SELECT_HINT_IMAGE.selectedIndex;
   hintAlgSelection = ELEM_SELECT_HINT_ALG.selectedIndex;
   stickeringSelection = ELEM_SELECT_STICKERING.selectedIndex;
   crossColorSelection = ELEM_SELECT_CROSS_COLOR.value;
   frontColorSelection = ELEM_SELECT_FRONT_COLOR.value;
-  console.log(crossColorSelection, frontColorSelection);
   timerEnabled = ELEM_CHECKBOX_TIMER_ENABLE.checked;
   recapEnabled = ELEM_CHECKBOX_RECAP_ENABLE.checked;
+  setSettingsElementsVisibility();
 
-  if (timerEnabled) {
-    ELEM_TIMER.style.display = "block";
-  } else {
-    ELEM_TIMER.style.display = "none";
+  // Only generate new case list if relevant settings changed
+  if (isChanged) {
+    generateNewTrainCaseList();
   }
 
-  if (recapEnabled) {
-    ELEM_RECAP_INFO.style.display = "block";
-    if (recapDone) recapDone = false;
-  } else {
-    ELEM_RECAP_INFO.style.display = "none";
-  }
+  // Save the current settings for next time
+  lastSettings = {
+    leftSelection: newLeftSelection,
+    rightSelection: newRightSelection,
+    aufSelection: newAufSelection,
+    considerAUFinAlg: newConsiderAUFinAlg,
+    trainStateSelection: [...newTrainStateSelection], // copy array
+    trainGroupSelection: [...newTrainGroupSelection], // copy array
+  };
 
   closeOverlays();
-  trainCaseList = [];
-  TrainCase.currentTrainCaseNumber = -1;
-  generateTrainCaseList();
-  //Set the active cases for training page
-  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
-  nextScramble(1);
+}
+
+function arraysEqual(a, b) {
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 }
 
 /**
@@ -1209,6 +1260,15 @@ function showSelectedGroup() {
   viewSelection = ELEM_SELECT_GROUP.selectedIndex;
 }
 
+function generateNewTrainCaseList() {
+  trainCaseList = [];
+  TrainCase.currentTrainCaseNumber = -1;
+  generateTrainCaseList();
+  //Set the active cases for training page
+  ELEM_TRAINING_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
+  nextScramble(1);
+}
+
 /**
  * Generates a new list of cases to be trained and adds them to the current list.
  * Called when settings are changed or when the list of cases to be trained is empty.
@@ -1264,6 +1324,10 @@ function generateTrainCaseList() {
 
   // Add new cases to current list
   trainCaseList = trainCaseList.concat(trainCaseListTemp);
+  
+  // If no hint image is selected and user clicks on hint alg, the hint image will appear.
+  // This hides the hint image
+  updateHintImgVisibility();
 }
 
 /**
@@ -1353,9 +1417,6 @@ function nextScramble(nextPrevious) {
   currentTrainGroup = INDEX_GROUP;
   currentTrainCase = INDEX_CASE;
 
-  // If no hint image is selected and user clicks on hint alg, the hint image will appear.
-  // This hides the hint image
-  updateHintImgVisibility();
   saveUserData();
 
   // Update recap info
@@ -1370,7 +1431,7 @@ function nextScramble(nextPrevious) {
 function getRecapInfo() {
   let summary = "";
   if (recapDone) {
-    summary = `Recap done (<a href="#" onclick="updateTrainCases();">Press to reset</a>)`;
+    summary = `Recap done (<a href="#" onclick="generateTrainCaseList();">Press to reset</a>)`;
   } else if (leftSelection && rightSelection) {
     let remainingCases = trainCaseList.slice(TrainCase.currentTrainCaseNumber);
     let remainingLeftCases = remainingCases.filter((item) => item.getMirroring() == 1).length;
@@ -1627,7 +1688,7 @@ let expand = (target, duration = 300) => {
 function changeMode() {
   if (mode == 0) {
     mode = 1;
-    updateTrainCases();
+    generateNewTrainCaseList();
     ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
     ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
     ELEM_WINDOW_SELECT.classList.add("display-none");
