@@ -348,7 +348,7 @@ function loadList(group, saveName, defaultValue, length, sliceEnd = true) {
   // To fix this, the list is sliced to the correct length.
   if (sliceEnd) {
     // Only slice end if requested
-    out = out.slice(0, group.numberCases);
+    out = out.slice(0, length);
 
     if (out.length < length) {
       const missingEntries = group.numberCases - out.length;
