@@ -285,6 +285,8 @@ window.addEventListener("load", () => {
 
   showHideDebugInfo();
   setSettingsElementsVisibility();
+
+  syncDialogOpenFlag();
 });
 
 function setSettingsElementsVisibility() {
@@ -348,6 +350,8 @@ async function loadTwistyAlgViewer() {
     ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
     updateHintImgVisibility();
     console.error("Failed to load TwistyAlgViewer module:", err);
+  } finally {
+    syncDialogOpenFlag();
   }
 }
 
@@ -2126,6 +2130,7 @@ function closeOverlays() {
   ELEM_CHANGE_STATE_POPUP.close();
   ELEM_FEEDBACK_CONTAINER.close();
   flagDialogOpen = false;
+  syncDialogOpenFlag();
 }
 
 function showWelcomePopup() {
@@ -2208,5 +2213,16 @@ function openDialog(ELEM) {
   ELEM.showModal();
   ELEM_BODY.style.overflow = "hidden";
   flagDialogOpen = true;
+  syncDialogOpenFlag();
 }
 flagDialogOpen = true;
+
+function syncDialogOpenFlag() {
+  for (const dialog of ELEM_DIALOGS) {
+    if (dialog.open) {
+      flagDialogOpen = true;
+      return;
+    }
+  }
+  flagDialogOpen = false;
+}
