@@ -60,6 +60,14 @@ class Group {
     return this.idName;
   }
 
+  getNumberCategories() {
+    return this.categoryCases.length;
+  }
+  
+  getNumberCases() {
+    return this.numberCases;
+  }
+
   getCaseState(indexCase) {
     return this.caseSelection[indexCase];
   }

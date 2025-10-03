@@ -123,14 +123,8 @@ const STORAGE_KEY_PREFIXES = {
 function saveUserData() {
   console.log("Saving User Data");
 
-  localStorage.setItem(
-    STORAGE_KEYS.TRAIN_STATE_SELECTION,
-    JSON.stringify(trainStateSelection)
-  );
-  localStorage.setItem(
-    STORAGE_KEYS.TRAIN_GROUP_SELECTION,
-    JSON.stringify(trainGroupSelection)
-  );
+  localStorage.setItem(STORAGE_KEYS.TRAIN_STATE_SELECTION, JSON.stringify(trainStateSelection));
+  localStorage.setItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION, JSON.stringify(trainGroupSelection));
 
   // Saving viewSelection (Basic, Basic Back, Advanced, Expert)
   localStorage.setItem(STORAGE_KEYS.VIEW_SELECTION, viewSelection);
@@ -141,27 +135,12 @@ function saveUserData() {
 
   // Saving other settings
   localStorage.setItem(STORAGE_KEYS.AUF_SELECTION, aufSelection);
-  localStorage.setItem(
-    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
-    considerAUFinAlg
-  );
-  localStorage.setItem(
-    STORAGE_KEYS.HINT_IMAGE_SELECTION,
-    hintImageSelection
-  );
+  localStorage.setItem(STORAGE_KEYS.CONSIDER_AUF_IN_ALG, considerAUFinAlg);
+  localStorage.setItem(STORAGE_KEYS.HINT_IMAGE_SELECTION, hintImageSelection);
   localStorage.setItem(STORAGE_KEYS.HINT_ALG_SELECTION, hintAlgSelection);
-  localStorage.setItem(
-    STORAGE_KEYS.STICKERING_SELECTION,
-    stickeringSelection
-  );
-  localStorage.setItem(
-    STORAGE_KEYS.CROSS_COLOR_SELECTION,
-    crossColorSelection
-  );
-  localStorage.setItem(
-    STORAGE_KEYS.FRONT_COLOR_SELECTION,
-    frontColorSelection
-  );
+  localStorage.setItem(STORAGE_KEYS.STICKERING_SELECTION, stickeringSelection);
+  localStorage.setItem(STORAGE_KEYS.CROSS_COLOR_SELECTION, crossColorSelection);
+  localStorage.setItem(STORAGE_KEYS.FRONT_COLOR_SELECTION, frontColorSelection);
   localStorage.setItem(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
   localStorage.setItem(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
 
@@ -170,15 +149,9 @@ function saveUserData() {
 
   forEachGroup((GROUP) => {
     // Save Collapse
-    localStorage.setItem(
-      GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE,
-      JSON.stringify(GROUP.collapse)
-    );
+    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE, JSON.stringify(GROUP.collapse));
     // Save Case Selection
-    localStorage.setItem(
-      GROUP.saveName + STORAGE_SUFFIXES.CASE_SELECTION,
-      JSON.stringify(GROUP.caseSelection)
-    );
+    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.CASE_SELECTION, JSON.stringify(GROUP.caseSelection));
     // Save Custom Algorithms Right
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
@@ -205,10 +178,7 @@ function saveUserData() {
       JSON.stringify(GROUP.algorithmSelectionLeft)
     );
     // Save Solve Counter
-    localStorage.setItem(
-      GROUP.saveName + STORAGE_SUFFIXES.SOLVE_COUNTER,
-      JSON.stringify(GROUP.solveCounter)
-    );
+    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.SOLVE_COUNTER, JSON.stringify(GROUP.solveCounter));
   });
 }
 
@@ -227,40 +197,28 @@ function loadUserData() {
   if (temp != null) viewSelection = parseInt(temp);
 
   // Check if user visits site for the first time
-  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT) != null)
-    firstVisit = false;
+  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT) != null) firstVisit = false;
   // Check if user visits train view for the first time
-  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_TRAIN) != null)
-    firstVisitTrain = false;
+  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_TRAIN) != null) firstVisitTrain = false;
 
   // Load trainStateSelection
   // Switch from old storage solution
   if (localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION) == null) {
     for (let i = 0; i < trainStateSelection.length; i++) {
-      trainStateSelection[i] = loadBoolean(
-        STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION + i,
-        trainStateSelection[i]
-      );
+      trainStateSelection[i] = loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION + i, trainStateSelection[i]);
     }
   } else {
-    trainStateSelection = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION)
-    ); // Keep only this
+    trainStateSelection = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION)); // Keep only this
   }
 
   // Load trainGroupSelection
   // Switch from old storage solution
   if (localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION) == null) {
     for (let i = 0; i < trainGroupSelection.length; i++) {
-      trainGroupSelection[i] = loadBoolean(
-        STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION + i,
-        trainGroupSelection[i]
-      );
+      trainGroupSelection[i] = loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION + i, trainGroupSelection[i]);
     }
   } else {
-    trainGroupSelection = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION)
-    ); // Keep only this
+    trainGroupSelection = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION)); // Keep only this
   }
 
   // Packing inside own function would not shrink the code here, since default value is defined above
@@ -284,64 +242,43 @@ function loadUserData() {
   leftSelection = loadBoolean(STORAGE_KEYS.LEFT_SELECTION, leftSelection);
   rightSelection = loadBoolean(STORAGE_KEYS.RIGHT_SELECTION, rightSelection);
   aufSelection = loadBoolean(STORAGE_KEYS.AUF_SELECTION, aufSelection);
-  considerAUFinAlg = loadBoolean(
-    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
-    considerAUFinAlg
-  );
+  considerAUFinAlg = loadBoolean(STORAGE_KEYS.CONSIDER_AUF_IN_ALG, considerAUFinAlg);
   timerEnabled = loadBoolean(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
   recapEnabled = loadBoolean(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
 
   forEachGroup((GROUP) => {
     // Load collapse state
-    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, false);
+    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, true, GROUP.getNumberCategories());
     // Load Case Selection
-    GROUP.caseSelection = loadList(
-      GROUP,
-      STORAGE_SUFFIXES.CASE_SELECTION,
-      0
-    );
+    GROUP.caseSelection = loadList(GROUP, STORAGE_SUFFIXES.CASE_SELECTION, 0, GROUP.getNumberCases());
 
     // Load Custom Algorithms Right
-    GROUP.customAlgorithmsRight = loadList(
-      GROUP,
-      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
-      ""
-    );
+    GROUP.customAlgorithmsRight = loadList(GROUP, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT, "", GROUP.getNumberCases());
 
     // Load Custom Algorithms Left
-    GROUP.customAlgorithmsLeft = loadList(
-      GROUP,
-      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
-      ""
-    );
+    GROUP.customAlgorithmsLeft = loadList(GROUP, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT, "", GROUP.getNumberCases());
 
     // Load Custom Algorithms Left
-    GROUP.identicalAlgorithm = loadList(
-      GROUP,
-      STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
-      true
-    );
+    GROUP.identicalAlgorithm = loadList(GROUP, STORAGE_SUFFIXES.IDENTICAL_ALGORITHM, true, GROUP.getNumberCases());
 
     // Load Algorithm Selection Right
     GROUP.algorithmSelectionRight = loadList(
       GROUP,
       STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
-      0
+      0,
+      GROUP.getNumberCases()
     );
 
     // Load Algorithm Selection Left
     GROUP.algorithmSelectionLeft = loadList(
       GROUP,
       STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
-      0
+      0,
+      GROUP.getNumberCases()
     );
 
     // Load Solve Counter
-    GROUP.solveCounter = loadList(
-      GROUP,
-      STORAGE_SUFFIXES.SOLVE_COUNTER,
-      0
-    );
+    GROUP.solveCounter = loadList(GROUP, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, GROUP.getNumberCases());
   });
 
   // Set learning state of some cases on first visit, so that the user can see the options
@@ -388,7 +325,7 @@ function loadBoolean(saveName, defaultValue) {
  * @returns {Array} The list stored in local storage if it exists, otherwise a
  *   list of the correct length filled with the defaultValue.
  */
-function loadList(group, saveName, defaultValue, sliceEnd = true) {
+function loadList(group, saveName, defaultValue, length, sliceEnd = true) {
   let out;
   let temp = localStorage.getItem(group.saveName + saveName);
   if (temp !== null) {
@@ -413,7 +350,7 @@ function loadList(group, saveName, defaultValue, sliceEnd = true) {
     // Only slice end if requested
     out = out.slice(0, group.numberCases);
 
-    if (out.length < group.numberCases) {
+    if (out.length < length) {
       const missingEntries = group.numberCases - out.length;
       out = out.concat(Array(missingEntries).fill(defaultValue));
     }
@@ -497,10 +434,7 @@ function importFromURL() {
 
       let caseSelectionList = base3Number.split("");
 
-      localStorage.setItem(
-        group.saveName + STORAGE_SUFFIXES.CASE_SELECTION,
-        JSON.stringify(caseSelectionList)
-      );
+      localStorage.setItem(group.saveName + STORAGE_SUFFIXES.CASE_SELECTION, JSON.stringify(caseSelectionList));
     });
   }
 
@@ -583,12 +517,7 @@ function migrateCaseNumbers() {
     // We need to NOT slice the end because we need to check the actual length
     // Migrate if list length is expected length -> list has old numbering
     // Does not need to be "solveCounter" specifically. Just needs to be a list
-    let groupSolveCounter = loadList(
-      g,
-      STORAGE_SUFFIXES.SOLVE_COUNTER,
-      0,
-      false
-    );
+    let groupSolveCounter = loadList(g, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, g.getNumberCases(), false);
     if (groupSolveCounter.length === EXPECTED_ARRAY_LENGTH) {
       migrateCaseNumberGroup(g);
     }
@@ -608,35 +537,35 @@ function migrateCaseNumberGroup(g) {
   // Pass sliceEnd = false to ensure we get the actual length
   lists.push({
     key: STORAGE_SUFFIXES.COLLAPSE,
-    value: loadList(g, STORAGE_SUFFIXES.COLLAPSE, false, false),
+    value: loadList(g, STORAGE_SUFFIXES.COLLAPSE, false, g.getNumberCategories(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.CASE_SELECTION,
-    value: loadList(g, STORAGE_SUFFIXES.CASE_SELECTION, 0, false),
+    value: loadList(g, STORAGE_SUFFIXES.CASE_SELECTION, 0, g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
-    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT, "", false),
+    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT, "", g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
-    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT, "", false),
+    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT, "", g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
-    value: loadList(g, STORAGE_SUFFIXES.IDENTICAL_ALGORITHM, true, false),
+    value: loadList(g, STORAGE_SUFFIXES.IDENTICAL_ALGORITHM, true, g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
-    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT, 0, false),
+    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT, 0, g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
-    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT, 0, false),
+    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT, 0, g.getNumberCases(), false),
   });
   lists.push({
     key: STORAGE_SUFFIXES.SOLVE_COUNTER,
-    value: loadList(g, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, false),
+    value: loadList(g, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, g.getNumberCases(), false),
   });
 
   lists.forEach((kvp) => {
