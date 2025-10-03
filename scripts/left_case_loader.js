@@ -8,7 +8,7 @@ function addLeftImages() {
     forEachGroup((GROUP) => {
         if (!GROUP.imgCase || !GROUP.imgCase.length) return;
 
-        if (!GROUP.imgCaseLeft) GROUP.imgCaseLeft = [];
+        GROUP.imgCaseLeft ??= [];
 
         GROUP.imgCase.forEach((imgRight, indexCase) => {
             if (!(imgRight instanceof HTMLImageElement)) return;

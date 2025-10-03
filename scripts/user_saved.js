@@ -111,7 +111,7 @@ function saveUserData() {
   // Saving that the user just visited the site
   localStorage.setItem("firstVisit", false);
 
-  for (const GROUP of GROUPS.values()) {
+  forEachGroup((GROUP) => {
     // Save Collapse
     localStorage.setItem(GROUP.saveName + "collapse", JSON.stringify(GROUP.collapse));
     // Save Case Selection
@@ -128,7 +128,7 @@ function saveUserData() {
     localStorage.setItem(GROUP.saveName + "algorithmSelectionLeft", JSON.stringify(GROUP.algorithmSelectionLeft));
     // Save Solve Counter
     localStorage.setItem(GROUP.saveName + "solveCounter", JSON.stringify(GROUP.solveCounter));
-  }
+  });
 }
 
 /**
@@ -195,7 +195,7 @@ function loadUserData() {
   timerEnabled = loadBoolean("timerEnabled", timerEnabled);
   recapEnabled = loadBoolean("recapEnabled", recapEnabled);
 
-  for (const GROUP of GROUPS.values()) {
+  forEachGroup((GROUP) => {
     // Load collapse state
     GROUP.collapse = loadList(GROUP, "collapse", false);
     // Load Case Selection
@@ -218,7 +218,7 @@ function loadUserData() {
 
     // Load Solve Counter
     GROUP.solveCounter = loadList(GROUP, "solveCounter", 0);
-  }
+  });
 
   // Set learning state of some cases on first visit, so that the user can see the options
   if (firstVisit) {
