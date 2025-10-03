@@ -78,6 +78,42 @@ let firstVisitTrain = true;
 const BASE62_CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const BASE = 62;
 
+// Local storage keys and suffixes
+const STORAGE_KEYS = {
+  TRAIN_STATE_SELECTION: "trainStateSelection",
+  TRAIN_GROUP_SELECTION: "trainGroupSelection",
+  VIEW_SELECTION: "viewSelection",
+  LEFT_SELECTION: "leftSelection",
+  RIGHT_SELECTION: "rightSelection",
+  AUF_SELECTION: "aufSelection",
+  CONSIDER_AUF_IN_ALG: "considerAUFinAlg",
+  HINT_IMAGE_SELECTION: "hintImageSelection",
+  HINT_ALG_SELECTION: "hintAlgSelection",
+  STICKERING_SELECTION: "stickeringSelection",
+  CROSS_COLOR_SELECTION: "crossColorSelection",
+  FRONT_COLOR_SELECTION: "frontColorSelection",
+  TIMER_ENABLED: "timerEnabled",
+  RECAP_ENABLED: "recapEnabled",
+  FIRST_VISIT: "firstVisit",
+  FIRST_VISIT_TRAIN: "firstVisitTrain",
+};
+
+const STORAGE_SUFFIXES = {
+  COLLAPSE: "collapse",
+  CASE_SELECTION: "caseSelection",
+  CUSTOM_ALGORITHMS_RIGHT: "customAlgorithms",
+  CUSTOM_ALGORITHMS_LEFT: "customAlgorithmsLeft",
+  IDENTICAL_ALGORITHM: "identicalAlgorithm",
+  ALGORITHM_SELECTION_RIGHT: "algorithmSelection",
+  ALGORITHM_SELECTION_LEFT: "algorithmSelectionLeft",
+  SOLVE_COUNTER: "solveCounter",
+};
+
+const STORAGE_KEY_PREFIXES = {
+  TRAIN_STATE_SELECTION: "trainStateSelection",
+  TRAIN_GROUP_SELECTION: "trainGroupSelection",
+};
+
 //#endregion
 
 /**
@@ -87,47 +123,92 @@ const BASE = 62;
 function saveUserData() {
   console.log("Saving User Data");
 
-  localStorage.setItem("trainStateSelection", JSON.stringify(trainStateSelection));
-  localStorage.setItem("trainGroupSelection", JSON.stringify(trainGroupSelection));
+  localStorage.setItem(
+    STORAGE_KEYS.TRAIN_STATE_SELECTION,
+    JSON.stringify(trainStateSelection)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.TRAIN_GROUP_SELECTION,
+    JSON.stringify(trainGroupSelection)
+  );
 
   // Saving viewSelection (Basic, Basic Back, Advanced, Expert)
-  localStorage.setItem("viewSelection", viewSelection);
+  localStorage.setItem(STORAGE_KEYS.VIEW_SELECTION, viewSelection);
 
   // Saving left right train selection
-  localStorage.setItem("leftSelection", leftSelection);
-  localStorage.setItem("rightSelection", rightSelection);
+  localStorage.setItem(STORAGE_KEYS.LEFT_SELECTION, leftSelection);
+  localStorage.setItem(STORAGE_KEYS.RIGHT_SELECTION, rightSelection);
 
   // Saving other settings
-  localStorage.setItem("aufSelection", aufSelection);
-  localStorage.setItem("considerAUFinAlg", considerAUFinAlg);
-  localStorage.setItem("hintImageSelection", hintImageSelection);
-  localStorage.setItem("hintAlgSelection", hintAlgSelection);
-  localStorage.setItem("stickeringSelection", stickeringSelection);
-  localStorage.setItem("crossColorSelection", crossColorSelection);
-  localStorage.setItem("frontColorSelection", frontColorSelection);
-  localStorage.setItem("timerEnabled", timerEnabled);
-  localStorage.setItem("recapEnabled", recapEnabled);
+  localStorage.setItem(STORAGE_KEYS.AUF_SELECTION, aufSelection);
+  localStorage.setItem(
+    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
+    considerAUFinAlg
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.HINT_IMAGE_SELECTION,
+    hintImageSelection
+  );
+  localStorage.setItem(STORAGE_KEYS.HINT_ALG_SELECTION, hintAlgSelection);
+  localStorage.setItem(
+    STORAGE_KEYS.STICKERING_SELECTION,
+    stickeringSelection
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.CROSS_COLOR_SELECTION,
+    crossColorSelection
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.FRONT_COLOR_SELECTION,
+    frontColorSelection
+  );
+  localStorage.setItem(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
+  localStorage.setItem(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
 
   // Saving that the user just visited the site
-  localStorage.setItem("firstVisit", false);
+  localStorage.setItem(STORAGE_KEYS.FIRST_VISIT, false);
 
   forEachGroup((GROUP) => {
     // Save Collapse
-    localStorage.setItem(GROUP.saveName + "collapse", JSON.stringify(GROUP.collapse));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.COLLAPSE}`,
+      JSON.stringify(GROUP.collapse)
+    );
     // Save Case Selection
-    localStorage.setItem(GROUP.saveName + "caseSelection", JSON.stringify(GROUP.caseSelection));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.CASE_SELECTION}`,
+      JSON.stringify(GROUP.caseSelection)
+    );
     // Save Custom Algorithms Right
-    localStorage.setItem(GROUP.saveName + "customAlgorithms", JSON.stringify(GROUP.customAlgorithmsRight));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT}`,
+      JSON.stringify(GROUP.customAlgorithmsRight)
+    );
     // Save Custom Algorithms Left
-    localStorage.setItem(GROUP.saveName + "customAlgorithmsLeft", JSON.stringify(GROUP.customAlgorithmsLeft));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT}`,
+      JSON.stringify(GROUP.customAlgorithmsLeft)
+    );
     // Identical Algorithm for Left & Right
-    localStorage.setItem(GROUP.saveName + "identicalAlgorithm", JSON.stringify(GROUP.identicalAlgorithm));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.IDENTICAL_ALGORITHM}`,
+      JSON.stringify(GROUP.identicalAlgorithm)
+    );
     // Save Algorithm Selection Right
-    localStorage.setItem(GROUP.saveName + "algorithmSelection", JSON.stringify(GROUP.algorithmSelectionRight));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT}`,
+      JSON.stringify(GROUP.algorithmSelectionRight)
+    );
     // Save Algorithm Selection Left
-    localStorage.setItem(GROUP.saveName + "algorithmSelectionLeft", JSON.stringify(GROUP.algorithmSelectionLeft));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT}`,
+      JSON.stringify(GROUP.algorithmSelectionLeft)
+    );
     // Save Solve Counter
-    localStorage.setItem(GROUP.saveName + "solveCounter", JSON.stringify(GROUP.solveCounter));
+    localStorage.setItem(
+      `${GROUP.saveName}${STORAGE_SUFFIXES.SOLVE_COUNTER}`,
+      JSON.stringify(GROUP.solveCounter)
+    );
   });
 }
 
@@ -142,82 +223,125 @@ function loadUserData() {
   migrateCaseNumbers();
 
   // Load viewSelection
-  temp = localStorage.getItem("viewSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.VIEW_SELECTION);
   if (temp != null) viewSelection = parseInt(temp);
 
   // Check if user visits site for the first time
-  if (localStorage.getItem("firstVisit") != null) firstVisit = false;
+  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT) != null)
+    firstVisit = false;
   // Check if user visits train view for the first time
-  if (localStorage.getItem("firstVisitTrain") != null) firstVisitTrain = false;
+  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_TRAIN) != null)
+    firstVisitTrain = false;
 
   // Load trainStateSelection
   // Switch from old storage solution
-  if (localStorage.getItem("trainStateSelection") == null) {
+  if (localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION) == null) {
     for (let i = 0; i < trainStateSelection.length; i++) {
-      trainStateSelection[i] = loadBoolean("trainStateSelection" + i, trainStateSelection[i]);
+      trainStateSelection[i] = loadBoolean(
+        `${STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION}${i}`,
+        trainStateSelection[i]
+      );
     }
   } else {
-    trainStateSelection = JSON.parse(localStorage.getItem("trainStateSelection")); // Keep only this
+    trainStateSelection = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION)
+    ); // Keep only this
   }
 
   // Load trainGroupSelection
   // Switch from old storage solution
-  if (localStorage.getItem("trainGroupSelection") == null) {
+  if (localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION) == null) {
     for (let i = 0; i < trainGroupSelection.length; i++) {
-      trainGroupSelection[i] = loadBoolean("trainGroupSelection" + i, trainGroupSelection[i]);
+      trainGroupSelection[i] = loadBoolean(
+        `${STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION}${i}`,
+        trainGroupSelection[i]
+      );
     }
   } else {
-    trainGroupSelection = JSON.parse(localStorage.getItem("trainGroupSelection")); // Keep only this
+    trainGroupSelection = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION)
+    ); // Keep only this
   }
 
   // Packing inside own function would not shrink the code here, since default value is defined above
-  temp = localStorage.getItem("hintImageSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.HINT_IMAGE_SELECTION);
   if (temp != null) hintImageSelection = parseInt(temp);
 
   // Packing inside own function would not shrink the code here, since default value is defined above
-  temp = localStorage.getItem("hintAlgSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.HINT_ALG_SELECTION);
   if (temp != null) hintAlgSelection = parseInt(temp);
 
-  temp = localStorage.getItem("stickeringSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.STICKERING_SELECTION);
   if (temp != null) stickeringSelection = parseInt(temp);
 
-  temp = localStorage.getItem("crossColorSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.CROSS_COLOR_SELECTION);
   if (temp != null) crossColorSelection = temp;
 
-  temp = localStorage.getItem("frontColorSelection");
+  temp = localStorage.getItem(STORAGE_KEYS.FRONT_COLOR_SELECTION);
   if (temp != null) frontColorSelection = temp;
 
   // Load other settings
-  leftSelection = loadBoolean("leftSelection", leftSelection);
-  rightSelection = loadBoolean("rightSelection", rightSelection);
-  aufSelection = loadBoolean("aufSelection", aufSelection);
-  considerAUFinAlg = loadBoolean("considerAUFinAlg", considerAUFinAlg);
-  timerEnabled = loadBoolean("timerEnabled", timerEnabled);
-  recapEnabled = loadBoolean("recapEnabled", recapEnabled);
+  leftSelection = loadBoolean(STORAGE_KEYS.LEFT_SELECTION, leftSelection);
+  rightSelection = loadBoolean(STORAGE_KEYS.RIGHT_SELECTION, rightSelection);
+  aufSelection = loadBoolean(STORAGE_KEYS.AUF_SELECTION, aufSelection);
+  considerAUFinAlg = loadBoolean(
+    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
+    considerAUFinAlg
+  );
+  timerEnabled = loadBoolean(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
+  recapEnabled = loadBoolean(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
 
   forEachGroup((GROUP) => {
     // Load collapse state
-    GROUP.collapse = loadList(GROUP, "collapse", false);
+    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, false);
     // Load Case Selection
-    GROUP.caseSelection = loadList(GROUP, "caseSelection", 0);
+    GROUP.caseSelection = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CASE_SELECTION,
+      0
+    );
 
     // Load Custom Algorithms Right
-    GROUP.customAlgorithmsRight = loadList(GROUP, "customAlgorithms", "");
+    GROUP.customAlgorithmsRight = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
+      ""
+    );
 
     // Load Custom Algorithms Left
-    GROUP.customAlgorithmsLeft = loadList(GROUP, "customAlgorithmsLeft", "");
+    GROUP.customAlgorithmsLeft = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
+      ""
+    );
 
     // Load Custom Algorithms Left
-    GROUP.identicalAlgorithm = loadList(GROUP, "identicalAlgorithm", true);
+    GROUP.identicalAlgorithm = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
+      true
+    );
 
     // Load Algorithm Selection Right
-    GROUP.algorithmSelectionRight = loadList(GROUP, "algorithmSelection", 0);
+    GROUP.algorithmSelectionRight = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
+      0
+    );
 
     // Load Algorithm Selection Left
-    GROUP.algorithmSelectionLeft = loadList(GROUP, "algorithmSelectionLeft", 0);
+    GROUP.algorithmSelectionLeft = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
+      0
+    );
 
     // Load Solve Counter
-    GROUP.solveCounter = loadList(GROUP, "solveCounter", 0);
+    GROUP.solveCounter = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.SOLVE_COUNTER,
+      0
+    );
   });
 
   // Set learning state of some cases on first visit, so that the user can see the options
@@ -266,7 +390,7 @@ function loadBoolean(saveName, defaultValue) {
  */
 function loadList(group, saveName, defaultValue, sliceEnd = true) {
   let out;
-  let temp = localStorage.getItem(group.saveName + saveName);
+  let temp = localStorage.getItem(`${group.saveName}${saveName}`);
   if (temp !== null) {
     try {
       temp = JSON.parse(temp);
@@ -317,7 +441,7 @@ function clearUserData() {
  * train page for the first time.
  */
 function setFirstVisitTrain() {
-  localStorage.setItem("firstVisitTrain", false);
+  localStorage.setItem(STORAGE_KEYS.FIRST_VISIT_TRAIN, false);
 }
 
 /**
@@ -373,7 +497,10 @@ function importFromURL() {
 
       let caseSelectionList = base3Number.split("");
 
-      localStorage.setItem(group.saveName + "caseSelection", JSON.stringify(caseSelectionList));
+      localStorage.setItem(
+        `${group.saveName}${STORAGE_SUFFIXES.CASE_SELECTION}`,
+        JSON.stringify(caseSelectionList)
+      );
     });
   }
 
@@ -456,7 +583,12 @@ function migrateCaseNumbers() {
     // We need to NOT slice the end because we need to check the actual length
     // Migrate if list length is expected length -> list has old numbering
     // Does not need to be "solveCounter" specifically. Just needs to be a list
-    let groupSolveCounter = loadList(g, "solveCounter", 0, false);
+    let groupSolveCounter = loadList(
+      g,
+      STORAGE_SUFFIXES.SOLVE_COUNTER,
+      0,
+      false
+    );
     if (groupSolveCounter.length === EXPECTED_ARRAY_LENGTH) {
       migrateCaseNumberGroup(g);
     }
@@ -474,14 +606,38 @@ function migrateCaseNumberGroup(g) {
 
   let lists = [];
   // Pass sliceEnd = false to ensure we get the actual length
-  lists.push({ key: "collapse", value: loadList(g, "collapse", false, false) });
-  lists.push({ key: "caseSelection", value: loadList(g, "caseSelection", 0, false) });
-  lists.push({ key: "customAlgorithms", value: loadList(g, "customAlgorithms", "", false) });
-  lists.push({ key: "customAlgorithmsLeft", value: loadList(g, "customAlgorithmsLeft", "", false) });
-  lists.push({ key: "identicalAlgorithm", value: loadList(g, "identicalAlgorithm", true, false) });
-  lists.push({ key: "algorithmSelection", value: loadList(g, "algorithmSelection", 0, false) });
-  lists.push({ key: "algorithmSelectionLeft", value: loadList(g, "algorithmSelectionLeft", 0, false) });
-  lists.push({ key: "solveCounter", value: loadList(g, "solveCounter", 0, false) });
+  lists.push({
+    key: STORAGE_SUFFIXES.COLLAPSE,
+    value: loadList(g, STORAGE_SUFFIXES.COLLAPSE, false, false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.CASE_SELECTION,
+    value: loadList(g, STORAGE_SUFFIXES.CASE_SELECTION, 0, false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
+    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT, "", false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
+    value: loadList(g, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT, "", false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
+    value: loadList(g, STORAGE_SUFFIXES.IDENTICAL_ALGORITHM, true, false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
+    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT, 0, false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
+    value: loadList(g, STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT, 0, false),
+  });
+  lists.push({
+    key: STORAGE_SUFFIXES.SOLVE_COUNTER,
+    value: loadList(g, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, false),
+  });
 
   lists.forEach((kvp) => {
     let name = kvp.key;
@@ -498,6 +654,6 @@ function migrateCaseNumberGroup(g) {
     list.pop();
 
     // Save
-    localStorage.setItem(g.saveName + name, JSON.stringify(list));
+    localStorage.setItem(`${g.saveName}${name}`, JSON.stringify(list));
   });
 }
