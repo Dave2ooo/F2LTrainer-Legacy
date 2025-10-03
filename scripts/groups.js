@@ -26,7 +26,7 @@ class Group {
     this.piecesToHide = config.piecesToHide;
     this.ignoreAUF = config.ignoreAUF ?? [];
     this.resetDomState();
-    this.validateConfig();
+    // this.validateConfig(); // can be commented out for performance
   }
 
   resetDomState() {
