@@ -338,26 +338,34 @@ async function loadTwistyAlgViewer() {
 
     // Twisty Player loaded correctly
     twistyLoadFlag = true;
+    await addTwistyPlayerEventListeners();
     console.log("Twisty Player + Alg loaded");
   } catch (err) {
     // If Twisty Player cannot be loaded, default to 2D image
     ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
     // Disable option to select Twisty Player
     ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
-    console.error("Failed to load TwistyAlgViewer module:", error);
+    console.error("Failed to load TwistyAlgViewer module:", err);
   }
 }
 
-function addTwistyPlayerEventListeners() {
+async function addTwistyPlayerEventListeners() {
+  if (twistyEventListenerFlag) return;
+
   try {
-    const ELEM_TWISTY_PLAYER_BODY = ELEM_TWISTY_PLAYER.contentWrapper.firstChild;
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("mousedown", (event) => twistyPlayerMouseDown(event));
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("mouseup", (event) => twistyPlayerMouseUp(event));
-    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchstart", (event) => twistyPlayerTouchStart(event));
-    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchend", (event) => twistyPlayerTouchEnd(event));
+    if (!ELEM_TWISTY_PLAYER) {
+      throw new Error("Twisty player element is not available");
+    }
+
+    const twistySceneModel = await waitForTwistyPlayerSceneModel(ELEM_TWISTY_PLAYER);
+
+    ELEM_TWISTY_PLAYER.addEventListener("mousedown", twistyPlayerMouseDown);
+    ELEM_TWISTY_PLAYER.addEventListener("mouseup", twistyPlayerMouseUp);
+    // ELEM_TWISTY_PLAYER.addEventListener("touchstart", twistyPlayerTouchStart);
+    // ELEM_TWISTY_PLAYER.addEventListener("touchend", twistyPlayerTouchEnd);
 
     // Called when cube is rotated. Hide reset button if camera latitude is default
-    ELEM_TWISTY_PLAYER.experimentalModel.twistySceneModel.orbitCoordinatesRequest.addFreshListener((v) => {
+    twistySceneModel.orbitCoordinatesRequest.addFreshListener((v) => {
       if (v.latitude == TWISTY_PLAYER_CAMERA.LATITUDE) {
         hideResetButton();
       } else {
@@ -368,6 +376,20 @@ function addTwistyPlayerEventListeners() {
   } catch (e) {
     console.warn(e);
   }
+}
+
+async function waitForTwistyPlayerSceneModel(twistyPlayerElement) {
+  await customElements.whenDefined("twisty-player");
+
+  const MAX_ATTEMPTS = 50;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const sceneModel = twistyPlayerElement.experimentalModel?.twistySceneModel;
+    if (sceneModel) return sceneModel;
+
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }
+
+  throw new Error("Twisty player scene model is not ready");
 }
 
 function twistyPlayerMouseDown(event) {
@@ -1546,7 +1568,6 @@ function updateHintImgVisibility() {
       // 3D cube as hint
       ELEM_DIV_HINT_IMG.classList.add("display-none");
       ELEM_DIV_TWISTY_PLAYER.classList.remove("display-none");
-      if (!twistyEventListenerFlag) addTwistyPlayerEventListeners();
   }
 }
 
