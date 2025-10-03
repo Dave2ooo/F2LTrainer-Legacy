@@ -343,8 +343,10 @@ async function loadTwistyAlgViewer() {
   } catch (err) {
     // If Twisty Player cannot be loaded, default to 2D image
     ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
+    hintImageSelection = 1;
     // Disable option to select Twisty Player
     ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
+    updateHintImgVisibility();
     console.error("Failed to load TwistyAlgViewer module:", err);
   }
 }
