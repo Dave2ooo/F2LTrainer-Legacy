@@ -171,42 +171,42 @@ function saveUserData() {
   forEachGroup((GROUP) => {
     // Save Collapse
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.COLLAPSE}`,
+      GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE,
       JSON.stringify(GROUP.collapse)
     );
     // Save Case Selection
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.CASE_SELECTION}`,
+      GROUP.saveName + STORAGE_SUFFIXES.CASE_SELECTION,
       JSON.stringify(GROUP.caseSelection)
     );
     // Save Custom Algorithms Right
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT}`,
+      GROUP.saveName + STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
       JSON.stringify(GROUP.customAlgorithmsRight)
     );
     // Save Custom Algorithms Left
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT}`,
+      GROUP.saveName + STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
       JSON.stringify(GROUP.customAlgorithmsLeft)
     );
     // Identical Algorithm for Left & Right
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.IDENTICAL_ALGORITHM}`,
+      GROUP.saveName + STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
       JSON.stringify(GROUP.identicalAlgorithm)
     );
     // Save Algorithm Selection Right
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT}`,
+      GROUP.saveName + STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
       JSON.stringify(GROUP.algorithmSelectionRight)
     );
     // Save Algorithm Selection Left
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT}`,
+      GROUP.saveName + STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
       JSON.stringify(GROUP.algorithmSelectionLeft)
     );
     // Save Solve Counter
     localStorage.setItem(
-      `${GROUP.saveName}${STORAGE_SUFFIXES.SOLVE_COUNTER}`,
+      GROUP.saveName + STORAGE_SUFFIXES.SOLVE_COUNTER,
       JSON.stringify(GROUP.solveCounter)
     );
   });
@@ -238,7 +238,7 @@ function loadUserData() {
   if (localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION) == null) {
     for (let i = 0; i < trainStateSelection.length; i++) {
       trainStateSelection[i] = loadBoolean(
-        `${STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION}${i}`,
+        STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION + i,
         trainStateSelection[i]
       );
     }
@@ -253,7 +253,7 @@ function loadUserData() {
   if (localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION) == null) {
     for (let i = 0; i < trainGroupSelection.length; i++) {
       trainGroupSelection[i] = loadBoolean(
-        `${STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION}${i}`,
+        STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION + i,
         trainGroupSelection[i]
       );
     }
@@ -390,7 +390,7 @@ function loadBoolean(saveName, defaultValue) {
  */
 function loadList(group, saveName, defaultValue, sliceEnd = true) {
   let out;
-  let temp = localStorage.getItem(`${group.saveName}${saveName}`);
+  let temp = localStorage.getItem(group.saveName + saveName);
   if (temp !== null) {
     try {
       temp = JSON.parse(temp);
@@ -498,7 +498,7 @@ function importFromURL() {
       let caseSelectionList = base3Number.split("");
 
       localStorage.setItem(
-        `${group.saveName}${STORAGE_SUFFIXES.CASE_SELECTION}`,
+        group.saveName + STORAGE_SUFFIXES.CASE_SELECTION,
         JSON.stringify(caseSelectionList)
       );
     });
@@ -654,6 +654,6 @@ function migrateCaseNumberGroup(g) {
     list.pop();
 
     // Save
-    localStorage.setItem(`${g.saveName}${name}`, JSON.stringify(list));
+    localStorage.setItem(g.saveName + name, JSON.stringify(list));
   });
 }
