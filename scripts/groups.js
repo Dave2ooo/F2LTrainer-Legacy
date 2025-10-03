@@ -213,15 +213,22 @@ class Group {
         this[propertyName] = Array(numberCases).fill(defaultValue);
         return;
       }
-      if (arrayRef.length !== numberCases) {
+
+      if (arrayRef.length === numberCases) {
+        return;
+      }
+
+      const shouldWarn = arrayRef.length > 0;
+      if (shouldWarn) {
         console.warn(
           `${groupLabel}: ${propertyName} has length ${arrayRef.length}, expected ${numberCases}.`
         );
-        if (arrayRef.length < numberCases) {
-          arrayRef.push(...Array(numberCases - arrayRef.length).fill(defaultValue));
-        } else if (arrayRef.length > numberCases) {
-          arrayRef.length = numberCases;
-        }
+      }
+
+      if (arrayRef.length < numberCases) {
+        arrayRef.push(...Array(numberCases - arrayRef.length).fill(defaultValue));
+      } else if (arrayRef.length > numberCases) {
+        arrayRef.length = numberCases;
       }
     };
 
