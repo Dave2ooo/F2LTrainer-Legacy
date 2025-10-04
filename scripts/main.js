@@ -41,7 +41,7 @@ let editAlgGlobal = {
 
 // Maximum number of algs per Case
 const NUM_ALG = 20;
-const COLORS_ALG = ["transparent", "#009900"];
+const COLORS_ALG = { transparent: "transparent", green: "#009900" };
 
 const ELEM_WINDOW_SELECT = document.getElementById("window-select");
 const ELEM_WINDOW_TRAIN = document.querySelector(".window-train");
@@ -63,7 +63,6 @@ const ELEM_DIALOGS = document.querySelectorAll("dialog");
 const CATEGORY_NAMES = ["Unlearned", "Learning", "Finished", "All"];
 
 const CATEGORY_COLORS = [COLOR_UNLEARNED, COLOR_LEARNING, COLOR_FINISHED];
-const CATEGORY_BORDERS = ["solid", "solid", "solid"];
 const CATEGORY_TEXT_COLOR = [COLOR_TEXT, COLOR_TEXT_INVERTED, COLOR_TEXT_INVERTED];
 const COLORS_BTN_EDIT = [FILTER_IMG, FILTER_BLACK, FILTER_BLACK];
 
@@ -71,6 +70,9 @@ const IMG_PATH_RIGHT_ARROW = "./images/arrow_collapse_right.svg";
 const IMG_PATH_DOWN_ARROW = "./images/arrow_collapse_down.svg";
 const IMG_PATH_CHANGE_LEARNING_STATE = "./images/change_learning_state.svg";
 const IMG_PATH_CHANGE_LEARNING_STATE_HOLLOW = "./images/change_learning_state_hollow.svg";
+
+const IMG_PATH_MIRROR = "./images/mirror1.svg";
+const IMG_PATH_EDIT = "./images/edit.svg";
 
 const ELEM_LABEL_CHOOSE_GROUP = document.querySelector(".acessibility-label");
 const ELEM_CONTAINER_SELECT_GROUP = document.querySelector(".container-select-group");
@@ -161,6 +163,10 @@ const ELEM_TIMER = document.getElementById("timer");
 let flagTimerRunning;
 let second = 0;
 let count = 0;
+const COLOR_TIMER = {
+  neutral: "#00ee00",
+  ready: COLOR_TEXT,
+};
 
 let spacePressFlag = false;
 const ELEM_PRESS_ME_TRAIN = document.getElementById("div-press-me-tain-id");
@@ -214,12 +220,12 @@ window.addEventListener("load", () => {
     ELEM_EDITALG_LISTENTRY[i].onclick = function () {
       // Set background to transparent on all algs
       ELEM_EDITALG_LISTENTRY.forEach((element) => {
-        element.style.background = COLORS_ALG[0];
+        uiSetBackgroundColor(element, COLORS_ALG.transparent);
       });
-      ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[0];
+      uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
       // Set background to selected on selected alg
-      ELEM_EDITALG_LISTENTRY[i].style.background = COLORS_ALG[1];
+      uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[i], COLORS_ALG.green);
 
       // Save selected alg globally. i is the index of selected alg
       if (ELEM_IDENTICAL_ALG.checked) {
@@ -261,14 +267,14 @@ window.addEventListener("load", () => {
   document.addEventListener("keyup", keyup);
 
   ELEM_HINT_IMG.addEventListener("load", function () {
-    ELEM_HINT_IMG.style.opacity = "1";
+    uiSetOpacity(ELEM_HINT_IMG, 1);
     ELEM_LOADING_CASE.classList.add(CLASS_DISPLAY_NONE);
   });
 
   // Run this function to only show basic cases in the beginning
   showSelectedGroup();
 
-  ELEM_LOADING_SCREEN.style.display = "none";
+  uiHideElement(ELEM_LOADING_SCREEN);
 
   loadTwistyAlgViewer();
   // const autoLoadTimeout = setTimeout(loadTwistyAlgViewer, 1000);
@@ -390,25 +396,26 @@ function addElementsToDOM() {
     // Iterate over all categories (basic inserts, pieces on top/white facing..., ...)
     // for (let indexCategory = 0; indexCategory < GROUP.categoryCases.length; indexCategory++) {
     GROUP.categoryCases.forEach((categoryItems, indexCategory) => {
-      GROUP.categoryContainer[indexCategory] = document.createElement("div");
-      GROUP.categoryContainer[indexCategory].classList.add("category-container");
-      GROUP.categoryContainer[indexCategory].id = "expand-contract-group" + INDEX_GROUP + "-category" + indexCategory;
-      GROUP.collapseContainer.push(document.createElement("button"));
-      GROUP.collapseContainer[indexCategory].type = "button";
-      GROUP.collapseContainer[indexCategory].classList.add("collapse-container");
+      GROUP.divCategoryContainer[indexCategory] = document.createElement("div");
+      GROUP.divCategoryContainer[indexCategory].classList.add("category-container");
+      GROUP.divCategoryContainer[indexCategory].id =
+        "expand-contract-group" + INDEX_GROUP + "-category" + indexCategory;
+      GROUP.btnCollapseContainer.push(document.createElement("button"));
+      GROUP.btnCollapseContainer[indexCategory].type = "button";
+      GROUP.btnCollapseContainer[indexCategory].classList.add("collapse-container");
 
-      GROUP.categoryCollapseImg.push(document.createElement("img"));
-      GROUP.categoryCollapseImg[indexCategory].classList.add("img-collapse-category");
-      GROUP.categoryCollapseImg[indexCategory].alt = "collapse category";
-      GROUP.categoryCollapseImg[indexCategory].onclick = function () {
+      GROUP.imgCategoryCollapse.push(document.createElement("img"));
+      GROUP.imgCategoryCollapse[indexCategory].classList.add("img-collapse-category");
+      GROUP.imgCategoryCollapse[indexCategory].alt = "collapse category";
+      GROUP.imgCategoryCollapse[indexCategory].onclick = function () {
         collapseCategory(GROUP_ID, indexCategory);
       };
 
-      GROUP.categoryCollapseImg[indexCategory].src = IMG_PATH_RIGHT_ARROW;
+      GROUP.imgCategoryCollapse[indexCategory].src = IMG_PATH_RIGHT_ARROW;
       if (GROUP.isCategoryCollapsed(indexCategory)) {
-        GROUP.categoryContainer[indexCategory].classList.add("display-none");
+        GROUP.divCategoryContainer[indexCategory].classList.add("display-none");
       } else {
-        GROUP.categoryCollapseImg[indexCategory].classList.add("rotate-arrow");
+        GROUP.imgCategoryCollapse[indexCategory].classList.add("rotate-arrow");
       }
 
       GROUP.headingCategoryName.push(document.createElement("h2"));
@@ -443,12 +450,12 @@ function addElementsToDOM() {
         changeLearningStateBulk(GROUP_ID, indexCategory, 2);
       };
 
-      GROUP.collapseContainer[indexCategory].appendChild(GROUP.categoryCollapseImg[indexCategory]);
-      GROUP.collapseContainer[indexCategory].appendChild(GROUP.headingCategoryName[indexCategory]);
-      GROUP.collapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[0][indexCategory]);
-      GROUP.collapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[1][indexCategory]);
-      GROUP.collapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[2][indexCategory]);
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.collapseContainer[indexCategory]);
+      GROUP.btnCollapseContainer[indexCategory].appendChild(GROUP.imgCategoryCollapse[indexCategory]);
+      GROUP.btnCollapseContainer[indexCategory].appendChild(GROUP.headingCategoryName[indexCategory]);
+      GROUP.btnCollapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[0][indexCategory]);
+      GROUP.btnCollapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[1][indexCategory]);
+      GROUP.btnCollapseContainer[indexCategory].appendChild(GROUP.btnChangeLearningState[2][indexCategory]);
+      ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.btnCollapseContainer[indexCategory]);
 
       // Iterate over every case in category
       // for (let indexCategoryItem = 0; indexCategoryItem < categoryItems.length; indexCategoryItem++) {
@@ -467,8 +474,8 @@ function addElementsToDOM() {
         GROUP.divContainer[indexCase] = document.createElement("div");
         GROUP.divContainer[indexCase].classList.add("case-container");
 
-        GROUP.caseNumber[indexCase] = document.createElement("div");
-        GROUP.caseNumber[indexCase].classList.add("case-number");
+        GROUP.divCaseNumber[indexCase] = document.createElement("div");
+        GROUP.divCaseNumber[indexCase].classList.add("case-number");
 
         GROUP.imgContainer[indexCase] = document.createElement("button");
         GROUP.imgContainer[indexCase].classList.add("img-case-container");
@@ -480,8 +487,8 @@ function addElementsToDOM() {
         GROUP.imgCase[indexCase].classList.add("img-case");
         GROUP.imgCase[indexCase].classList.add("front");
 
-        GROUP.algorithm[indexCase] = document.createElement("div");
-        GROUP.algorithm[indexCase].classList.add("algorithm");
+        GROUP.divAlgorithm[indexCase] = document.createElement("div");
+        GROUP.divAlgorithm[indexCase].classList.add("algorithm");
 
         GROUP.btnContainer[indexCase] = document.createElement("div");
         GROUP.btnContainer[indexCase].classList.add("btn-container");
@@ -512,14 +519,14 @@ function addElementsToDOM() {
           mirrorCase(INDEX_GROUP, indexCase);
         };
 
-        GROUP.divAlgorithm[indexCase] = document.createElement("div");
-        GROUP.divAlgorithm[indexCase].classList.add("div-algorithm");
+        GROUP.divAlgButtonContainer[indexCase] = document.createElement("div");
+        GROUP.divAlgButtonContainer[indexCase].classList.add("div-alg-btn-container");
 
         if (GROUP.caseNumberMapping && GROUP.caseNumberMapping.hasOwnProperty(indexCase + 1)) {
-          GROUP.caseNumber[indexCase].innerHTML = GROUP.caseNumberMapping[indexCase + 1];
-          GROUP.caseNumber[indexCase].classList.add("case-number-wide");
+          GROUP.divCaseNumber[indexCase].innerHTML = GROUP.caseNumberMapping[indexCase + 1];
+          GROUP.divCaseNumber[indexCase].classList.add("case-number-wide");
         } else {
-          GROUP.caseNumber[indexCase].innerHTML = indexCase + 1;
+          GROUP.divCaseNumber[indexCase].innerHTML = indexCase + 1;
         }
 
         // -------------------------------------------------------------- Case Number ---------------------------
@@ -530,23 +537,23 @@ function addElementsToDOM() {
         // Set shown alg
         const algSelection = GROUP.getAlgorithmSelection("right", indexCase);
         if (algSelection < algorithmPool.length) {
-          GROUP.divAlgorithm[indexCase].innerHTML = algorithmPool[algSelection];
+          GROUP.divAlgButtonContainer[indexCase].innerHTML = algorithmPool[algSelection];
         } else {
-          GROUP.divAlgorithm[indexCase].innerHTML = GROUP.customAlgorithmsRight[indexCase];
+          GROUP.divAlgButtonContainer[indexCase].innerHTML = GROUP.customAlgorithmsRight[indexCase];
         }
 
-        GROUP.imgMirror[indexCase].src = "./images/mirror1.svg";
-        GROUP.imgEdit[indexCase].src = "./images/edit.svg";
+        GROUP.imgMirror[indexCase].src = IMG_PATH_MIRROR;
+        GROUP.imgEdit[indexCase].src = IMG_PATH_EDIT;
 
         applyCaseStateStyling(GROUP, indexCase);
 
-        GROUP.divContainer[indexCase].appendChild(GROUP.caseNumber[indexCase]); // Don't show case number
+        GROUP.divContainer[indexCase].appendChild(GROUP.divCaseNumber[indexCase]); // Don't show case number
 
         GROUP.divContainer[indexCase].appendChild(GROUP.imgContainer[indexCase]);
         GROUP.imgContainer[indexCase].appendChild(GROUP.imgCase[indexCase]);
-        GROUP.divContainer[indexCase].appendChild(GROUP.algorithm[indexCase]);
-        GROUP.algorithm[indexCase].appendChild(GROUP.divAlgorithm[indexCase]);
-        GROUP.algorithm[indexCase].appendChild(GROUP.btnContainer[indexCase]);
+        GROUP.divContainer[indexCase].appendChild(GROUP.divAlgorithm[indexCase]);
+        GROUP.divAlgorithm[indexCase].appendChild(GROUP.divAlgButtonContainer[indexCase]);
+        GROUP.divAlgorithm[indexCase].appendChild(GROUP.btnContainer[indexCase]);
         GROUP.btnContainer[indexCase].appendChild(GROUP.btnEdit[indexCase]);
         GROUP.btnContainer[indexCase].appendChild(GROUP.btnMirror[indexCase]);
         GROUP.btnEdit[indexCase].appendChild(GROUP.imgEdit[indexCase]);
@@ -558,26 +565,25 @@ function addElementsToDOM() {
           }
         });
 
-        GROUP.categoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
+        GROUP.divCategoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
       }
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.categoryContainer[indexCategory]);
-  });
-  ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
+      ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.divCategoryContainer[indexCategory]);
+    });
+    ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
   });
 }
 
 function applyCaseStateStyling(group, indexCase) {
   const state = group.getCaseState(indexCase);
   if (group.divContainer[indexCase]) {
-    group.divContainer[indexCase].style.background = CATEGORY_COLORS[state];
-    group.divContainer[indexCase].style.color = CATEGORY_TEXT_COLOR[state];
-    group.divContainer[indexCase].style.borderStyle = CATEGORY_BORDERS[state];
+    uiSetBackgroundColor(group.divContainer[indexCase], CATEGORY_COLORS[state]);
+    uiSetFontColor(group.divContainer[indexCase], CATEGORY_TEXT_COLOR[state]);
   }
   if (group.imgEdit[indexCase]) {
-    group.imgEdit[indexCase].style.filter = COLORS_BTN_EDIT[state];
+    uiSetFilter(group.imgEdit[indexCase], COLORS_BTN_EDIT[state]);
   }
   if (group.imgMirror[indexCase]) {
-    group.imgMirror[indexCase].style.filter = COLORS_BTN_EDIT[state];
+    uiSetFilter(group.imgMirror[indexCase], COLORS_BTN_EDIT[state]);
   }
 }
 
@@ -640,7 +646,7 @@ function updateAlg() {
   // Show selected alg in select mode
   let tempAlg = tempAlgRight;
   if (GROUP.flagMirrored[INDEX_CASE] == true) tempAlg = tempAlgLeft;
-  GROUP.divAlgorithm[INDEX_CASE].innerHTML = tempAlg;
+  GROUP.divAlgButtonContainer[INDEX_CASE].innerHTML = tempAlg;
 
   // Show selected alg in train mode
   if (TrainCase.currentTrainCaseNumber >= 0 && mode == 1) {
@@ -724,24 +730,25 @@ function editAlgs(indexGroup, indexCase, mirrored) {
       // Set Text to Alg
       ELEM_EDITALG_LISTENTRY[alg].innerHTML = algorithmPool[alg];
       // Make all used elements visible
-      ELEM_EDITALG_LISTENTRY[alg].style.display = "block";
+      uiShowElement(ELEM_EDITALG_LISTENTRY[alg]);
     } else {
       // Make all unused elements invisible
-      ELEM_EDITALG_LISTENTRY[alg].style.display = "none";
+      uiHideElement(ELEM_EDITALG_LISTENTRY[alg]);
     }
     // Reset all backgrounds
-    ELEM_EDITALG_LISTENTRY[alg].style.background = COLORS_ALG[0];
+    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[alg], COLORS_ALG.transparent);
   }
 
   // Check if previously saved alg is default or custom
   if (editAlgGlobal.selectedAlgNumberRight < algorithmPool.length) {
     // If alg is default set color of selected alg
-    ELEM_EDITALG_LISTENTRY[GROUP.getAlgorithmSelection("right", INDEX_CASE)].style.background = COLORS_ALG[1];
+    const tempAlgSelection = GROUP.getAlgorithmSelection("right", INDEX_CASE);
+    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[tempAlgSelection], COLORS_ALG.green);
     // and reset color of custom
-    ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[0];
+    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
   } else {
     // If alg is custom set color
-    ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[1];
+    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
   }
 
   // Set text in custom alg textbox to saved value
@@ -754,7 +761,7 @@ function editAlgs(indexGroup, indexCase, mirrored) {
   if (mirrored) {
     ELEM_SWITCH_RIGHT.checked = false;
     ELEM_SWITCH_LEFT.checked = true;
-    switchLeftRight();
+    switchLeftRightEditAlg();
   }
 
   // Set checkbox to saved state
@@ -779,12 +786,12 @@ function customAlgSelected() {
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
-    element.style.background = COLORS_ALG[0];
+    uiSetBackgroundColor(element, COLORS_ALG.transparent);
   });
-  ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[0];
+  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
   // Set Background of custom alg to selected
-  ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[1];
+  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
 
   // Save selected alg globally
   const selectedAlgTemp = algorithmPool.length;
@@ -808,7 +815,7 @@ function customAlgSelected() {
  * algorithm for the chosen case. If the identical checkbox is checked,
  * the same algorithm (mirrored) is shown for both cases.
  */
-function switchLeftRight() {
+function switchLeftRightEditAlg() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
   const GROUP = getGroupByIndex(INDEX_GROUP);
@@ -816,9 +823,9 @@ function switchLeftRight() {
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
-    element.style.background = COLORS_ALG[0];
+    uiSetBackgroundColor(element, COLORS_ALG.transparent);
   });
-  ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[0];
+  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
   let selectedAlgTemp = 0;
   if (ELEM_SWITCH_RIGHT.checked) {
@@ -872,10 +879,10 @@ function switchLeftRight() {
   // Check if custom or default alg is selected
   if (selectedAlgTemp < algorithmPool.length) {
     // If alg is default, set color of selected alg
-    ELEM_EDITALG_LISTENTRY[selectedAlgTemp].style.background = COLORS_ALG[1];
+    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[selectedAlgTemp], COLORS_ALG.green);
   } else {
     // If alg is custom, set color
-    ELEM_EDITALG_CUSTOMALG.style.background = COLORS_ALG[1];
+    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
   }
 }
 
@@ -1027,16 +1034,16 @@ function updateTrainCases() {
   recapEnabled = ELEM_CHECKBOX_RECAP_ENABLE.checked;
 
   if (timerEnabled) {
-    ELEM_TIMER.style.display = "block";
+    uiShowElement(ELEM_TIMER);
   } else {
-    ELEM_TIMER.style.display = "none";
+    uiHideElement(ELEM_TIMER);
   }
 
   if (recapEnabled) {
-    ELEM_RECAP_INFO.style.display = "block";
+    uiShowElement(ELEM_RECAP_INFO);
     if (recapDone) recapDone = false;
   } else {
-    ELEM_RECAP_INFO.style.display = "none";
+    uiHideElement(ELEM_RECAP_INFO);
   }
 
   closeOverlays();
@@ -1110,28 +1117,28 @@ function showHintAlg() {
     if (twistyLoadFlag) {
       if (hintAlgSelection == 2) {
         // "Show all time"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
-        ELEM_HINT_PLACEHOLDER.style.display = "none";
-        ELEM_HINT_ALG.style.display = "none";
-        ELEM_TWISTY_ALG_VIEWER.style.display = "block";
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "visible"));
+        uiHideElement(ELEM_HINT_PLACEHOLDER);
+        uiHideElement(ELEM_HINT_ALG);
+        uiShowElement(ELEM_TWISTY_ALG_VIEWER);
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "hidden"));
-        ELEM_HINT_PLACEHOLDER.style.display = "flex";
-        ELEM_HINT_ALG.style.display = "none";
-        ELEM_TWISTY_ALG_VIEWER.style.display = "none";
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "hidden"));
+        uiShowElement(ELEM_HINT_PLACEHOLDER, "flex");
+        uiHideElement(ELEM_HINT_ALG);
+        uiHideElement(ELEM_TWISTY_ALG_VIEWER);
       }
     } else {
       // twistyLoadFlag: false
       if (hintAlgSelection == 2) {
         // "Show all time"
-        ELEM_HINT_PLACEHOLDER.style.display = "none";
+        uiHideElement(ELEM_HINT_PLACEHOLDER);
         ELEM_HINT_ALG.innerText = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHint();
-        ELEM_HINT_ALG.style.display = "flex";
+        uiShowElement(ELEM_HINT_ALG, "flex");
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
-        ELEM_HINT_PLACEHOLDER.style.display = "flex";
-        ELEM_HINT_ALG.style.display = "none";
+        uiShowElement(ELEM_HINT_PLACEHOLDER, "flex");
+        uiHideElement(ELEM_HINT_ALG);
       }
     }
   } else {
@@ -1142,7 +1149,7 @@ function showHintAlg() {
     // Show hint image if no hint image is selected but hint alg button is pressed
     if (hintImageSelection == 0) {
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      ELEM_HINT_IMG.style.visibility = "visible";
+      uiSetVisibility(ELEM_HINT_IMG, "visible");
     }
 
     // Get algorithm and convert to list
@@ -1150,33 +1157,33 @@ function showHintAlg() {
 
     if (twistyLoadFlag) {
       // Hide hint placeholder
-      ELEM_HINT_PLACEHOLDER.style.display = "none";
+      uiHideElement(ELEM_HINT_PLACEHOLDER);
       // Make hint visible
-      ELEM_TWISTY_ALG_VIEWER.style.display = "flex";
+      uiShowElement(ELEM_TWISTY_ALG_VIEWER, "flex");
 
       if (hintAlgSelection == 0) {
         // "reveal step-by-step"
         // ELEM_HINT_IMG.style.opacity = "1";
 
         // Hide all moves if hintCounter is 0
-        if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "hidden"));
+        if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "hidden"));
 
         // Show one move at a time
         const maxViewerMoves = ELEMS_TWISTY_ALG_MOVE.length;
         const maxMoves = Math.max(ALG_LIST.length, maxViewerMoves);
         if (hintCounter < maxMoves && ELEMS_TWISTY_ALG_MOVE[hintCounter]) {
-          ELEMS_TWISTY_ALG_MOVE[hintCounter].style.visibility = "visible";
+          uiSetVisibility(ELEMS_TWISTY_ALG_MOVE[hintCounter], "visible");
           hintCounter++;
         }
         return;
       } else if (hintAlgSelection == 1) {
         // "Reveal at once"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => (element.style.visibility = "visible"));
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "visible"));
       }
     } else {
       // Hide hint placeholder
-      ELEM_HINT_PLACEHOLDER.style.display = "none";
-      ELEM_HINT_ALG.style.display = "flex";
+      uiHideElement(ELEM_HINT_PLACEHOLDER);
+      uiShowElement(ELEM_HINT_ALG, "flex");
       // twistyLoadFlag: false
       if (hintAlgSelection == 0) {
         // "reveal step-by-step"
@@ -1199,9 +1206,9 @@ function showHintAlg() {
 function showSelectedGroup() {
   forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     if (ELEM_SELECT_GROUP.selectedIndex === INDEX_GROUP) {
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "flex";
+      uiShowElement(ELEM_GROUP_CONTAINER[INDEX_GROUP], "flex");
     } else {
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "none";
+      uiHideElement(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
     }
   });
   // Scroll to the top
@@ -1286,7 +1293,7 @@ function nextScramble(nextPrevious) {
   // Show next/previous case
   // (nextPrevious = 0: previous case, nextPrevious = 1: next case)
   if (hintImageSelection == 1) {
-    ELEM_HINT_IMG.style.opacity = "0.3";
+    uiSetOpacity(ELEM_HINT_IMG, 0.3);
     ELEM_LOADING_CASE.classList.remove(CLASS_DISPLAY_NONE);
   }
 
@@ -1472,13 +1479,13 @@ function updateHintImgVisibility() {
     case 0:
       // No hint
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      ELEM_HINT_IMG.style.visibility = "hidden";
+      uiSetVisibility(ELEM_HINT_IMG, "hidden");
       ELEM_DIV_TWISTY_PLAYER.classList.add("display-none");
       break;
     case 1:
       // 2D image as hint
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      ELEM_HINT_IMG.style.visibility = "visible";
+      uiSetVisibility(ELEM_HINT_IMG, "visible");
       ELEM_DIV_TWISTY_PLAYER.classList.add("display-none");
       break;
     default:
@@ -1498,11 +1505,11 @@ function showHideDebugInfo() {
   if (boolShowDebugInfo) {
     boolShowDebugInfo = false;
     ELEM_BTN_SHOW_HIDE_DEBUG_INFO.innerHTML = "> Show details";
-    ELEM_DEBUG_INFO.style.display = "none";
+    uiHideElement(ELEM_DEBUG_INFO);
   } else {
     boolShowDebugInfo = true;
     ELEM_BTN_SHOW_HIDE_DEBUG_INFO.innerHTML = "> Hide details";
-    ELEM_DEBUG_INFO.style.display = "block";
+    uiShowElement(ELEM_DEBUG_INFO);
   }
 }
 
@@ -1536,16 +1543,16 @@ function changeState(indexGroup, indexCategory, indexCase) {
 function collapseCategory(groupId, indexCategory) {
   const GROUP = GROUPS.get(groupId);
   if (!GROUP) return;
-  const CATEGORY_CONATINER = GROUP.categoryContainer[indexCategory];
+  const CATEGORY_CONATINER = GROUP.divCategoryContainer[indexCategory];
   if (!CATEGORY_CONATINER) return;
   const wasCollapsed = GROUP.isCategoryCollapsed(indexCategory);
   if (wasCollapsed == true) {
     // expand
-    GROUP.categoryCollapseImg[indexCategory].classList.add("rotate-arrow");
+    GROUP.imgCategoryCollapse[indexCategory].classList.add("rotate-arrow");
     expand(CATEGORY_CONATINER, 300);
   } else {
     // colapse
-    GROUP.categoryCollapseImg[indexCategory].classList.remove("rotate-arrow");
+    GROUP.imgCategoryCollapse[indexCategory].classList.remove("rotate-arrow");
     collapse(CATEGORY_CONATINER, 300);
   }
   GROUP.toggleCategory(indexCategory);
@@ -1771,7 +1778,7 @@ function spaceDown() {
       toggleTimer();
       spacePressFlag = true;
     } else {
-      ELEM_TIMER.style.color = "#00ee00"; // yellow
+      uiSetFontColor(ELEM_TIMER, COLOR_TIMER.ready); // yellow
     }
   } else {
     flagTimerRunning = false;
@@ -1794,6 +1801,7 @@ function spaceUp() {
   if (timerEnabled) {
     if (spacePressFlag == false) {
       ELEM_TIMER.style.color = COLOR_TEXT;
+      uiSetFontColor(ELEM_TIMER, COLOR_TIMER.neutral);
       toggleTimer();
     }
     spacePressFlag = false;
@@ -1888,7 +1896,7 @@ function mirrorCase(indexGroup, indexCase) {
   const mirrored = GROUP.flagMirrored[indexCase];
   GROUP.flagMirrored[indexCase] = !GROUP.flagMirrored[indexCase];
   GROUP.imgContainer[indexCase].style.transform = mirrored ? "rotateY(0deg)" : "rotateY(180deg)";
-  GROUP.divAlgorithm[indexCase].innerHTML = mirrored ? tempAlgRight : tempAlgLeft;
+  GROUP.divAlgButtonContainer[indexCase].innerHTML = mirrored ? tempAlgRight : tempAlgLeft;
 }
 
 /**
@@ -2058,7 +2066,7 @@ function showWelcomePopover() {
     const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
     ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
     ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
-    ELEM_POPOVER_INFO.style.display = "block";
+    uiShowElement(ELEM_POPOVER_INFO);
   }
 }
 
@@ -2074,7 +2082,7 @@ function showInfo() {
   if (ELEM_POPOVER_INFO.matches("[popover]:popover-open")) {
     ELEM_POPOVER_INFO.hidePopover();
   } else {
-    ELEM_POPOVER_INFO.style.display = "none";
+    uiHideElement(ELEM_POPOVER_INFO);
   }
 
   ELEM_BTN_INFO.blur(); // Убираем фокус

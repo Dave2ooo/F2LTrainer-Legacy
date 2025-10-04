@@ -29,18 +29,18 @@ class Group {
   }
 
   resetDomState() {
-    this.categoryContainer = [];
-    this.collapseContainer = [];
-    this.categoryCollapseImg = [];
+    this.divCategoryContainer = [];
+    this.btnCollapseContainer = [];
+    this.imgCategoryCollapse = [];
     this.headingCategoryName = [];
     this.btnChangeLearningState = [[], [], []];
     this.divContainer = [];
-    this.caseNumber = [];
+    this.divCaseNumber = [];
     this.imgContainer = [];
     this.imgCase = [];
     this.imgCaseLeft = [];
-    this.algorithm = [];
     this.divAlgorithm = [];
+    this.divAlgButtonContainer = [];
     this.btnContainer = [];
     this.btnMirror = [];
     this.imgMirror = [];
@@ -63,7 +63,7 @@ class Group {
   getNumberCategories() {
     return this.categoryCases.length;
   }
-  
+
   getNumberCases() {
     return this.numberCases;
   }
