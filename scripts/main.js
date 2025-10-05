@@ -5,6 +5,7 @@
 import * as ui from "./ui.js";
 import * as stringManipulation from "./string_manipulation.js";
 import * as groups from "./groups.js";
+import * as twistyPlayer from "./twistyPlayer.js";
 
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
@@ -383,10 +384,6 @@ function twistyPlayerMouseUp(event) {
 //   }
 // }
 
-function isSamePoint(point1, point2) {
-  return point1.x === point2.x && point1.y === point2.y;
-}
-
 /**
  * Creates all necessary elements in the DOM for the case selection page.
  * Called when the page is loaded.
@@ -666,13 +663,13 @@ function updateAlg() {
     }
     ELEM_SCRAMBLE.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleAUF();
     const SETUP_ALG = trainCaseList[TrainCase.currentTrainCaseNumber].getSetupAlg();
-    ELEM_TWISTY_PLAYER.experimentalSetupAlg = SETUP_ALG;
-    ELEM_TWISTY_PLAYER.alg = CURRENT_TRAIN_CASE.getAlgHintAUF();
+    twistyPlayer.setSetupAlg(SETUP_ALG);
+    twistyPlayer.setAlg(CURRENT_TRAIN_CASE.getAlgHintAUF())
     ELEM_DEBUG_INFO.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getDebugInfo();
   }
 
   // Reset Twisty Player progressbar
-  ELEM_TWISTY_PLAYER.timestamp = 0;
+  twistyPlayer.resetTimestamp();
 
   closeOverlays();
 
@@ -1278,17 +1275,6 @@ function generateTrainCaseList() {
 }
 
 /**
- * https://stackoverflow.com/a/12646864
- * Less biased shuffle
- */
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-/**
  * Show next/previous case
  * Called when user clicks on Previous/Next Scramble button or presses space
  * @param {number} nextPrevious - 0 to show previous case, 1 to show next case
@@ -1410,7 +1396,7 @@ function updateCheckboxStatus() {
   ELEM_CHECKBOX_RIGHT.checked = rightSelection;
   ELEM_CHECKBOX_AUF.checked = aufSelection;
   ELEM_CHECKBOX_CONSIDER_AUF.checked = considerAUFinAlg;
-  enableDisableCheckboxConsiderAUF();
+  toggleCheckboxConsiderAUF();
 
   ELEM_SELECT_HINT_IMAGE.selectedIndex = hintImageSelection;
   ELEM_SELECT_HINT_ALG.selectedIndex = hintAlgSelection;
@@ -1422,7 +1408,7 @@ function updateCheckboxStatus() {
   ELEM_CHECKBOX_RECAP_ENABLE.checked = recapEnabled;
 }
 
-function enableDisableCheckboxConsiderAUF() {
+function toggleCheckboxConsiderAUF() {
   ELEM_CHECKBOX_CONSIDER_AUF.disabled = !ELEM_CHECKBOX_AUF.checked;
 }
 
@@ -1544,92 +1530,6 @@ function changeState(indexGroup, indexCategory, indexCase) {
  * @param {string} groupId - Id of the group.
  * @param {number} indexCategory - Index of the category within the group.
  */
-function collapseCategory(groupId, indexCategory) {
-  const GROUP = GROUPS.get(groupId);
-  if (!GROUP) return;
-  const CATEGORY_CONATINER = GROUP.divCategoryContainer[indexCategory];
-  if (!CATEGORY_CONATINER) return;
-  const wasCollapsed = GROUP.isCategoryCollapsed(indexCategory);
-  if (wasCollapsed == true) {
-    // expand
-    GROUP.imgCategoryCollapse[indexCategory].classList.add("rotate-arrow");
-    expand(CATEGORY_CONATINER, 300);
-  } else {
-    // colapse
-    GROUP.imgCategoryCollapse[indexCategory].classList.remove("rotate-arrow");
-    collapse(CATEGORY_CONATINER, 300);
-  }
-  GROUP.toggleCategory(indexCategory);
-  saveUserData();
-}
-
-/**
- * Collapse/Minimize the specific category in select mode.
- * Updates the visual state of the category container
- * by setting height, padding, margin, and overflow properties.
- *
- * @param {HTMLElement} target - The element to collapse.
- * @param {number} [duration=300] - The duration of the collapse animation in milliseconds.
- */
-function collapse(target, duration = 300) {
-  target.style.transitionProperty = "height, margin, padding";
-  target.style.transitionDuration = duration + "ms";
-  target.style.boxSizing = "border-box";
-  target.style.height = target.offsetHeight + "px";
-  target.offsetHeight;
-  target.style.overflow = "hidden";
-  target.style.height = 0;
-  target.style.paddingTop = 0;
-  target.style.paddingBottom = 0;
-  target.style.marginTop = 0;
-  target.style.marginBottom = 0;
-  window.setTimeout(() => {
-    target.classList.add("display-none");
-    target.style.removeProperty("height");
-    target.style.removeProperty("padding-top");
-    target.style.removeProperty("padding-bottom");
-    target.style.removeProperty("margin-top");
-    target.style.removeProperty("margin-bottom");
-    target.style.removeProperty("overflow");
-    target.style.removeProperty("transition-duration");
-    target.style.removeProperty("transition-property");
-  }, duration);
-}
-
-/**
- * Expand the specific category in select mode.
- * Updates the visual state of the category container
- * by setting height, padding, margin, and overflow properties.
- *
- * @param {HTMLElement} target - The element to expand.
- * @param {number} [duration=300] - The duration of the expand animation in milliseconds.
- */
-let expand = (target, duration = 300) => {
-  // Expand the specific category in select mode
-  target.classList.remove("display-none");
-  let height = target.offsetHeight;
-  target.style.overflow = "hidden";
-  target.style.height = 0;
-  target.style.paddingTop = 0;
-  target.style.paddingBottom = 0;
-  target.style.marginTop = 0;
-  target.style.marginBottom = 0;
-  target.offsetHeight;
-  target.style.boxSizing = "border-box";
-  target.style.transitionProperty = "height, margin, padding";
-  target.style.transitionDuration = duration + "ms";
-  target.style.height = height + "px";
-  target.style.removeProperty("padding-top");
-  target.style.removeProperty("padding-bottom");
-  target.style.removeProperty("margin-top");
-  target.style.removeProperty("margin-bottom");
-  window.setTimeout(() => {
-    target.style.removeProperty("height");
-    target.style.removeProperty("overflow");
-    target.style.removeProperty("transition-duration");
-    target.style.removeProperty("transition-property");
-  }, duration);
-};
 
 /**
  * Toggle between select mode and train mode.
@@ -1752,17 +1652,6 @@ function timer() {
  * @param {number} time - The timer time in 10ms units.
  * @returns {string} A string of the form "ss:cc" representing the time.
  */
-let timeToString = function (time) {
-  let countString = time % 100;
-  let secString = Math.floor(time / 100);
-  if (secString < 10) {
-    secString = "0" + secString;
-  }
-  if (countString < 10) {
-    countString = "0" + countString;
-  }
-  return secString + ":" + countString;
-};
 
 /**
  * Handles the spacebar key press event.
@@ -1928,11 +1817,6 @@ function hidePressMeTextTwisty() {
   ELEM_PRESS_ME_TWISTY.classList.add("display-none");
 }
 
-function copyUTLtoClipboard() {
-  alert("URL copied to clipboard");
-  navigator.clipboard.writeText(ELEM_INPUT_EXPORT.value);
-}
-
 function showResetButton() {
   // Show reset button in twisty player (3D cube in train mode)
   ELEM_BTN_RESET_PLAYER_VIEW.classList.remove("display-none");
@@ -2041,58 +1925,6 @@ function mouseup(e) {
   // console.log("mouseup, position: " + mouseposition);
 }
 
-// ----------    POP-UPS    ----------
-
-function closeOverlays() {
-  ELEM_BODY.style.overflow = "auto";
-  ELEM_WELCOME_CONATINER.close();
-  // ELEM_WELCOME_CONATINER_TRAIN.close();
-  ELEM_INFO_CONTAINER.close();
-  ELEM_EDITALG_CONTAINER.close();
-  ELEM_CONTAINER_TRAIN_SETTINGS.close();
-  // ELEM_CONTAINER_SELECT_SETTINGS.close();
-  ELEM_CHANGE_STATE_POPUP.close();
-  ELEM_FEEDBACK_CONTAINER.close();
-  flagDialogOpen = false;
-}
-
-function showWelcomePopup() {
-  if (firstVisit) {
-    openDialog(ELEM_WELCOME_CONATINER);
-  }
-}
-
-function showWelcomePopover() {
-  if (firstVisit) {
-    ELEM_POPOVER_INFO.popover = "manual";
-    ELEM_BTN_INFO.popoverTargetElement = ELEM_POPOVER_INFO;
-    ELEM_BTN_INFO.popoverTargetAction = "toggle";
-    const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
-    ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
-    ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
-    ui.showElement(ELEM_POPOVER_INFO);
-  }
-}
-
-function showWelcomeTrainPopup() {
-  setFirstVisitTrain();
-  // openDialog(ELEM_WELCOME_CONATINER_TRAIN);
-}
-
-function showInfo() {
-  ELEM_IFRAME_VIDEO.src = "https://www.youtube-nocookie.com/embed/EQbZvKssp7s?si=tEuX7PxLo8i5UdiT&amp;start=20";
-  openDialog(ELEM_INFO_CONTAINER);
-
-  if (ELEM_POPOVER_INFO.matches("[popover]:popover-open")) {
-    ELEM_POPOVER_INFO.hidePopover();
-  } else {
-    ui.hideElement(ELEM_POPOVER_INFO);
-  }
-
-  ELEM_BTN_INFO.blur(); // Убираем фокус
-  // ELEM_INFO_CONTAINER.scrollTo(0, 0);
-}
-
 //function showSettingsSelect() {
 //  exportUserData();
 //  openDialog(ELEM_CONTAINER_SELECT_SETTINGS);
@@ -2102,39 +1934,3 @@ function updateSettingsActiveCases() {
   //Set the active cases for settings page
   ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML(true);
 }
-
-function showSettingsTrain() {
-  exportToURL();
-  updateCheckboxStatus();
-
-  //Set the active cases for settings page
-  ELEM_SETTINGS_ACTIVE_CASES_INFO.innerHTML = getActiveCasesHTML();
-
-  openDialog(ELEM_CONTAINER_TRAIN_SETTINGS);
-}
-
-function showSetStateMenu() {
-  const GROUP = group.getGroupByIndex(currentTrainGroup);
-  const STATE = GROUP.getCaseState(currentTrainCase);
-  if (STATE == 0 || STATE == "0") {
-    ELEM_RADIO_UNLEARNED.checked = true;
-  } else if (STATE == 1 || STATE == "1") {
-    ELEM_RADIO_LEARNING.checked = true;
-  } else if (STATE == 2 || STATE == "2") {
-    ELEM_RADIO_FINISHED.checked = true;
-  }
-
-  openDialog(ELEM_CHANGE_STATE_POPUP);
-}
-
-function showFeedback() {
-  openDialog(ELEM_FEEDBACK_CONTAINER);
-  ELEM_FEEDBACK_NAME.focus();
-}
-
-function openDialog(ELEM) {
-  ELEM.showModal();
-  ELEM_BODY.style.overflow = "hidden";
-  flagDialogOpen = true;
-}
-flagDialogOpen = true;

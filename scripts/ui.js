@@ -50,3 +50,4 @@ export function setVisibility(elem, visibility){
   }
   elem.style.visibility = visibility;
 }
+
