@@ -548,37 +548,79 @@ const EXPERT_COLLECTION = new Group({
   ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 });
 
-const GROUPS = new Map([
+const GROUP_MAP = new Map([
   [BASIC_COLLECTION.idName, BASIC_COLLECTION],
   [BASIC_BACK_COLLECTION.idName, BASIC_BACK_COLLECTION],
   [ADVANCED_COLLECTION.idName, ADVANCED_COLLECTION],
   [EXPERT_COLLECTION.idName, EXPERT_COLLECTION],
 ]);
 
-const GROUP_ID_LIST = Array.from(GROUPS.keys());
+const GROUP_ID_LIST = Array.from(GROUP_MAP.keys());
+
+UIStore.setState(
+  {
+    groups: {
+      map: GROUP_MAP,
+      idList: GROUP_ID_LIST.slice(),
+    },
+  },
+  { source: "groups:init" }
+);
+
+function getGroupsSnapshot() {
+  const { groups } = UIStore.getState();
+  if (!groups || !groups.idList || !groups.map) {
+    return { idList: [], map: null };
+  }
+  return groups;
+}
 
 function getGroupIds() {
-  return GROUP_ID_LIST.slice();
+  const { idList } = getGroupsSnapshot();
+  return idList.slice();
 }
 
 function getGroupCount() {
-  return GROUP_ID_LIST.length;
+  const { idList } = getGroupsSnapshot();
+  return idList.length;
 }
 
 function getGroupIdByIndex(index) {
-  return GROUP_ID_LIST[index];
+  const { idList } = getGroupsSnapshot();
+  return idList[index];
 }
 
 function getGroupByIndex(index) {
-  return GROUPS.get(getGroupIdByIndex(index));
+  const { idList, map } = getGroupsSnapshot();
+  if (!map) {
+    return undefined;
+  }
+  const id = idList[index];
+  return map.get(id);
+}
+
+function getGroupById(id) {
+  const { map } = getGroupsSnapshot();
+  if (!map) {
+    return undefined;
+  }
+  return map.get(id);
 }
 
 function getGroupIndexById(id) {
-  return GROUP_ID_LIST.indexOf(id);
+  const { idList } = getGroupsSnapshot();
+  return idList.indexOf(id);
 }
 
 function forEachGroup(callback) {
-  GROUP_ID_LIST.forEach((id, index) => {
-    callback(GROUPS.get(id), index, id);
+  const { idList, map } = getGroupsSnapshot();
+  if (!map) {
+    return;
+  }
+  idList.forEach((id, index) => {
+    const group = map.get(id);
+    if (group) {
+      callback(group, index, id);
+    }
   });
 }

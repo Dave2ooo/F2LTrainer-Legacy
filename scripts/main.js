@@ -128,7 +128,6 @@ let currentTrainCase = -1;
 
 let hintCounter = 0;
 
-let mode = 0; // 0: select, 1: train
 
 // List that contains all the randomly selected cases
 let trainCaseList = [];
@@ -177,6 +176,48 @@ const ELEM_BTN_CHANGE_ALG = document.getElementById("btn-change-alg-id");
 const ELEM_FEEDBACK_NAME = document.getElementById("feedback-name-id");
 
 const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
+
+function getMode() {
+  return UIStore.getState().mode;
+}
+
+function setMode(nextMode, options) {
+  UIStore.setState({ mode: nextMode }, options);
+}
+
+let previousModeValue = getMode();
+
+function handleModeChange(state, priorMode) {
+  const mode = state.mode;
+  if (mode === 1) {
+    if (priorMode !== 1) {
+      updateTrainCases();
+      if (state.firstVisitTrain) {
+        UIStore.setState({ firstVisitTrain: false }, { source: "main:mode-enter-train" });
+      }
+    }
+    ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
+    ELEM_WINDOW_SELECT.classList.add("display-none");
+    ELEM_WINDOW_TRAIN.classList.remove("display-none");
+    ELEM_SELECT_GROUP.classList.add("display-none");
+  } else {
+    ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
+    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Start training");
+    ELEM_WINDOW_SELECT.classList.remove("display-none");
+    ELEM_WINDOW_TRAIN.classList.add("display-none");
+    ELEM_SELECT_GROUP.classList.remove("display-none");
+  }
+}
+
+handleModeChange(UIStore.getState(), undefined);
+
+UIStore.subscribe("mode", ({ state }) => {
+  const priorMode = previousModeValue;
+  previousModeValue = state.mode;
+  handleModeChange(state, priorMode);
+});
+
 //#endregion
 
 // ----------------------------------------- LOADING -------------------------------------------------------
@@ -318,30 +359,38 @@ async function loadTwistyAlgViewer() {
     ELEM_SELECT_HINT_IMAGE.selectedIndex = 1;
     // Disable option to select Twisty Player
     ELEM_SELECT_HINT_IMAGE.options[2].disabled = true;
-    console.error("Failed to load TwistyAlgViewer module:", error);
+    console.error("Failed to load TwistyAlgViewer module:", err);
   }
 }
 
 function addTwistyPlayerEventListeners() {
-  try {
-    const ELEM_TWISTY_PLAYER_BODY = ELEM_TWISTY_PLAYER.contentWrapper.firstChild;
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("mousedown", (event) => twistyPlayerMouseDown(event));
-    ELEM_TWISTY_PLAYER_BODY.addEventListener("mouseup", (event) => twistyPlayerMouseUp(event));
-    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchstart", (event) => twistyPlayerTouchStart(event));
-    // ELEM_TWISTY_PLAYER_BODY.addEventListener("touchend", (event) => twistyPlayerTouchEnd(event));
-
-    // Called when cube is rotated. Hide reset button if camera latitude is default
-    ELEM_TWISTY_PLAYER.experimentalModel.twistySceneModel.orbitCoordinatesRequest.addFreshListener((v) => {
-      if (v.latitude == TWISTY_PLAYER_CAMERA.LATITUDE) {
-        hideResetButton();
-      } else {
-        showResetButton();
-      }
-    });
-    twistyEventListenerFlag = true;
-  } catch (e) {
-    console.warn(e);
+  if (!ELEM_TWISTY_PLAYER || !twistyLoadFlag) {
+    return;
   }
+
+  const twistyBody = ELEM_TWISTY_PLAYER.contentWrapper?.firstChild;
+  if (!twistyBody) {
+    // Twisty Player is still rendering its internal scene. Try again shortly.
+    setTimeout(() => {
+      if (!twistyEventListenerFlag) addTwistyPlayerEventListeners();
+    }, 100);
+    return;
+  }
+
+  twistyBody.addEventListener("mousedown", (event) => twistyPlayerMouseDown(event));
+  twistyBody.addEventListener("mouseup", (event) => twistyPlayerMouseUp(event));
+  // twistyBody.addEventListener("touchstart", (event) => twistyPlayerTouchStart(event));
+  // twistyBody.addEventListener("touchend", (event) => twistyPlayerTouchEnd(event));
+
+  // Called when cube is rotated. Hide reset button if camera latitude is default
+  ELEM_TWISTY_PLAYER.experimentalModel.twistySceneModel.orbitCoordinatesRequest.addFreshListener((v) => {
+    if (v.latitude == TWISTY_PLAYER_CAMERA.LATITUDE) {
+      hideResetButton();
+    } else {
+      showResetButton();
+    }
+  });
+  twistyEventListenerFlag = true;
 }
 
 function twistyPlayerMouseDown(event) {
@@ -643,7 +692,7 @@ function updateAlg() {
   GROUP.divAlgorithm[INDEX_CASE].innerHTML = tempAlg;
 
   // Show selected alg in train mode
-  if (TrainCase.currentTrainCaseNumber >= 0 && mode == 1) {
+  if (TrainCase.currentTrainCaseNumber >= 0 && getMode() === 1) {
     const CURRENT_TRAIN_CASE = trainCaseList[TrainCase.currentTrainCaseNumber];
     if (!CURRENT_TRAIN_CASE.getMirroring()) {
       CURRENT_TRAIN_CASE.setAlgHint(tempAlgRight);
@@ -954,7 +1003,7 @@ function keydown(e) {
     // console.log("Key pressed: " + e.keyCode);
   }
 
-  if (mode === 0) return; // Do nothing when in case select mode
+  if (getMode() === 0) return; // Do nothing when in case select mode
 
   if (e.keyCode === 32) {
     // Space key
@@ -1534,7 +1583,7 @@ function changeState(indexGroup, indexCategory, indexCase) {
  * @param {number} indexCategory - Index of the category within the group.
  */
 function collapseCategory(groupId, indexCategory) {
-  const GROUP = GROUPS.get(groupId);
+  const GROUP = getGroupById(groupId);
   if (!GROUP) return;
   const CATEGORY_CONATINER = GROUP.categoryContainer[indexCategory];
   if (!CATEGORY_CONATINER) return;
@@ -1625,32 +1674,8 @@ let expand = (target, duration = 300) => {
  * mode: 0 = select, 1 = train
  */
 function changeMode() {
-  if (mode == 0) {
-    mode = 1;
-    updateTrainCases();
-    ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
-    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
-    ELEM_WINDOW_SELECT.classList.add("display-none");
-    ELEM_WINDOW_TRAIN.classList.remove("display-none");
-    //ELEM_BUTTON_SETTING_SELECT.classList.add("display-none");
-    //ELEM_BUTTON_SETTINGS.classList.remove("display-none");
-    // ELEM_CONTAINER_SELECT_GROUP.classList.add("display-none");
-    ELEM_SELECT_GROUP.classList.add("display-none");
-    if (firstVisitTrain) {
-      firstVisitTrain = false;
-      //showWelcomeTrainPopup();
-    }
-  } else {
-    mode = 0;
-    ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
-    ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Start training");
-    ELEM_WINDOW_SELECT.classList.remove("display-none");
-    ELEM_WINDOW_TRAIN.classList.add("display-none");
-    //ELEM_BUTTON_SETTING_SELECT.classList.remove("display-none");
-    //ELEM_BUTTON_SETTINGS.classList.add("display-none");
-    // ELEM_CONTAINER_SELECT_GROUP.classList.remove("display-none");
-    ELEM_SELECT_GROUP.classList.remove("display-none");
-  }
+  const nextMode = getMode() === 0 ? 1 : 0;
+  setMode(nextMode, { source: "main:changeMode" });
   ELEM_BTN_CHANGE_MODE.blur(); // Make button lose focus
 }
 
@@ -1661,7 +1686,9 @@ function changeMode() {
  */
 // function checkForDuplicates() {
 //   // Check if there are any duplicate cases in the groups map
-//   for (const GROUP of GROUPS.values()) {
+//   const { map } = getGroupsSnapshot();
+//   if (!map) return;
+//   for (const GROUP of map.values()) {
 //     const FLATTENED_LIST = GROUP.categoryCases.flat();
 //     for (let i = 0; i < FLATTENED_LIST.length; i++) {
 //       const CASE_I = FLATTENED_LIST[i];
@@ -1810,7 +1837,7 @@ function spaceUp() {
  * @param {number} state - The new learning state to set for all cases in the category.
  */
 function changeLearningStateBulk(groupId, indexCategory, state) {
-  const GROUP = GROUPS.get(groupId);
+  const GROUP = getGroupById(groupId);
   if (!GROUP) return;
   let categoryItems = GROUP.categoryCases[indexCategory];
 

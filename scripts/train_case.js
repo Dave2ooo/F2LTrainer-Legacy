@@ -102,7 +102,22 @@ class TrainCase {
       orange: { right: "yellow", left: "white" },
     },
   };
-  static currentTrainCaseNumber = -1;
+  static get currentTrainCaseNumber() {
+    const state = UIStore.getState();
+    const trainState = state.train || {};
+    return typeof trainState.currentIndex === "number" ? trainState.currentIndex : -1;
+  }
+
+  static set currentTrainCaseNumber(nextIndex) {
+    UIStore.setState(
+      {
+        train: {
+          currentIndex: nextIndex,
+        },
+      },
+      { source: "train_case:set-current-index" }
+    );
+  }
   #indexGroup;
   #indexCase;
   #indexScramble;
@@ -118,6 +133,10 @@ class TrainCase {
   #piecesToHide;
 
   constructor(indexGroup, indexCase, mirroring, crossColor, frontColor) {
+    const state = UIStore.getState();
+    const resolvedCrossColor = crossColor ?? state.crossColorSelection;
+    const resolvedFrontColor = frontColor ?? state.frontColorSelection;
+
     this.#indexGroup = indexGroup;
     this.#indexCase = indexCase;
     this.#mirroring = mirroring;
@@ -133,8 +152,8 @@ class TrainCase {
     this.#setRandomScramble();
     this.#setAlgHint();
     this.#addAuf();
-    this.#setCrossFrontColor(crossColor, frontColor);
-    this.#setPiecesToHide(crossColor, frontColor);
+    this.#setCrossFrontColor(resolvedCrossColor, resolvedFrontColor);
+    this.#setPiecesToHide(resolvedCrossColor, resolvedFrontColor);
   }
 
   #setRandomScramble() {
@@ -168,6 +187,7 @@ class TrainCase {
         0,
       ];
     } else {
+      const { aufSelection, considerAUFinAlg } = UIStore.getState();
       [this.#scrambleAUF, this.#setupAlg, this.#algHintAUF, this.#AUFNum] = StringManipulation.addAUF(
         this.#scramble,
         aufSelection,
