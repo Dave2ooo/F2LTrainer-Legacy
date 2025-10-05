@@ -1,3 +1,5 @@
+import * as groups from "./groups.js";
+
 class TrainCase {
   static cubeRotationAlgDict = {
     yellow: { red: "y", orange: "y'", blue: "y2", green: "" },
@@ -138,14 +140,14 @@ class TrainCase {
   }
 
   #setRandomScramble() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
     const { index, scramble } = GROUP.getRandomScrambleForCase(this.#indexCase);
     this.#indexScramble = index;
     this.#scramble = scramble;
   }
 
   #setAlgHint() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
     const tempAlgHintRight = GROUP.getAlgorithmForSide(this.#indexCase, "right") ?? "";
     const tempAlgHintLeft = GROUP.getAlgorithmForSide(this.#indexCase, "left") ?? "";
 
@@ -157,7 +159,7 @@ class TrainCase {
   }
 
   #addAuf() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
     if (GROUP.shouldIgnoreAUF(this.#indexCase + 1)) {
       //Add one to get the actual index
       //No AUF
@@ -231,7 +233,7 @@ class TrainCase {
   }
 
   #setPiecesToHide() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
     const piece = GROUP.getPiecesToHide(this.#indexCase);
     if (piece !== undefined) {
       this.#piecesToHide = piece;
@@ -290,11 +292,11 @@ class TrainCase {
 
   //#region Additional
   incrementSolveCounter() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
     GROUP.solveCounter[this.#indexCase]++;
   }
   getDebugInfo() {
-    const GROUP = getGroupByIndex(this.#indexGroup);
+    const GROUP = group.getGroupByIndex(this.#indexGroup);
 
     // Get index of selected hint algorithm
     let indexAlgSelection = GROUP.getAlgorithmSelection("right", this.#indexCase);

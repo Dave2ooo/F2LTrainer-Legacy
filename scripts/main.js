@@ -2,6 +2,10 @@
 
 "use strict";
 
+import * as ui from "./ui.js";
+import * as stringManipulation from "./string_manipulation.js";
+import * as groups from "./groups.js";
+
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
 
@@ -46,7 +50,7 @@ const COLORS_ALG = { transparent: "transparent", green: "#009900" };
 const ELEM_WINDOW_SELECT = document.getElementById("window-select");
 const ELEM_WINDOW_TRAIN = document.querySelector(".window-train");
 
-const ELEM_GROUP_CONTAINER = Array(getGroupCount());
+const ELEM_GROUP_CONTAINER = Array(groups.getGroupCount());
 const ELEM_SIDE_CONTAINER = document.getElementById("side-container");
 const ELEM_BTN_CHANGE_MODE = document.getElementById("change-mode");
 const ELEM_OVERLAY = document.getElementById("overlay");
@@ -220,12 +224,12 @@ window.addEventListener("load", () => {
     ELEM_EDITALG_LISTENTRY[i].onclick = function () {
       // Set background to transparent on all algs
       ELEM_EDITALG_LISTENTRY.forEach((element) => {
-        uiSetBackgroundColor(element, COLORS_ALG.transparent);
+        ui.setBackgroundColor(element, COLORS_ALG.transparent);
       });
-      uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
+      ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
       // Set background to selected on selected alg
-      uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[i], COLORS_ALG.green);
+      ui.setBackgroundColor(ELEM_EDITALG_LISTENTRY[i], COLORS_ALG.green);
 
       // Save selected alg globally. i is the index of selected alg
       if (ELEM_IDENTICAL_ALG.checked) {
@@ -267,14 +271,14 @@ window.addEventListener("load", () => {
   document.addEventListener("keyup", keyup);
 
   ELEM_HINT_IMG.addEventListener("load", function () {
-    uiSetOpacity(ELEM_HINT_IMG, 1);
+    ui.setOpacity(ELEM_HINT_IMG, 1);
     ELEM_LOADING_CASE.classList.add(CLASS_DISPLAY_NONE);
   });
 
   // Run this function to only show basic cases in the beginning
   showSelectedGroup();
 
-  uiHideElement(ELEM_LOADING_SCREEN);
+  ui.hideElement(ELEM_LOADING_SCREEN);
 
   loadTwistyAlgViewer();
   // const autoLoadTimeout = setTimeout(loadTwistyAlgViewer, 1000);
@@ -389,7 +393,7 @@ function isSamePoint(point1, point2) {
  */
 function addElementsToDOM() {
   // Iterate over all groups (basic, basic back, advanced, expert)
-  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
+  group.forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     ELEM_GROUP_CONTAINER[INDEX_GROUP] = document.createElement("div");
     ELEM_GROUP_CONTAINER[INDEX_GROUP].classList.add("group-container");
 
@@ -576,14 +580,14 @@ function addElementsToDOM() {
 function applyCaseStateStyling(group, indexCase) {
   const state = group.getCaseState(indexCase);
   if (group.divContainer[indexCase]) {
-    uiSetBackgroundColor(group.divContainer[indexCase], CATEGORY_COLORS[state]);
-    uiSetFontColor(group.divContainer[indexCase], CATEGORY_TEXT_COLOR[state]);
+    ui.setBackgroundColor(group.divContainer[indexCase], CATEGORY_COLORS[state]);
+    ui.setFontColor(group.divContainer[indexCase], CATEGORY_TEXT_COLOR[state]);
   }
   if (group.imgEdit[indexCase]) {
-    uiSetFilter(group.imgEdit[indexCase], COLORS_BTN_EDIT[state]);
+    ui.setFilter(group.imgEdit[indexCase], COLORS_BTN_EDIT[state]);
   }
   if (group.imgMirror[indexCase]) {
-    uiSetFilter(group.imgMirror[indexCase], COLORS_BTN_EDIT[state]);
+    ui.setFilter(group.imgMirror[indexCase], COLORS_BTN_EDIT[state]);
   }
 }
 
@@ -596,7 +600,7 @@ function applyCaseStateStyling(group, indexCase) {
 function updateAlg() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const GROUP = group.getGroupByIndex(INDEX_GROUP);
   const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   let tempAlgRight,
@@ -606,12 +610,12 @@ function updateAlg() {
   if (ELEM_SWITCH_RIGHT.checked) {
     editAlgGlobal.customAlgRight = ELEM_EDITALG_CUSTOMALG.value;
     if (ELEM_IDENTICAL_ALG.checked) {
-      editAlgGlobal.customAlgLeft = StringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
+      editAlgGlobal.customAlgLeft = stringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
     }
   } else {
     editAlgGlobal.customAlgLeft = ELEM_EDITALG_CUSTOMALG.value;
     if (ELEM_IDENTICAL_ALG.checked) {
-      editAlgGlobal.customAlgRight = StringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
+      editAlgGlobal.customAlgRight = stringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
     }
   }
 
@@ -634,7 +638,7 @@ function updateAlg() {
   }
 
   if (editAlgGlobal.selectedAlgNumberLeft < algorithmPool.length) {
-    tempAlgLeft = StringManipulation.mirrorAlg(algorithmPool[editAlgGlobal.selectedAlgNumberLeft]);
+    tempAlgLeft = stringManipulation.mirrorAlg(algorithmPool[editAlgGlobal.selectedAlgNumberLeft]);
   } else {
     tempAlgLeft = editAlgGlobal.customAlgLeft;
   }
@@ -653,11 +657,11 @@ function updateAlg() {
     const CURRENT_TRAIN_CASE = trainCaseList[TrainCase.currentTrainCaseNumber];
     if (!CURRENT_TRAIN_CASE.getMirroring()) {
       CURRENT_TRAIN_CASE.setAlgHint(tempAlgRight);
-      // if (considerAUFinAlg) tempAlgRight = StringManipulation.addAUFtoHint(tempAlgRight, CURRENT_TRAIN_CASE.getAUFNum());
+      // if (considerAUFinAlg) tempAlgRight = stringManipulation.addAUFtoHint(tempAlgRight, CURRENT_TRAIN_CASE.getAUFNum());
       // ELEM_TWISTY_PLAYER.alg = tempAlgRight;
     } else {
       CURRENT_TRAIN_CASE.setAlgHint(tempAlgLeft);
-      // if (considerAUFinAlg) tempAlgLeft = StringManipulation.addAUFtoHint(tempAlgLeft, CURRENT_TRAIN_CASE.getAUFNum());
+      // if (considerAUFinAlg) tempAlgLeft = stringManipulation.addAUFtoHint(tempAlgLeft, CURRENT_TRAIN_CASE.getAUFNum());
       // ELEM_TWISTY_PLAYER.alg = tempAlgLeft;
     }
     ELEM_SCRAMBLE.innerHTML = trainCaseList[TrainCase.currentTrainCaseNumber].getSelectedScrambleAUF();
@@ -710,7 +714,7 @@ function editAlgs(indexGroup, indexCase, mirrored) {
   editAlgGlobal.indexCase = indexCase;
 
   const INDEX_CASE = indexCase;
-  const GROUP = getGroupByIndex(indexGroup);
+  const GROUP = group.getGroupByIndex(indexGroup);
 
   // Set switch to default state (right)
   ELEM_SWITCH_RIGHT.checked = true;
@@ -730,25 +734,25 @@ function editAlgs(indexGroup, indexCase, mirrored) {
       // Set Text to Alg
       ELEM_EDITALG_LISTENTRY[alg].innerHTML = algorithmPool[alg];
       // Make all used elements visible
-      uiShowElement(ELEM_EDITALG_LISTENTRY[alg]);
+      ui.showElement(ELEM_EDITALG_LISTENTRY[alg]);
     } else {
       // Make all unused elements invisible
-      uiHideElement(ELEM_EDITALG_LISTENTRY[alg]);
+      ui.hideElement(ELEM_EDITALG_LISTENTRY[alg]);
     }
     // Reset all backgrounds
-    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[alg], COLORS_ALG.transparent);
+    ui.setBackgroundColor(ELEM_EDITALG_LISTENTRY[alg], COLORS_ALG.transparent);
   }
 
   // Check if previously saved alg is default or custom
   if (editAlgGlobal.selectedAlgNumberRight < algorithmPool.length) {
     // If alg is default set color of selected alg
     const tempAlgSelection = GROUP.getAlgorithmSelection("right", INDEX_CASE);
-    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[tempAlgSelection], COLORS_ALG.green);
+    ui.setBackgroundColor(ELEM_EDITALG_LISTENTRY[tempAlgSelection], COLORS_ALG.green);
     // and reset color of custom
-    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
+    ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
   } else {
     // If alg is custom set color
-    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
+    ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
   }
 
   // Set text in custom alg textbox to saved value
@@ -781,17 +785,17 @@ function editAlgs(indexGroup, indexCase, mirrored) {
 function customAlgSelected() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const GROUP = group.getGroupByIndex(INDEX_GROUP);
   const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
-    uiSetBackgroundColor(element, COLORS_ALG.transparent);
+    ui.setBackgroundColor(element, COLORS_ALG.transparent);
   });
-  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
+  ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
   // Set Background of custom alg to selected
-  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
+  ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
 
   // Save selected alg globally
   const selectedAlgTemp = algorithmPool.length;
@@ -818,14 +822,14 @@ function customAlgSelected() {
 function switchLeftRightEditAlg() {
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const GROUP = group.getGroupByIndex(INDEX_GROUP);
   const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
 
   // Set background to transparent on all algs
   ELEM_EDITALG_LISTENTRY.forEach((element) => {
-    uiSetBackgroundColor(element, COLORS_ALG.transparent);
+    ui.setBackgroundColor(element, COLORS_ALG.transparent);
   });
-  uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
+  ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.transparent);
 
   let selectedAlgTemp = 0;
   if (ELEM_SWITCH_RIGHT.checked) {
@@ -849,7 +853,7 @@ function switchLeftRightEditAlg() {
 
     // If identical is checked, show the same (mirrored) alg
     if (ELEM_IDENTICAL_ALG.checked) {
-      ELEM_EDITALG_CUSTOMALG.value = StringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
+      ELEM_EDITALG_CUSTOMALG.value = stringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
     }
   } else {
     // Code for left case
@@ -859,7 +863,7 @@ function switchLeftRightEditAlg() {
 
     // Fill textboxes with algorithms for left case
     for (let index = 0; index < algorithmPool.length; index++) {
-      ELEM_EDITALG_LISTENTRY[index].innerHTML = StringManipulation.mirrorAlg(algorithmPool[index]);
+      ELEM_EDITALG_LISTENTRY[index].innerHTML = stringManipulation.mirrorAlg(algorithmPool[index]);
     }
 
     // Save current right alg globally
@@ -872,17 +876,17 @@ function switchLeftRightEditAlg() {
 
     // If identical is checked, show the same (mirrored) alg
     if (ELEM_IDENTICAL_ALG.checked) {
-      ELEM_EDITALG_CUSTOMALG.value = StringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
+      ELEM_EDITALG_CUSTOMALG.value = stringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
     }
   }
 
   // Check if custom or default alg is selected
   if (selectedAlgTemp < algorithmPool.length) {
     // If alg is default, set color of selected alg
-    uiSetBackgroundColor(ELEM_EDITALG_LISTENTRY[selectedAlgTemp], COLORS_ALG.green);
+    ui.setBackgroundColor(ELEM_EDITALG_LISTENTRY[selectedAlgTemp], COLORS_ALG.green);
   } else {
     // If alg is custom, set color
-    uiSetBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
+    ui.setBackgroundColor(ELEM_EDITALG_CUSTOMALG, COLORS_ALG.green);
   }
 }
 
@@ -896,7 +900,7 @@ function syncLeftRightAlgSelection() {
 
   const INDEX_GROUP = editAlgGlobal.indexGroup;
   const INDEX_CASE = editAlgGlobal.indexCase;
-  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const GROUP = group.getGroupByIndex(INDEX_GROUP);
 
   // Sync selected algs
   if (ELEM_SWITCH_RIGHT.checked) {
@@ -909,11 +913,11 @@ function syncLeftRightAlgSelection() {
   const algorithmPool = GROUP.getAlgorithmPool(INDEX_CASE);
   if (ELEM_SWITCH_RIGHT.checked) {
     if (editAlgGlobal.selectedAlgNumberRight >= algorithmPool.length) {
-      editAlgGlobal.customAlgLeft = StringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
+      editAlgGlobal.customAlgLeft = stringManipulation.mirrorAlg(editAlgGlobal.customAlgRight);
     }
   } else {
     if (editAlgGlobal.selectedAlgNumberLeft >= algorithmPool.length) {
-      editAlgGlobal.customAlgRight = StringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
+      editAlgGlobal.customAlgRight = stringManipulation.mirrorAlg(editAlgGlobal.customAlgLeft);
     }
   }
 }
@@ -1034,16 +1038,16 @@ function updateTrainCases() {
   recapEnabled = ELEM_CHECKBOX_RECAP_ENABLE.checked;
 
   if (timerEnabled) {
-    uiShowElement(ELEM_TIMER);
+    ui.showElement(ELEM_TIMER);
   } else {
-    uiHideElement(ELEM_TIMER);
+    ui.hideElement(ELEM_TIMER);
   }
 
   if (recapEnabled) {
-    uiShowElement(ELEM_RECAP_INFO);
+    ui.showElement(ELEM_RECAP_INFO);
     if (recapDone) recapDone = false;
   } else {
-    uiHideElement(ELEM_RECAP_INFO);
+    ui.hideElement(ELEM_RECAP_INFO);
   }
 
   closeOverlays();
@@ -1082,8 +1086,8 @@ function getActiveCasesCount(fromSettings = false) {
     : trainGroupSelection;
 
   let activeCases = 0;
-  for (let indexGroup = 0; indexGroup < getGroupCount(); indexGroup++) {
-    const GROUP = getGroupByIndex(indexGroup);
+  for (let indexGroup = 0; indexGroup < groups.getGroupCount(); indexGroup++) {
+    const GROUP = group.getGroupByIndex(indexGroup);
     // Skip if group is not selected in settings
     if (!trainGroupSelectionTemp[indexGroup]) continue;
     for (const categoryItems of GROUP.categoryCases) {
@@ -1117,28 +1121,28 @@ function showHintAlg() {
     if (twistyLoadFlag) {
       if (hintAlgSelection == 2) {
         // "Show all time"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "visible"));
-        uiHideElement(ELEM_HINT_PLACEHOLDER);
-        uiHideElement(ELEM_HINT_ALG);
-        uiShowElement(ELEM_TWISTY_ALG_VIEWER);
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => ui.setVisibility(element, "visible"));
+        ui.hideElement(ELEM_HINT_PLACEHOLDER);
+        ui.hideElement(ELEM_HINT_ALG);
+        ui.showElement(ELEM_TWISTY_ALG_VIEWER);
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "hidden"));
-        uiShowElement(ELEM_HINT_PLACEHOLDER, "flex");
-        uiHideElement(ELEM_HINT_ALG);
-        uiHideElement(ELEM_TWISTY_ALG_VIEWER);
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => ui.setVisibility(element, "hidden"));
+        ui.showElement(ELEM_HINT_PLACEHOLDER, "flex");
+        ui.hideElement(ELEM_HINT_ALG);
+        ui.hideElement(ELEM_TWISTY_ALG_VIEWER);
       }
     } else {
       // twistyLoadFlag: false
       if (hintAlgSelection == 2) {
         // "Show all time"
-        uiHideElement(ELEM_HINT_PLACEHOLDER);
+        ui.hideElement(ELEM_HINT_PLACEHOLDER);
         ELEM_HINT_ALG.innerText = trainCaseList[TrainCase.currentTrainCaseNumber].getAlgHint();
-        uiShowElement(ELEM_HINT_ALG, "flex");
+        ui.showElement(ELEM_HINT_ALG, "flex");
       } else if (hintAlgSelection == 0 || hintAlgSelection == 1) {
         // "Reveal step-by-step" or "Reveal all at once"
-        uiShowElement(ELEM_HINT_PLACEHOLDER, "flex");
-        uiHideElement(ELEM_HINT_ALG);
+        ui.showElement(ELEM_HINT_PLACEHOLDER, "flex");
+        ui.hideElement(ELEM_HINT_ALG);
       }
     }
   } else {
@@ -1149,7 +1153,7 @@ function showHintAlg() {
     // Show hint image if no hint image is selected but hint alg button is pressed
     if (hintImageSelection == 0) {
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      uiSetVisibility(ELEM_HINT_IMG, "visible");
+      ui.setVisibility(ELEM_HINT_IMG, "visible");
     }
 
     // Get algorithm and convert to list
@@ -1157,33 +1161,33 @@ function showHintAlg() {
 
     if (twistyLoadFlag) {
       // Hide hint placeholder
-      uiHideElement(ELEM_HINT_PLACEHOLDER);
+      ui.hideElement(ELEM_HINT_PLACEHOLDER);
       // Make hint visible
-      uiShowElement(ELEM_TWISTY_ALG_VIEWER, "flex");
+      ui.showElement(ELEM_TWISTY_ALG_VIEWER, "flex");
 
       if (hintAlgSelection == 0) {
         // "reveal step-by-step"
         // ELEM_HINT_IMG.style.opacity = "1";
 
         // Hide all moves if hintCounter is 0
-        if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "hidden"));
+        if (hintCounter == 0) ELEMS_TWISTY_ALG_MOVE.forEach((element) => ui.setVisibility(element, "hidden"));
 
         // Show one move at a time
         const maxViewerMoves = ELEMS_TWISTY_ALG_MOVE.length;
         const maxMoves = Math.max(ALG_LIST.length, maxViewerMoves);
         if (hintCounter < maxMoves && ELEMS_TWISTY_ALG_MOVE[hintCounter]) {
-          uiSetVisibility(ELEMS_TWISTY_ALG_MOVE[hintCounter], "visible");
+          ui.setVisibility(ELEMS_TWISTY_ALG_MOVE[hintCounter], "visible");
           hintCounter++;
         }
         return;
       } else if (hintAlgSelection == 1) {
         // "Reveal at once"
-        ELEMS_TWISTY_ALG_MOVE.forEach((element) => uiSetVisibility(element, "visible"));
+        ELEMS_TWISTY_ALG_MOVE.forEach((element) => ui.setVisibility(element, "visible"));
       }
     } else {
       // Hide hint placeholder
-      uiHideElement(ELEM_HINT_PLACEHOLDER);
-      uiShowElement(ELEM_HINT_ALG, "flex");
+      ui.hideElement(ELEM_HINT_PLACEHOLDER);
+      ui.showElement(ELEM_HINT_ALG, "flex");
       // twistyLoadFlag: false
       if (hintAlgSelection == 0) {
         // "reveal step-by-step"
@@ -1204,11 +1208,11 @@ function showHintAlg() {
  * Scrolls to the top of the page and saves the selection to local storage.
  */
 function showSelectedGroup() {
-  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
+  group.forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     if (ELEM_SELECT_GROUP.selectedIndex === INDEX_GROUP) {
-      uiShowElement(ELEM_GROUP_CONTAINER[INDEX_GROUP], "flex");
+      ui.showElement(ELEM_GROUP_CONTAINER[INDEX_GROUP], "flex");
     } else {
-      uiHideElement(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
+      ui.hideElement(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
     }
   });
   // Scroll to the top
@@ -1228,8 +1232,8 @@ function showSelectedGroup() {
 function generateTrainCaseList() {
   let trainCaseListTemp = [];
   // Add all cases that shall be learned to trainCaseListTemp
-  for (let indexGroup = 0; indexGroup < getGroupCount(); indexGroup++) {
-    const GROUP = getGroupByIndex(indexGroup);
+  for (let indexGroup = 0; indexGroup < groups.getGroupCount(); indexGroup++) {
+    const GROUP = group.getGroupByIndex(indexGroup);
     // Skip if group is not selected in settings
     if (!trainGroupSelection[indexGroup]) continue;
     for (const categoryItems of GROUP.categoryCases) {
@@ -1293,7 +1297,7 @@ function nextScramble(nextPrevious) {
   // Show next/previous case
   // (nextPrevious = 0: previous case, nextPrevious = 1: next case)
   if (hintImageSelection == 1) {
-    uiSetOpacity(ELEM_HINT_IMG, 0.3);
+    ui.setOpacity(ELEM_HINT_IMG, 0.3);
     ELEM_LOADING_CASE.classList.remove(CLASS_DISPLAY_NONE);
   }
 
@@ -1332,7 +1336,7 @@ function nextScramble(nextPrevious) {
   const FRONT_COLOR = trainCaseList[TrainCase.currentTrainCaseNumber].getFrontColor();
   const PIECES_TO_HIDE = trainCaseList[TrainCase.currentTrainCaseNumber].getPiecesToHide();
 
-  const GROUP = getGroupByIndex(INDEX_GROUP);
+  const GROUP = group.getGroupByIndex(INDEX_GROUP);
 
   if (!MIRRORING) {
     ELEM_HINT_IMG.src = GROUP.imgPath + "right/F2L" + (INDEX_CASE + 1) + ".svg";
@@ -1479,13 +1483,13 @@ function updateHintImgVisibility() {
     case 0:
       // No hint
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      uiSetVisibility(ELEM_HINT_IMG, "hidden");
+      ui.setVisibility(ELEM_HINT_IMG, "hidden");
       ELEM_DIV_TWISTY_PLAYER.classList.add("display-none");
       break;
     case 1:
       // 2D image as hint
       ELEM_DIV_HINT_IMG.classList.remove("display-none");
-      uiSetVisibility(ELEM_HINT_IMG, "visible");
+      ui.setVisibility(ELEM_HINT_IMG, "visible");
       ELEM_DIV_TWISTY_PLAYER.classList.add("display-none");
       break;
     default:
@@ -1505,11 +1509,11 @@ function showHideDebugInfo() {
   if (boolShowDebugInfo) {
     boolShowDebugInfo = false;
     ELEM_BTN_SHOW_HIDE_DEBUG_INFO.innerHTML = "> Show details";
-    uiHideElement(ELEM_DEBUG_INFO);
+    ui.hideElement(ELEM_DEBUG_INFO);
   } else {
     boolShowDebugInfo = true;
     ELEM_BTN_SHOW_HIDE_DEBUG_INFO.innerHTML = "> Hide details";
-    uiShowElement(ELEM_DEBUG_INFO);
+    ui.showElement(ELEM_DEBUG_INFO);
   }
 }
 
@@ -1522,7 +1526,7 @@ function showHideDebugInfo() {
  * @param {number} indexCase - Index of the case.
  */
 function changeState(indexGroup, indexCategory, indexCase) {
-  const GROUP = getGroupByIndex(indexGroup);
+  const GROUP = group.getGroupByIndex(indexGroup);
   GROUP.cycleCaseState(indexCase);
   applyCaseStateStyling(GROUP, indexCase);
   highlightBulkChangeTrainingStateButton(indexGroup, indexCategory, indexCase);
@@ -1686,7 +1690,7 @@ function changeMode() {
  * (Executed when learning state is changed in train mode)
  */
 function changeStateRadio() {
-  const GROUP = getGroupByIndex(currentTrainGroup);
+  const GROUP = group.getGroupByIndex(currentTrainGroup);
   if (GROUP == undefined) return;
   if (ELEM_RADIO_UNLEARNED.checked == true) GROUP.setCaseState(currentTrainCase, 0);
   if (ELEM_RADIO_LEARNING.checked == true) GROUP.setCaseState(currentTrainCase, 1);
@@ -1778,7 +1782,7 @@ function spaceDown() {
       toggleTimer();
       spacePressFlag = true;
     } else {
-      uiSetFontColor(ELEM_TIMER, COLOR_TIMER.ready); // yellow
+      ui.setFontColor(ELEM_TIMER, COLOR_TIMER.ready); // yellow
     }
   } else {
     flagTimerRunning = false;
@@ -1801,7 +1805,7 @@ function spaceUp() {
   if (timerEnabled) {
     if (spacePressFlag == false) {
       ELEM_TIMER.style.color = COLOR_TEXT;
-      uiSetFontColor(ELEM_TIMER, COLOR_TIMER.neutral);
+      ui.setFontColor(ELEM_TIMER, COLOR_TIMER.neutral);
       toggleTimer();
     }
     spacePressFlag = false;
@@ -1844,7 +1848,7 @@ function changeLearningStateBulk(groupId, indexCategory, state) {
  */
 function highlightBulkChangeTrainingStateButton(indexGroup, indexCategory) {
   // Make the button bigger if all cases in category are in the same learning state
-  const GROUP = getGroupByIndex(indexGroup);
+  const GROUP = group.getGroupByIndex(indexGroup);
   let categoryItems = GROUP.categoryCases[indexCategory];
   let numUnlearned = 0,
     numLearning = 0,
@@ -1875,7 +1879,7 @@ function highlightBulkChangeTrainingStateButton(indexGroup, indexCategory) {
  * adjusting button size based on the learning state of all cases within the category.
  */
 function highlightAllBulkChangeTrainingStateButtons() {
-  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
+  group.forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
     GROUP.categoryCases.forEach((categoryItems, indexCategory) => {
       highlightBulkChangeTrainingStateButton(INDEX_GROUP, indexCategory);
     });
@@ -1889,7 +1893,7 @@ function highlightAllBulkChangeTrainingStateButtons() {
  * @param {number} indexCase - The index of the case within the group.
  */
 function mirrorCase(indexGroup, indexCase) {
-  const GROUP = getGroupByIndex(indexGroup);
+  const GROUP = group.getGroupByIndex(indexGroup);
   const tempAlgRight = GROUP.getAlgorithmForSide(indexCase, "right");
   const tempAlgLeft = GROUP.getAlgorithmForSide(indexCase, "left");
 
@@ -1910,7 +1914,7 @@ function showPressMeText() {
     divPressMe = document.createElement("div");
     divPressMe.classList.add("div-press-me");
     divPressMe.innerHTML = "Press<br>me";
-    getGroupByIndex(0).imgContainer[3].appendChild(divPressMe);
+    group.getGroupByIndex(0).imgContainer[3].appendChild(divPressMe);
   }
 }
 
@@ -2066,7 +2070,7 @@ function showWelcomePopover() {
     const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
     ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
     ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
-    uiShowElement(ELEM_POPOVER_INFO);
+    ui.showElement(ELEM_POPOVER_INFO);
   }
 }
 
@@ -2082,7 +2086,7 @@ function showInfo() {
   if (ELEM_POPOVER_INFO.matches("[popover]:popover-open")) {
     ELEM_POPOVER_INFO.hidePopover();
   } else {
-    uiHideElement(ELEM_POPOVER_INFO);
+    ui.hideElement(ELEM_POPOVER_INFO);
   }
 
   ELEM_BTN_INFO.blur(); // Убираем фокус
@@ -2110,7 +2114,7 @@ function showSettingsTrain() {
 }
 
 function showSetStateMenu() {
-  const GROUP = getGroupByIndex(currentTrainGroup);
+  const GROUP = group.getGroupByIndex(currentTrainGroup);
   const STATE = GROUP.getCaseState(currentTrainCase);
   if (STATE == 0 || STATE == "0") {
     ELEM_RADIO_UNLEARNED.checked = true;

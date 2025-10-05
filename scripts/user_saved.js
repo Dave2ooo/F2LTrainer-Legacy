@@ -147,7 +147,7 @@ function saveUserData() {
   // Saving that the user just visited the site
   localStorage.setItem(STORAGE_KEYS.FIRST_VISIT, false);
 
-  forEachGroup((GROUP) => {
+  group.forEachGroup((GROUP) => {
     // Save Collapse
     localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE, JSON.stringify(GROUP.collapse));
     // Save Case Selection
@@ -246,7 +246,7 @@ function loadUserData() {
   timerEnabled = loadBoolean(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
   recapEnabled = loadBoolean(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
 
-  forEachGroup((GROUP) => {
+  group.forEachGroup((GROUP) => {
     // Load collapse state
     GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, true, GROUP.getNumberCategories());
     // Load Case Selection
@@ -283,13 +283,13 @@ function loadUserData() {
 
   // Set learning state of some cases on first visit, so that the user can see the options
   if (firstVisit) {
-    const BASIC_GROUP = getGroupByIndex(0);
+    const BASIC_GROUP = group.getGroupByIndex(0);
     BASIC_GROUP.setCaseState(0, 1);
     BASIC_GROUP.setCaseState(1, 1);
     BASIC_GROUP.setCaseState(2, 2);
   }
 
-  updateCheckboxStatus();
+  // updateCheckboxStatus();
   // updateHintVisibility();
 }
 
@@ -397,7 +397,7 @@ function exportToURL() {
   if (baseURL == "http://127.0.0.1:5500") baseURL = "http://127.0.0.1:5500/F2LTrainer/index.html";
 
   exportURL = baseURL + "?";
-  forEachGroup((group, i) => {
+  group.forEachGroup((group, i) => {
     // Case selection
     const caseSelection = group.caseSelection;
     const caseSelectionString = caseSelection.join("");
@@ -422,7 +422,7 @@ function importFromURL() {
   if (!urlParams.size) return;
 
   if (confirm("Import data from URL?")) {
-    forEachGroup((group, i) => {
+    group.forEachGroup((group, i) => {
       const saveName = group.saveNameCasesURL;
       const base62String = urlParams.get(group.saveNameCasesURL);
       if (base62String === null) return;

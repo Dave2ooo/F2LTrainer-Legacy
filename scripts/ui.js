@@ -1,17 +1,17 @@
-function uiShowElement(elem, displayType = "block") {
+export function showElement(elem, displayType = "block") {
   if (elem) elem.style.display = displayType;
 }
 
-function uiHideElement(elem) {
+export function hideElement(elem) {
   if (elem) elem.style.display = "none";
 }
 
-function uiToggleElement(elem, show, displayType = "block") {
+export function toggleElement(elem, show, displayType = "block") {
   if (!elem) return;
   elem.style.display = show ? displayType : "none";
 }
 
-function uiSetOpacity(elem, opacity){
+export function setOpacity(elem, opacity){
   if (!elem) {
      console.warn("uiSetOpacity: elem is undefined");
     return;
@@ -19,7 +19,7 @@ function uiSetOpacity(elem, opacity){
   elem.style.opacity = opacity;
 }
 
-function uiSetBackgroundColor(elem, color){
+export function setBackgroundColor(elem, color){
   if (!elem) {
      console.warn("uiSetBackgroundColor: elem is undefined");
     return;
@@ -27,7 +27,7 @@ function uiSetBackgroundColor(elem, color){
   elem.style.backgroundColor = color;
 }
 
-function uiSetFontColor(elem, color){
+export function setFontColor(elem, color){
   if (!elem) {
      console.warn("uiSetFontColor: elem is undefined");
     return;
@@ -35,7 +35,7 @@ function uiSetFontColor(elem, color){
   elem.style.color = color;
 }
 
-function uiSetFilter(elem, filter){
+export function setFilter(elem, filter){
   if (!elem) {
      console.warn("uiSetFilter: elem is undefined");
     return;
@@ -43,7 +43,7 @@ function uiSetFilter(elem, filter){
   elem.style.filter = filter;
 }
 
-function uiSetVisibility(elem, visibility){
+export function setVisibility(elem, visibility){
   if (!elem) {
      console.warn("uiSetVisibility: elem is undefined");
     return;

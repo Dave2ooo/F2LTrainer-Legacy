@@ -1,6 +1,6 @@
 // Source https://github.com/Dave2ooo/F2LTrainer
 
-class Group {
+export class Group {
   constructor(config) {
     this.saveName = config.saveName;
     this.saveNameCasesURL = config.saveNameCasesURL;
@@ -447,7 +447,7 @@ const EXPERT_COLLECTION = new Group({
   ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 });
 
-const GROUPS = new Map([
+export const GROUPS = new Map([
   [BASIC_COLLECTION.idName, BASIC_COLLECTION],
   [BASIC_BACK_COLLECTION.idName, BASIC_BACK_COLLECTION],
   [ADVANCED_COLLECTION.idName, ADVANCED_COLLECTION],
@@ -456,27 +456,27 @@ const GROUPS = new Map([
 
 const GROUP_ID_LIST = Array.from(GROUPS.keys());
 
-function getGroupIds() {
+export function getGroupIds() {
   return GROUP_ID_LIST.slice();
 }
 
-function getGroupCount() {
+export function getGroupCount() {
   return GROUP_ID_LIST.length;
 }
 
-function getGroupIdByIndex(index) {
+export function getGroupIdByIndex(index) {
   return GROUP_ID_LIST[index];
 }
 
-function getGroupByIndex(index) {
+export function getGroupByIndex(index) {
   return GROUPS.get(getGroupIdByIndex(index));
 }
 
-function getGroupIndexById(id) {
+export function getGroupIndexById(id) {
   return GROUP_ID_LIST.indexOf(id);
 }
 
-function forEachGroup(callback) {
+export function forEachGroup(callback) {
   GROUP_ID_LIST.forEach((id, index) => {
     callback(GROUPS.get(id), index, id);
   });
