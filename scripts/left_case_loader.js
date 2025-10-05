@@ -1,7 +1,23 @@
-window.addEventListener("load", () => {
-    if (typeof GROUPS !== "undefined" && getGroupCount()) {
-        addLeftImages();
-    }
+let leftImagesAttached = false;
+
+function ensureLeftImages() {
+    if (leftImagesAttached) return;
+
+    const { map, idList } = getGroupsSnapshot();
+    if (!map || !idList || idList.length === 0) return;
+
+    addLeftImages();
+    leftImagesAttached = true;
+}
+
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    ensureLeftImages();
+} else {
+    window.addEventListener("load", ensureLeftImages, { once: true });
+}
+
+UIStore.subscribe("groups", () => {
+    ensureLeftImages();
 });
 
 function addLeftImages() {

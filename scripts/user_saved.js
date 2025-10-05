@@ -1,78 +1,124 @@
 // Source https://github.com/Dave2ooo/F2LTrainer
 
-//#region Variables
-// Basic
-let basicTrash = [];
-let basicCaseSelection = [];
-let basicAlgorithmSelectionRight = [];
-let basicAlgorithmSelectionLeft = [];
-let basicIdenticalAlgorithm = [];
-let basicCustomAlgorithmsRight = [];
-let basicCustomAlgorithmsLeft = [];
-let basicCollapse = [];
-let basicSolveCounter = [];
+const USER_SAVED_STORE_KEYS = [
+  "basicTrash",
+  "basicCaseSelection",
+  "basicAlgorithmSelectionRight",
+  "basicAlgorithmSelectionLeft",
+  "basicIdenticalAlgorithm",
+  "basicCustomAlgorithmsRight",
+  "basicCustomAlgorithmsLeft",
+  "basicCollapse",
+  "basicSolveCounter",
+  "basicBackTrash",
+  "basicBackCaseSelection",
+  "basicBackAlgorithmSelectionRight",
+  "basicBackAlgorithmSelectionLeft",
+  "basicBackIdenticalAlgorithm",
+  "basicBackCustomAlgorithmsRight",
+  "basicBackCustomAlgorithmsLeft",
+  "basicBackCollapse",
+  "basicBackSolveCounter",
+  "advancedTrash",
+  "advancedCaseSelection",
+  "advancedAlgorithmSelectionRight",
+  "advancedAlgorithmSelectionLeft",
+  "advancedIdenticalAlgorithm",
+  "advandedCustomAlgorithmsRight",
+  "advandedCustomAlgorithmsLeft",
+  "advancedCollapse",
+  "advancedSolveCounter",
+  "expertTrash",
+  "expertCaseSelection",
+  "expertAlgorithmSelectionRight",
+  "expertAlgorithmSelectionLeft",
+  "expertIdenticalAlgorithm",
+  "expertCustomAlgorithmsRight",
+  "expertCustomAlgorithmsLeft",
+  "expertCollapse",
+  "expertSolveCounter",
+  "viewSelection",
+  "trainStateSelection",
+  "trainGroupSelection",
+  "leftSelection",
+  "rightSelection",
+  "aufSelection",
+  "considerAUFinAlg",
+  "hintImageSelection",
+  "hintAlgSelection",
+  "stickeringSelection",
+  "crossColorSelection",
+  "frontColorSelection",
+  "timerEnabled",
+  "recapEnabled",
+  "firstVisit",
+  "firstVisitTrain",
+];
 
-// Basic Back
-let basicBackTrash = [];
-let basicBackCaseSelection = [];
-let basicBackAlgorithmSelectionRight = [];
-let basicBackAlgorithmSelectionLeft = [];
-let basicBackIdenticalAlgorithm = [];
-let basicBackCustomAlgorithmsRight = [];
-let basicBackCustomAlgorithmsLeft = [];
-let basicBackCollapse = [];
-let basicBackSolveCounter = [];
+USER_SAVED_STORE_KEYS.forEach(defineUIStoreGlobalAccessor);
 
-// Advanced
-let advancedTrash = [];
-let advancedCaseSelection = [];
-let advancedAlgorithmSelectionRight = [];
-let advancedAlgorithmSelectionLeft = [];
-let advancedIdenticalAlgorithm = [];
-let advandedCustomAlgorithmsRight = [];
-let advandedCustomAlgorithmsLeft = [];
-let advancedCollapse = [];
-let advancedSolveCounter = [];
+const GROUP_STORE_KEY_MAP = {
+  Basic: {
+    algorithmSelectionLeft: "basicAlgorithmSelectionLeft",
+    algorithmSelectionRight: "basicAlgorithmSelectionRight",
+    caseSelection: "basicCaseSelection",
+    collapse: "basicCollapse",
+    customAlgorithmsLeft: "basicCustomAlgorithmsLeft",
+    customAlgorithmsRight: "basicCustomAlgorithmsRight",
+    identicalAlgorithm: "basicIdenticalAlgorithm",
+    solveCounter: "basicSolveCounter",
+    trash: "basicTrash",
+  },
+  BasicBack: {
+    algorithmSelectionLeft: "basicBackAlgorithmSelectionLeft",
+    algorithmSelectionRight: "basicBackAlgorithmSelectionRight",
+    caseSelection: "basicBackCaseSelection",
+    collapse: "basicBackCollapse",
+    customAlgorithmsLeft: "basicBackCustomAlgorithmsLeft",
+    customAlgorithmsRight: "basicBackCustomAlgorithmsRight",
+    identicalAlgorithm: "basicBackIdenticalAlgorithm",
+    solveCounter: "basicBackSolveCounter",
+    trash: "basicBackTrash",
+  },
+  Advanced: {
+    algorithmSelectionLeft: "advancedAlgorithmSelectionLeft",
+    algorithmSelectionRight: "advancedAlgorithmSelectionRight",
+    caseSelection: "advancedCaseSelection",
+    collapse: "advancedCollapse",
+    customAlgorithmsLeft: "advandedCustomAlgorithmsLeft",
+    customAlgorithmsRight: "advandedCustomAlgorithmsRight",
+    identicalAlgorithm: "advancedIdenticalAlgorithm",
+    solveCounter: "advancedSolveCounter",
+    trash: "advancedTrash",
+  },
+  Expert: {
+    algorithmSelectionLeft: "expertAlgorithmSelectionLeft",
+    algorithmSelectionRight: "expertAlgorithmSelectionRight",
+    caseSelection: "expertCaseSelection",
+    collapse: "expertCollapse",
+    customAlgorithmsLeft: "expertCustomAlgorithmsLeft",
+    customAlgorithmsRight: "expertCustomAlgorithmsRight",
+    identicalAlgorithm: "expertIdenticalAlgorithm",
+    solveCounter: "expertSolveCounter",
+    trash: "expertTrash",
+  },
+};
 
-// Expert
-let expertTrash = [];
-let expertCaseSelection = [];
-let expertAlgorithmSelectionRight = [];
-let expertAlgorithmSelectionLeft = [];
-let expertIdenticalAlgorithm = [];
-let expertCustomAlgorithmsRight = [];
-let expertCustomAlgorithmsLeft = [];
-let expertCollapse = [];
-let expertSolveCounter = [];
+function defineUIStoreGlobalAccessor(key) {
+  if (Object.prototype.hasOwnProperty.call(window, key)) {
+    return;
+  }
 
-// View selection
-let viewSelection = 0;
-
-// 0 -> unlearned
-// 1 -> learning
-// 2 -> finished
-let trainStateSelection = [false, true, false];
-
-// 0 -> basic
-// 1 -> basic back
-// 2 -> advanced
-// 3 -> expert
-let trainGroupSelection = [true, true, true, true];
-
-let leftSelection = true;
-let rightSelection = true;
-let aufSelection = true;
-let considerAUFinAlg = true;
-let hintImageSelection = 2;
-let hintAlgSelection = 0;
-let stickeringSelection = 0;
-let crossColorSelection = "white";
-let frontColorSelection = "red";
-let timerEnabled = false;
-let recapEnabled = false;
-
-let firstVisit = true;
-let firstVisitTrain = true;
+  Object.defineProperty(window, key, {
+    configurable: true,
+    get() {
+      return UIStore.getState()[key];
+    },
+    set(value) {
+      UIStore.setState({ [key]: value });
+    },
+  });
+}
 
 // Character set for Base62 encoding
 const BASE62_CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -114,7 +160,59 @@ const STORAGE_KEY_PREFIXES = {
   TRAIN_GROUP_SELECTION: "trainGroupSelection",
 };
 
-//#endregion
+function parseIntOrDefault(value, defaultValue) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? defaultValue : parsed;
+}
+
+function parseJsonArray(value, fallback) {
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return Array.isArray(fallback) ? [...fallback] : fallback;
+}
+
+function readNumericSetting(key, defaultValue) {
+  const stored = localStorage.getItem(key);
+  if (stored == null) {
+    return defaultValue;
+  }
+  return parseIntOrDefault(stored, defaultValue);
+}
+
+function syncGroupStateToStoreFromGroups() {
+  const patch = {};
+
+  forEachGroup((GROUP) => {
+    const storeKeys = GROUP_STORE_KEY_MAP[GROUP.getId()];
+    if (!storeKeys) return;
+
+    patch[storeKeys.collapse] = cloneArray(GROUP.collapse);
+    patch[storeKeys.caseSelection] = cloneArray(GROUP.caseSelection);
+    patch[storeKeys.customAlgorithmsRight] = cloneArray(GROUP.customAlgorithmsRight);
+    patch[storeKeys.customAlgorithmsLeft] = cloneArray(GROUP.customAlgorithmsLeft);
+    patch[storeKeys.identicalAlgorithm] = cloneArray(GROUP.identicalAlgorithm);
+    patch[storeKeys.algorithmSelectionRight] = cloneArray(GROUP.algorithmSelectionRight);
+    patch[storeKeys.algorithmSelectionLeft] = cloneArray(GROUP.algorithmSelectionLeft);
+    patch[storeKeys.solveCounter] = cloneArray(GROUP.solveCounter);
+    if (storeKeys.trash) {
+      patch[storeKeys.trash] = cloneArray(GROUP.trash);
+    }
+  });
+
+  if (Object.keys(patch).length > 0) {
+    UIStore.setState(patch, { source: "user_saved.syncGroupState" });
+  }
+}
+
+function cloneArray(value) {
+  return Array.isArray(value) ? value.slice() : [];
+}
 
 /**
  * Saves all user data to localStorage.
@@ -123,62 +221,94 @@ const STORAGE_KEY_PREFIXES = {
 function saveUserData() {
   console.log("Saving User Data");
 
-  localStorage.setItem(STORAGE_KEYS.TRAIN_STATE_SELECTION, JSON.stringify(trainStateSelection));
-  localStorage.setItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION, JSON.stringify(trainGroupSelection));
+  syncGroupStateToStoreFromGroups();
+
+  const state = UIStore.getState();
+
+  localStorage.setItem(
+    STORAGE_KEYS.TRAIN_STATE_SELECTION,
+    JSON.stringify(state.trainStateSelection)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.TRAIN_GROUP_SELECTION,
+    JSON.stringify(state.trainGroupSelection)
+  );
 
   // Saving viewSelection (Basic, Basic Back, Advanced, Expert)
-  localStorage.setItem(STORAGE_KEYS.VIEW_SELECTION, viewSelection);
+  localStorage.setItem(STORAGE_KEYS.VIEW_SELECTION, String(state.viewSelection));
 
   // Saving left right train selection
-  localStorage.setItem(STORAGE_KEYS.LEFT_SELECTION, leftSelection);
-  localStorage.setItem(STORAGE_KEYS.RIGHT_SELECTION, rightSelection);
+  localStorage.setItem(STORAGE_KEYS.LEFT_SELECTION, String(state.leftSelection));
+  localStorage.setItem(STORAGE_KEYS.RIGHT_SELECTION, String(state.rightSelection));
 
   // Saving other settings
-  localStorage.setItem(STORAGE_KEYS.AUF_SELECTION, aufSelection);
-  localStorage.setItem(STORAGE_KEYS.CONSIDER_AUF_IN_ALG, considerAUFinAlg);
-  localStorage.setItem(STORAGE_KEYS.HINT_IMAGE_SELECTION, hintImageSelection);
-  localStorage.setItem(STORAGE_KEYS.HINT_ALG_SELECTION, hintAlgSelection);
-  localStorage.setItem(STORAGE_KEYS.STICKERING_SELECTION, stickeringSelection);
-  localStorage.setItem(STORAGE_KEYS.CROSS_COLOR_SELECTION, crossColorSelection);
-  localStorage.setItem(STORAGE_KEYS.FRONT_COLOR_SELECTION, frontColorSelection);
-  localStorage.setItem(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
-  localStorage.setItem(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
+  localStorage.setItem(STORAGE_KEYS.AUF_SELECTION, String(state.aufSelection));
+  localStorage.setItem(
+    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
+    String(state.considerAUFinAlg)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.HINT_IMAGE_SELECTION,
+    String(state.hintImageSelection)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.HINT_ALG_SELECTION,
+    String(state.hintAlgSelection)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.STICKERING_SELECTION,
+    String(state.stickeringSelection)
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.CROSS_COLOR_SELECTION,
+    state.crossColorSelection
+  );
+  localStorage.setItem(
+    STORAGE_KEYS.FRONT_COLOR_SELECTION,
+    state.frontColorSelection
+  );
+  localStorage.setItem(STORAGE_KEYS.TIMER_ENABLED, String(state.timerEnabled));
+  localStorage.setItem(STORAGE_KEYS.RECAP_ENABLED, String(state.recapEnabled));
 
   // Saving that the user just visited the site
   localStorage.setItem(STORAGE_KEYS.FIRST_VISIT, false);
 
   forEachGroup((GROUP) => {
-    // Save Collapse
-    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE, JSON.stringify(GROUP.collapse));
-    // Save Case Selection
-    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.CASE_SELECTION, JSON.stringify(GROUP.caseSelection));
-    // Save Custom Algorithms Right
+    const storeKeys = GROUP_STORE_KEY_MAP[GROUP.getId()];
+    if (!storeKeys) return;
+
+    localStorage.setItem(
+      GROUP.saveName + STORAGE_SUFFIXES.COLLAPSE,
+      JSON.stringify(state[storeKeys.collapse] ?? [])
+    );
+    localStorage.setItem(
+      GROUP.saveName + STORAGE_SUFFIXES.CASE_SELECTION,
+      JSON.stringify(state[storeKeys.caseSelection] ?? [])
+    );
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
-      JSON.stringify(GROUP.customAlgorithmsRight)
+      JSON.stringify(state[storeKeys.customAlgorithmsRight] ?? [])
     );
-    // Save Custom Algorithms Left
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
-      JSON.stringify(GROUP.customAlgorithmsLeft)
+      JSON.stringify(state[storeKeys.customAlgorithmsLeft] ?? [])
     );
-    // Identical Algorithm for Left & Right
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
-      JSON.stringify(GROUP.identicalAlgorithm)
+      JSON.stringify(state[storeKeys.identicalAlgorithm] ?? [])
     );
-    // Save Algorithm Selection Right
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
-      JSON.stringify(GROUP.algorithmSelectionRight)
+      JSON.stringify(state[storeKeys.algorithmSelectionRight] ?? [])
     );
-    // Save Algorithm Selection Left
     localStorage.setItem(
       GROUP.saveName + STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
-      JSON.stringify(GROUP.algorithmSelectionLeft)
+      JSON.stringify(state[storeKeys.algorithmSelectionLeft] ?? [])
     );
-    // Save Solve Counter
-    localStorage.setItem(GROUP.saveName + STORAGE_SUFFIXES.SOLVE_COUNTER, JSON.stringify(GROUP.solveCounter));
+    localStorage.setItem(
+      GROUP.saveName + STORAGE_SUFFIXES.SOLVE_COUNTER,
+      JSON.stringify(state[storeKeys.solveCounter] ?? [])
+    );
   });
 }
 
@@ -187,106 +317,152 @@ function saveUserData() {
  */
 function loadUserData() {
   console.log("Loading User Data");
-  let temp;
 
-  // Do migraiton of case numbers if needed
   migrateCaseNumbers();
 
-  // Load viewSelection
-  temp = localStorage.getItem(STORAGE_KEYS.VIEW_SELECTION);
-  if (temp != null) viewSelection = parseInt(temp);
+  const defaults = UIStore.getState();
+  const patch = {};
 
-  // Check if user visits site for the first time
-  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT) != null) firstVisit = false;
-  // Check if user visits train view for the first time
-  if (localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_TRAIN) != null) firstVisitTrain = false;
+  const viewSelectionRaw = localStorage.getItem(STORAGE_KEYS.VIEW_SELECTION);
+  patch.viewSelection = viewSelectionRaw != null
+    ? parseIntOrDefault(viewSelectionRaw, defaults.viewSelection)
+    : defaults.viewSelection;
 
-  // Load trainStateSelection
-  // Switch from old storage solution
-  if (localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION) == null) {
-    for (let i = 0; i < trainStateSelection.length; i++) {
-      trainStateSelection[i] = loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION + i, trainStateSelection[i]);
-    }
+  patch.firstVisit =
+    localStorage.getItem(STORAGE_KEYS.FIRST_VISIT) != null ? false : defaults.firstVisit;
+  patch.firstVisitTrain =
+    localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_TRAIN) != null ? false : defaults.firstVisitTrain;
+
+  const trainStateSelectionRaw = localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION);
+  if (trainStateSelectionRaw == null) {
+    patch.trainStateSelection = defaults.trainStateSelection.map((defaultValue, index) =>
+      loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_STATE_SELECTION + index, defaultValue)
+    );
   } else {
-    trainStateSelection = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRAIN_STATE_SELECTION)); // Keep only this
+    patch.trainStateSelection = parseJsonArray(trainStateSelectionRaw, defaults.trainStateSelection);
   }
 
-  // Load trainGroupSelection
-  // Switch from old storage solution
-  if (localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION) == null) {
-    for (let i = 0; i < trainGroupSelection.length; i++) {
-      trainGroupSelection[i] = loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION + i, trainGroupSelection[i]);
-    }
+  const trainGroupSelectionRaw = localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION);
+  if (trainGroupSelectionRaw == null) {
+    patch.trainGroupSelection = defaults.trainGroupSelection.map((defaultValue, index) =>
+      loadBoolean(STORAGE_KEY_PREFIXES.TRAIN_GROUP_SELECTION + index, defaultValue)
+    );
   } else {
-    trainGroupSelection = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRAIN_GROUP_SELECTION)); // Keep only this
+    patch.trainGroupSelection = parseJsonArray(trainGroupSelectionRaw, defaults.trainGroupSelection);
   }
 
-  // Packing inside own function would not shrink the code here, since default value is defined above
-  temp = localStorage.getItem(STORAGE_KEYS.HINT_IMAGE_SELECTION);
-  if (temp != null) hintImageSelection = parseInt(temp);
+  patch.hintImageSelection = readNumericSetting(
+    STORAGE_KEYS.HINT_IMAGE_SELECTION,
+    defaults.hintImageSelection
+  );
+  patch.hintAlgSelection = readNumericSetting(
+    STORAGE_KEYS.HINT_ALG_SELECTION,
+    defaults.hintAlgSelection
+  );
+  patch.stickeringSelection = readNumericSetting(
+    STORAGE_KEYS.STICKERING_SELECTION,
+    defaults.stickeringSelection
+  );
 
-  // Packing inside own function would not shrink the code here, since default value is defined above
-  temp = localStorage.getItem(STORAGE_KEYS.HINT_ALG_SELECTION);
-  if (temp != null) hintAlgSelection = parseInt(temp);
+  const crossColor = localStorage.getItem(STORAGE_KEYS.CROSS_COLOR_SELECTION);
+  patch.crossColorSelection = crossColor != null ? crossColor : defaults.crossColorSelection;
 
-  temp = localStorage.getItem(STORAGE_KEYS.STICKERING_SELECTION);
-  if (temp != null) stickeringSelection = parseInt(temp);
+  const frontColor = localStorage.getItem(STORAGE_KEYS.FRONT_COLOR_SELECTION);
+  patch.frontColorSelection = frontColor != null ? frontColor : defaults.frontColorSelection;
 
-  temp = localStorage.getItem(STORAGE_KEYS.CROSS_COLOR_SELECTION);
-  if (temp != null) crossColorSelection = temp;
-
-  temp = localStorage.getItem(STORAGE_KEYS.FRONT_COLOR_SELECTION);
-  if (temp != null) frontColorSelection = temp;
-
-  // Load other settings
-  leftSelection = loadBoolean(STORAGE_KEYS.LEFT_SELECTION, leftSelection);
-  rightSelection = loadBoolean(STORAGE_KEYS.RIGHT_SELECTION, rightSelection);
-  aufSelection = loadBoolean(STORAGE_KEYS.AUF_SELECTION, aufSelection);
-  considerAUFinAlg = loadBoolean(STORAGE_KEYS.CONSIDER_AUF_IN_ALG, considerAUFinAlg);
-  timerEnabled = loadBoolean(STORAGE_KEYS.TIMER_ENABLED, timerEnabled);
-  recapEnabled = loadBoolean(STORAGE_KEYS.RECAP_ENABLED, recapEnabled);
+  patch.leftSelection = loadBoolean(STORAGE_KEYS.LEFT_SELECTION, defaults.leftSelection);
+  patch.rightSelection = loadBoolean(STORAGE_KEYS.RIGHT_SELECTION, defaults.rightSelection);
+  patch.aufSelection = loadBoolean(STORAGE_KEYS.AUF_SELECTION, defaults.aufSelection);
+  patch.considerAUFinAlg = loadBoolean(
+    STORAGE_KEYS.CONSIDER_AUF_IN_ALG,
+    defaults.considerAUFinAlg
+  );
+  patch.timerEnabled = loadBoolean(STORAGE_KEYS.TIMER_ENABLED, defaults.timerEnabled);
+  patch.recapEnabled = loadBoolean(STORAGE_KEYS.RECAP_ENABLED, defaults.recapEnabled);
 
   forEachGroup((GROUP) => {
-    // Load collapse state
-    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, true, GROUP.getNumberCategories());
-    // Load Case Selection
-    GROUP.caseSelection = loadList(GROUP, STORAGE_SUFFIXES.CASE_SELECTION, 0, GROUP.getNumberCases());
+    const storeKeys = GROUP_STORE_KEY_MAP[GROUP.getId()];
+    if (!storeKeys) return;
 
-    // Load Custom Algorithms Right
-    GROUP.customAlgorithmsRight = loadList(GROUP, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT, "", GROUP.getNumberCases());
-
-    // Load Custom Algorithms Left
-    GROUP.customAlgorithmsLeft = loadList(GROUP, STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT, "", GROUP.getNumberCases());
-
-    // Load Custom Algorithms Left
-    GROUP.identicalAlgorithm = loadList(GROUP, STORAGE_SUFFIXES.IDENTICAL_ALGORITHM, true, GROUP.getNumberCases());
-
-    // Load Algorithm Selection Right
-    GROUP.algorithmSelectionRight = loadList(
+    const collapse = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.COLLAPSE,
+      true,
+      GROUP.getNumberCategories()
+    );
+    const caseSelection = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CASE_SELECTION,
+      0,
+      GROUP.getNumberCases()
+    );
+    const customRight = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_RIGHT,
+      "",
+      GROUP.getNumberCases()
+    );
+    const customLeft = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.CUSTOM_ALGORITHMS_LEFT,
+      "",
+      GROUP.getNumberCases()
+    );
+    const identical = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.IDENTICAL_ALGORITHM,
+      true,
+      GROUP.getNumberCases()
+    );
+    const algorithmSelectionRight = loadList(
       GROUP,
       STORAGE_SUFFIXES.ALGORITHM_SELECTION_RIGHT,
       0,
       GROUP.getNumberCases()
     );
-
-    // Load Algorithm Selection Left
-    GROUP.algorithmSelectionLeft = loadList(
+    const algorithmSelectionLeft = loadList(
       GROUP,
       STORAGE_SUFFIXES.ALGORITHM_SELECTION_LEFT,
       0,
       GROUP.getNumberCases()
     );
+    const solveCounter = loadList(
+      GROUP,
+      STORAGE_SUFFIXES.SOLVE_COUNTER,
+      0,
+      GROUP.getNumberCases()
+    );
 
-    // Load Solve Counter
-    GROUP.solveCounter = loadList(GROUP, STORAGE_SUFFIXES.SOLVE_COUNTER, 0, GROUP.getNumberCases());
+    GROUP.collapse = collapse;
+    GROUP.caseSelection = caseSelection;
+    GROUP.customAlgorithmsRight = customRight;
+    GROUP.customAlgorithmsLeft = customLeft;
+    GROUP.identicalAlgorithm = identical;
+    GROUP.algorithmSelectionRight = algorithmSelectionRight;
+    GROUP.algorithmSelectionLeft = algorithmSelectionLeft;
+    GROUP.solveCounter = solveCounter;
+
+    patch[storeKeys.collapse] = collapse;
+    patch[storeKeys.caseSelection] = caseSelection;
+    patch[storeKeys.customAlgorithmsRight] = customRight;
+    patch[storeKeys.customAlgorithmsLeft] = customLeft;
+    patch[storeKeys.identicalAlgorithm] = identical;
+    patch[storeKeys.algorithmSelectionRight] = algorithmSelectionRight;
+    patch[storeKeys.algorithmSelectionLeft] = algorithmSelectionLeft;
+    patch[storeKeys.solveCounter] = solveCounter;
+    if (storeKeys.trash) {
+      patch[storeKeys.trash] = cloneArray(GROUP.trash);
+    }
   });
 
-  // Set learning state of some cases on first visit, so that the user can see the options
-  if (firstVisit) {
+  UIStore.setState(patch, { source: "loadUserData" });
+
+  if (patch.firstVisit) {
     const BASIC_GROUP = getGroupByIndex(0);
     BASIC_GROUP.setCaseState(0, 1);
     BASIC_GROUP.setCaseState(1, 1);
     BASIC_GROUP.setCaseState(2, 2);
+    syncGroupStateToStoreFromGroups();
   }
 
   updateCheckboxStatus();
@@ -379,6 +555,7 @@ function clearUserData() {
  */
 function setFirstVisitTrain() {
   localStorage.setItem(STORAGE_KEYS.FIRST_VISIT_TRAIN, false);
+  UIStore.setState({ firstVisitTrain: false }, { source: "user_saved.setFirstVisitTrain" });
 }
 
 /**
@@ -509,8 +686,12 @@ function migrateCaseNumbers() {
   const EXPECTED_ARRAY_LENGTH = 42;
 
   // We could probably just use index 0,1 since they most likely will not change, but just to be sure use idName
-  let groupBasic = GROUPS.get("Basic");
-  let groupBasicBack = GROUPS.get("BasicBack");
+  const groupBasic = getGroupById("Basic");
+  const groupBasicBack = getGroupById("BasicBack");
+
+  if (!groupBasic || !groupBasicBack) {
+    return;
+  }
 
   // Load solveCounter for each group and check length
   [groupBasic, groupBasicBack].forEach((g) => {
