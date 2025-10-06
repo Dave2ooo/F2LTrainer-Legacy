@@ -26,6 +26,7 @@ class Group {
     this.piecesToHide = config.piecesToHide;
     this.ignoreAUF = config.ignoreAUF ?? [];
     this.resetDomState();
+    // this.validateConfig(); // can be commented out for performance
   }
 
   resetDomState() {
@@ -167,6 +168,106 @@ class Group {
   getCaseLabel(indexCase) {
     if (!this.caseNumberMapping) return undefined;
     return this.caseNumberMapping[indexCase + 1];
+  }
+
+  validateConfig() {
+    const groupLabel = this.name || this.idName || this.saveName || "Group";
+    const { numberCases } = this;
+
+    if (Array.isArray(this.categoryNames) && Array.isArray(this.categoryCases)) {
+      if (this.categoryNames.length !== this.categoryCases.length) {
+        console.warn(
+          `${groupLabel}: categoryNames (${this.categoryNames.length}) does not match categoryCases (${this.categoryCases.length}).`
+        );
+      }
+
+      const flattenedCases = this.categoryCases.flat();
+      if (flattenedCases.length !== numberCases) {
+        console.warn(
+          `${groupLabel}: categoryCases cover ${flattenedCases.length} cases but numberCases is ${numberCases}.`
+        );
+      }
+
+      const seenCases = new Set();
+      for (const caseId of flattenedCases) {
+        if (typeof caseId !== "number" || Number.isNaN(caseId)) {
+          console.warn(`${groupLabel}: categoryCases contains a non-numeric case id (${caseId}).`);
+          continue;
+        }
+
+        if (caseId < 1 || caseId > numberCases) {
+          console.warn(`${groupLabel}: categoryCases includes out-of-range case id ${caseId}.`);
+        }
+
+        if (seenCases.has(caseId)) {
+          console.warn(`${groupLabel}: categoryCases contains duplicate case id ${caseId}.`);
+        }
+        seenCases.add(caseId);
+      }
+    }
+
+    const ensureLength = (propertyName, defaultValue) => {
+      let arrayRef = this[propertyName];
+      if (!Array.isArray(arrayRef)) {
+        console.warn(`${groupLabel}: ${propertyName} should be an array of length ${numberCases}.`);
+        this[propertyName] = Array(numberCases).fill(defaultValue);
+        return;
+      }
+
+      if (arrayRef.length === numberCases) {
+        return;
+      }
+
+      const shouldWarn = arrayRef.length > 0;
+      if (shouldWarn) {
+        console.warn(
+          `${groupLabel}: ${propertyName} has length ${arrayRef.length}, expected ${numberCases}.`
+        );
+      }
+
+      if (arrayRef.length < numberCases) {
+        arrayRef.push(...Array(numberCases - arrayRef.length).fill(defaultValue));
+      } else if (arrayRef.length > numberCases) {
+        arrayRef.length = numberCases;
+      }
+    };
+
+    ensureLength("caseSelection", 0);
+    ensureLength("algorithmSelectionLeft", 0);
+    ensureLength("algorithmSelectionRight", 0);
+    ensureLength("customAlgorithmsLeft", "");
+    ensureLength("customAlgorithmsRight", "");
+    ensureLength("solveCounter", 0);
+
+    if (Array.isArray(this.piecesToHide) && this.piecesToHide.length !== numberCases) {
+      console.warn(
+        `${groupLabel}: piecesToHide has length ${this.piecesToHide.length}, expected ${numberCases}.`
+      );
+    }
+
+    if (Array.isArray(this.ignoreAUF)) {
+      for (const caseId of this.ignoreAUF) {
+        if (typeof caseId !== "number" || caseId < 1 || caseId > numberCases) {
+          console.warn(`${groupLabel}: ignoreAUF includes invalid case id ${caseId}.`);
+        }
+      }
+    }
+
+    if (Array.isArray(this.caseNumberMapping)) {
+      this.caseNumberMapping.forEach((caseId, index) => {
+        if (caseId == null) return;
+        if (typeof caseId !== "number" || caseId < 1 || caseId > numberCases) {
+          console.warn(`${groupLabel}: caseNumberMapping[${index}] has invalid case id ${caseId}.`);
+        }
+      });
+    } else if (this.caseNumberMapping && typeof this.caseNumberMapping === "object") {
+      for (const key of Object.keys(this.caseNumberMapping)) {
+        const caseId = Number(key);
+        if (!Number.isInteger(caseId) || caseId < 1 || caseId > numberCases) {
+          console.warn(`${groupLabel}: caseNumberMapping has invalid case id key ${key}.`);
+        }
+      }
+    }
   }
 }
 
