@@ -603,7 +603,8 @@
         <img src="./images/settings.svg" alt="Settings" class="side-img" title="Settings" />
       </div>
 
-      <button type="button" id="change-mode" onclick="changeMode()" data-tooltip="Start training">Train</button>
+      <!-- <button type="button" id="change-mode" onclick="changeMode()" data-tooltip="Start training">Train</button> -->
+      <button type="button" id="change-mode" data-tooltip="Start training">Train</button>
     </div>
 
     <!-- All the Cases will be listed here -->
@@ -690,7 +691,8 @@
       </div>
 
       <div id="training-active-cases-info" onclick="showSettingsTrain()" data-tooltip="Open Settings"></div>
-      <button id="btn-show-hide-debug-info" onclick="showHideDebugInfo()">> Hide details</button>
+      <!-- <button id="btn-show-hide-debug-info" onclick="showHideDebugInfo()">> Hide details</button> -->
+      <button id="btn-show-hide-debug-info"></button>
       <div id="debug-info"></div>
       <div id="recap-info"></div>
     </div>
@@ -716,7 +718,7 @@
     <script src="./scripts/user_saved.js"></script>
     <script src="./scripts/groups.js"></script>
     <script src="./scripts/string_manipulation.js"></script>
-    <script src="./scripts/main.js" defer></script>
+    <script type="module" src="./scripts/main.js" defer></script>
     <script src="./scripts/left_case_loader.js" defer></script>
     <script src="./scripts/clear_feedback_form.js" defer></script>
     <script src="./scripts/train_case.js" defer></script>

@@ -289,7 +289,7 @@ function loadUserData() {
     BASIC_GROUP.setCaseState(2, 2);
   }
 
-  updateCheckboxStatus();
+  // updateCheckboxStatus();
   // updateHintVisibility();
 }
 

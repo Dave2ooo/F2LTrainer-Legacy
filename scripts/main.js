@@ -2,6 +2,9 @@
 
 "use strict";
 
+import { actions, store } from "./store.js";
+import { bindChecked, bindDisplay, bindText } from "./bindings.js";
+
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
 
@@ -179,6 +182,21 @@ const ELEM_FEEDBACK_NAME = document.getElementById("feedback-name-id");
 const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
 //#endregion
 
+ELEM_BTN_CHANGE_MODE.addEventListener("click", () => {
+  changeMode();
+});
+
+bindText(ELEM_BTN_SHOW_HIDE_DEBUG_INFO, (s) => (s.showDetailsFlag == false ? "Show details" : "Hide details"));
+bindDisplay(ELEM_DEBUG_INFO, (s) => s.showDetailsFlag);
+
+ELEM_BTN_SHOW_HIDE_DEBUG_INFO.addEventListener("click", () => {
+  const next = store.getState().showDetailsFlag ? 0 : 1;
+  actions.setShowDetailsFlag(next);
+  console.log(store.getState());
+});
+
+console.log(store.getState());
+
 // ----------------------------------------- LOADING -------------------------------------------------------
 window.addEventListener("load", () => {
   // window.onerror = function (msg, url, linenumber) {
@@ -273,7 +291,7 @@ window.addEventListener("load", () => {
   loadTwistyAlgViewer();
   // const autoLoadTimeout = setTimeout(loadTwistyAlgViewer, 1000);
 
-  showHideDebugInfo();
+  // showHideDebugInfo();
 });
 
 // function loadTwistyAlgViewer() {
@@ -561,8 +579,8 @@ function addElementsToDOM() {
         GROUP.categoryContainer[indexCategory].appendChild(GROUP.divContainer[indexCase]);
       }
       ELEM_GROUP_CONTAINER[INDEX_GROUP].appendChild(GROUP.categoryContainer[indexCategory]);
-  });
-  ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
+    });
+    ELEM_WINDOW_SELECT.appendChild(ELEM_GROUP_CONTAINER[INDEX_GROUP]);
   });
 }
 
