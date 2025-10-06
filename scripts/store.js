@@ -44,6 +44,7 @@ const initialState = {
   showDetailsFlag: false,
   dialogInfoOpenFlag: false,
   dialogSettingsOpenFlag: false,
+  dialogFeedbackOpenFlag: false,
 };
 
 export const store = new Store(initialState);
@@ -55,4 +56,5 @@ export const actions = {
   setShowDetailsFlag: (show) => store.set({ showDetailsFlag: show }),
   setDialogInfoOpenFlag: (open) => store.set({ dialogInfoOpenFlag: open }),
   setDialogSettingsOpenFlag: (open) => store.set({ dialogSettingsOpenFlag: open }),
+  setDialogFeedbackOpenFlag: (open) => store.set({ dialogFeedbackOpenFlag: open }),
 };

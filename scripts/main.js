@@ -190,6 +190,7 @@ bindText(ELEM_BTN_SHOW_HIDE_DEBUG_INFO, (s) => (s.showDetailsFlag == false ? "Sh
 bindDisplay(ELEM_DEBUG_INFO, (s) => s.showDetailsFlag);
 bindDialog(ELEM_WELCOME_CONATINER, (s) => s.dialogInfoOpenFlag);
 bindDialog(ELEM_CONTAINER_TRAIN_SETTINGS, (s) => s.dialogSettingsOpenFlag);
+bindDialog(ELEM_FEEDBACK_CONTAINER, (s) => s.dialogFeedbackOpenFlag);
 // #endregion
 
 // #region Event Listeners
@@ -213,6 +214,10 @@ ELEM_BTN_INFO.addEventListener("click", () => {
 
 document.getElementById("btn-open-settings").addEventListener("click", () => {
   actions.setDialogSettingsOpenFlag(true);
+});
+
+document.getElementById("btn-open-feedback").addEventListener("click", () => {
+  actions.setDialogFeedbackOpenFlag(true);
 });
 
 // #endregion
