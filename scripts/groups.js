@@ -180,15 +180,15 @@ const BASIC_COLLECTION = new Group({
   scrambles: basicScrambles,
   algorithms: basicAlgorithms,
   // User saved
-  algorithmSelectionRight: basicAlgorithmSelectionRight,
-  algorithmSelectionLeft: basicAlgorithmSelectionLeft,
-  identicalAlgorithm: basicIdenticalAlgorithm,
-  caseSelection: basicCaseSelection,
-  customAlgorithmsRight: basicCustomAlgorithmsRight,
-  customAlgorithmsLeft: basicCustomAlgorithmsLeft,
-  trash: basicTrash,
-  collapse: basicCollapse,
-  solveCounter: basicSolveCounter,
+  algorithmSelectionRight: [],
+  algorithmSelectionLeft: [],
+  identicalAlgorithm: [],
+  caseSelection: [],
+  customAlgorithmsRight: [],
+  customAlgorithmsLeft: [],
+  trash: [],
+  collapse: [],
+  solveCounter: [],
   //
   imgPath: "./images/basic_cases/",
   numberCases: 41,
@@ -232,15 +232,15 @@ const BASIC_BACK_COLLECTION = new Group({
   scrambles: basicScramblesBack,
   algorithms: basicAlgorithmsBack,
   // User saved
-  algorithmSelectionRight: basicBackAlgorithmSelectionRight,
-  algorithmSelectionLeft: basicBackAlgorithmSelectionLeft,
-  identicalAlgorithm: basicBackIdenticalAlgorithm,
-  caseSelection: basicBackCaseSelection,
-  customAlgorithmsRight: basicBackCustomAlgorithmsRight,
-  customAlgorithmsLeft: basicBackCustomAlgorithmsLeft,
-  trash: basicTrash,
-  collapse: basicBackCollapse,
-  solveCounter: basicBackSolveCounter,
+  algorithmSelectionRight: [],
+  algorithmSelectionLeft: [],
+  identicalAlgorithm: [],
+  caseSelection: [],
+  customAlgorithmsRight: [],
+  customAlgorithmsLeft: [],
+  trash: [],
+  collapse: [],
+  solveCounter: [],
   //
   imgPath: "./images/basic_cases_back/",
   numberCases: 41,
@@ -284,15 +284,15 @@ const ADVANCED_COLLECTION = new Group({
   scrambles: advancedScrambles,
   algorithms: advancedAlgorithms,
   // User saved
-  algorithmSelectionRight: advancedAlgorithmSelectionRight,
-  algorithmSelectionLeft: advancedAlgorithmSelectionLeft,
-  identicalAlgorithm: advancedIdenticalAlgorithm,
-  caseSelection: advancedCaseSelection,
-  customAlgorithmsRight: advandedCustomAlgorithmsRight,
-  customAlgorithmsLeft: advandedCustomAlgorithmsLeft,
-  trash: advancedTrash,
-  collapse: advancedCollapse,
-  solveCounter: advancedSolveCounter,
+  algorithmSelectionRight: [],
+  algorithmSelectionLeft: [],
+  identicalAlgorithm: [],
+  caseSelection: [],
+  customAlgorithmsRight: [],
+  customAlgorithmsLeft: [],
+  trash: [],
+  collapse: [],
+  solveCounter: [],
   //
   imgPath: "./images/advanced_cases/",
   numberCases: 60, // 42,
@@ -417,15 +417,15 @@ const EXPERT_COLLECTION = new Group({
   scrambles: expertScrambles,
   algorithms: expertAlgorithms,
   // User saved
-  algorithmSelectionRight: expertAlgorithmSelectionRight,
-  algorithmSelectionLeft: expertAlgorithmSelectionLeft,
-  identicalAlgorithm: expertIdenticalAlgorithm,
-  caseSelection: expertCaseSelection,
-  customAlgorithmsRight: expertCustomAlgorithmsRight,
-  customAlgorithmsLeft: expertCustomAlgorithmsLeft,
-  trash: expertTrash,
-  collapse: expertCollapse,
-  solveCounter: expertSolveCounter,
+  algorithmSelectionRight: [],
+  algorithmSelectionLeft: [],
+  identicalAlgorithm: [],
+  caseSelection: [],
+  customAlgorithmsRight: [],
+  customAlgorithmsLeft: [],
+  trash: [],
+  collapse: [],
+  solveCounter: [],
   //
   imgPath: "./images/expert_cases/",
   numberCases: 17,
@@ -447,36 +447,36 @@ const EXPERT_COLLECTION = new Group({
   ignoreAUF: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
 });
 
-const GROUPS = new Map([
+export const GROUPS = new Map([
   [BASIC_COLLECTION.idName, BASIC_COLLECTION],
   [BASIC_BACK_COLLECTION.idName, BASIC_BACK_COLLECTION],
   [ADVANCED_COLLECTION.idName, ADVANCED_COLLECTION],
   [EXPERT_COLLECTION.idName, EXPERT_COLLECTION],
 ]);
 
-const GROUP_ID_LIST = Array.from(GROUPS.keys());
+export const GROUP_ID_LIST = Array.from(GROUPS.keys());
 
-function getGroupIds() {
+export function getGroupIds() {
   return GROUP_ID_LIST.slice();
 }
 
-function getGroupCount() {
+export function getGroupCount() {
   return GROUP_ID_LIST.length;
 }
 
-function getGroupIdByIndex(index) {
+export function getGroupIdByIndex(index) {
   return GROUP_ID_LIST[index];
 }
 
-function getGroupByIndex(index) {
+export function getGroupByIndex(index) {
   return GROUPS.get(getGroupIdByIndex(index));
 }
 
-function getGroupIndexById(id) {
+export function getGroupIndexById(id) {
   return GROUP_ID_LIST.indexOf(id);
 }
 
-function forEachGroup(callback) {
+export function forEachGroup(callback) {
   GROUP_ID_LIST.forEach((id, index) => {
     callback(GROUPS.get(id), index, id);
   });

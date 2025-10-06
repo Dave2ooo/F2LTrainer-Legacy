@@ -46,6 +46,7 @@ const initialState = {
   dialogSettingsOpenFlag: false,
   dialogFeedbackOpenFlag: false,
   visibleGroup: "basic",
+  currentTrainCase: 
 };
 
 export const store = new Store(initialState);

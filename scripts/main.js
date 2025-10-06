@@ -2,13 +2,32 @@
 
 "use strict";
 
+import {
+  GROUPS,
+  GROUP_ID_LIST,
+  getGroupIds,
+  getGroupCount,
+  getGroupIdByIndex,
+  getGroupByIndex,
+  getGroupIndexById,
+  forEachGroup,
+} from "./groups.js";
 import { actions, store } from "./store.js";
 import { bindChecked, bindDisplay, bindText } from "./bindings.js";
 import { bindDialog } from "./dialog/bindDialog.js";
 import "./dialog/closeDialog.js";
 import { bindSelect } from "./bindings.js";
 import { bindGroupVisibility } from "./groups/bindGroups.js";
+import {
+  saveUserData,
+  loadUserData,
+  clearUserData,
+  setFirstVisitTrain,
+  exportToURL,
+  importFromURL,
+} from "./user_saved.js";
 
+console.log(GROUPS);
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
 
@@ -264,7 +283,7 @@ window.addEventListener("load", () => {
   saveUserData();
 
   // Set Group to show
-  ELEM_SELECT_GROUP.selectedIndex = viewSelection;
+  // ELEM_SELECT_GROUP.selectedIndex = viewSelection;
 
   // Create all Entries
   addElementsToDOM();
@@ -747,7 +766,7 @@ function updateAlg() {
 function editCurrentAlg() {
   ELEM_BTN_CHANGE_ALG.blur();
   console.log("curerntTrainCaseNumber", TrainCase.currentTrainCaseNumber);
-  
+
   const INDEX_GROUP = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexGroup();
   const INDEX_CASE = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexCase();
   const MIRRORED = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
@@ -1267,16 +1286,16 @@ function showHintAlg() {
  * Scrolls to the top of the page and saves the selection to local storage.
  */
 function showSelectedGroup() {
-  forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
-    if (ELEM_SELECT_GROUP.selectedIndex === INDEX_GROUP) {
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "flex";
-    } else {
-      ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "none";
-    }
-  });
-  // Scroll to the top
-  window.scrollTo(0, 0);
-  viewSelection = ELEM_SELECT_GROUP.selectedIndex;
+  // forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
+  //   if (ELEM_SELECT_GROUP.selectedIndex === INDEX_GROUP) {
+  //     ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "flex";
+  //   } else {
+  //     ELEM_GROUP_CONTAINER[INDEX_GROUP].style.display = "none";
+  //   }
+  // });
+  // // Scroll to the top
+  // window.scrollTo(0, 0);
+  // viewSelection = ELEM_SELECT_GROUP.selectedIndex;
 }
 
 /**
@@ -1968,12 +1987,13 @@ function mirrorCase(indexGroup, indexCase) {
  * user's first visit, as indicated by the `firstVisit` flag.
  */
 function showPressMeText() {
-  if (firstVisit) {
-    divPressMe = document.createElement("div");
-    divPressMe.classList.add("div-press-me");
-    divPressMe.innerHTML = "Press<br>me";
-    getGroupByIndex(0).imgContainer[3].appendChild(divPressMe);
-  }
+  // TODO: fix firstVisit
+  // if (firstVisit) {
+  //   divPressMe = document.createElement("div");
+  //   divPressMe.classList.add("div-press-me");
+  //   divPressMe.innerHTML = "Press<br>me";
+  //   getGroupByIndex(0).imgContainer[3].appendChild(divPressMe);
+  // }
 }
 
 // function hidePressMeTrainText() {
@@ -2115,21 +2135,23 @@ function closeOverlays() {
 }
 
 function showWelcomePopup() {
-  if (firstVisit) {
-    openDialog(ELEM_WELCOME_CONATINER);
-  }
+  // TODO: fix firstVisit
+  // if (firstVisit) {
+  //   openDialog(ELEM_WELCOME_CONATINER);
+  // }
 }
 
 function showWelcomePopover() {
-  if (firstVisit) {
-    ELEM_POPOVER_INFO.popover = "manual";
-    ELEM_BTN_INFO.popoverTargetElement = ELEM_POPOVER_INFO;
-    ELEM_BTN_INFO.popoverTargetAction = "toggle";
-    const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
-    ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
-    ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
-    ELEM_POPOVER_INFO.style.display = "block";
-  }
+  // TODO: fix firstVisit
+  // if (firstVisit) {
+  //   ELEM_POPOVER_INFO.popover = "manual";
+  //   ELEM_BTN_INFO.popoverTargetElement = ELEM_POPOVER_INFO;
+  //   ELEM_BTN_INFO.popoverTargetAction = "toggle";
+  //   const btnRect = ELEM_BTN_INFO.getBoundingClientRect();
+  //   ELEM_POPOVER_INFO.style.top = `${window.scrollY + btnRect.bottom + 8}px`;
+  //   ELEM_POPOVER_INFO.style.left = `${window.scrollX + btnRect.left + btnRect.width / 4}px`;
+  //   ELEM_POPOVER_INFO.style.display = "block";
+  // }
 }
 
 function showWelcomeTrainPopup() {

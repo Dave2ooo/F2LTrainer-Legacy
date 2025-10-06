@@ -1,5 +1,8 @@
 // Source https://github.com/Dave2ooo/F2LTrainer
 
+import { GROUPS, forEachGroup } from "./groups.js";
+
+
 //#region Variables
 // Basic
 let basicTrash = [];
@@ -120,7 +123,7 @@ const STORAGE_KEY_PREFIXES = {
  * Saves all user data to localStorage.
  * This function is called when the user wants to save his data.
  */
-function saveUserData() {
+export function saveUserData() {
   console.log("Saving User Data");
 
   localStorage.setItem(STORAGE_KEYS.TRAIN_STATE_SELECTION, JSON.stringify(trainStateSelection));
@@ -185,7 +188,7 @@ function saveUserData() {
 /**
  * Loads all user data from local storage
  */
-function loadUserData() {
+export function loadUserData() {
   console.log("Loading User Data");
   let temp;
 
@@ -364,7 +367,7 @@ function loadList(group, saveName, defaultValue, length, sliceEnd = true) {
  * including learning states and selected/custom algorithms.
  * If confirmed, clears the localStorage and reloads the page.
  */
-function clearUserData() {
+export function clearUserData() {
   if (confirm("Reset all saved data? (learning states, selected/custom algorithms)")) {
     console.log("Clearing");
     localStorage.clear();
@@ -377,7 +380,7 @@ function clearUserData() {
  * Sets a flag in localStorage indicating that the user has visited the
  * train page for the first time.
  */
-function setFirstVisitTrain() {
+export function setFirstVisitTrain() {
   localStorage.setItem(STORAGE_KEYS.FIRST_VISIT_TRAIN, false);
 }
 
@@ -389,7 +392,7 @@ function setFirstVisitTrain() {
  * The base 62 string is then appended to the URL as a parameter.
  * The URL is then set as the value of the export input field.
  */
-function exportToURL() {
+export function exportToURL() {
   // Base URL of your site
   let baseURL = window.location.origin;
 
@@ -415,7 +418,7 @@ function exportToURL() {
  * If no URL parameters are found, the function does nothing.
  * If the user confirms the import, the case selection is imported and the URL is reset.
  */
-function importFromURL() {
+export function importFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
 
   // If no URL parameters found, return
