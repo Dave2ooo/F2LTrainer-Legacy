@@ -7,6 +7,15 @@ import * as stringManipulation from "./string_manipulation.js";
 import * as groups from "./groups.js";
 import * as twistyPlayer from "./twistyPlayer.js";
 
+import { ui } from "./ui/elements.js";
+import { bindChecked, bindDisplay, bindText } from "./bindings.js";
+import { actions } from "./store.js";
+
+bindChecked(ui.checkboxLeft, (s) => s.leftSelection, actions.setLeft);
+bindChecked(ui.checkboxRight, (s) => s.rightSelection, actions.setRight);
+bindDisplay(ui.hintPlaceholder, (s) => s.considerAUFinAlg);
+bindText(ui.modeLabel, (s) => (s.mode === 0 ? "Select cases" : "Train mode"));
+
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
 

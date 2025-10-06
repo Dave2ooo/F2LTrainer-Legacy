@@ -45,34 +45,34 @@ let expertCustomAlgorithmsLeft = [];
 let expertCollapse = [];
 let expertSolveCounter = [];
 
-// View selection
-let viewSelection = 0;
+// // View selection
+// let viewSelection = 0;
 
-// 0 -> unlearned
-// 1 -> learning
-// 2 -> finished
-let trainStateSelection = [false, true, false];
+// // 0 -> unlearned
+// // 1 -> learning
+// // 2 -> finished
+// let trainStateSelection = [false, true, false];
 
-// 0 -> basic
-// 1 -> basic back
-// 2 -> advanced
-// 3 -> expert
-let trainGroupSelection = [true, true, true, true];
+// // 0 -> basic
+// // 1 -> basic back
+// // 2 -> advanced
+// // 3 -> expert
+// let trainGroupSelection = [true, true, true, true];
 
-let leftSelection = true;
-let rightSelection = true;
-let aufSelection = true;
-let considerAUFinAlg = true;
-let hintImageSelection = 2;
-let hintAlgSelection = 0;
-let stickeringSelection = 0;
-let crossColorSelection = "white";
-let frontColorSelection = "red";
-let timerEnabled = false;
-let recapEnabled = false;
+// let leftSelection = true;
+// let rightSelection = true;
+// let aufSelection = true;
+// let considerAUFinAlg = true;
+// let hintImageSelection = 2;
+// let hintAlgSelection = 0;
+// let stickeringSelection = 0;
+// let crossColorSelection = "white";
+// let frontColorSelection = "red";
+// let timerEnabled = false;
+// let recapEnabled = false;
 
-let firstVisit = true;
-let firstVisitTrain = true;
+// let firstVisit = true;
+// let firstVisitTrain = true;
 
 // Character set for Base62 encoding
 const BASE62_CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
