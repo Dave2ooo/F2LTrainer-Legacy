@@ -63,7 +63,7 @@ class Group {
   getNumberCategories() {
     return this.categoryCases.length;
   }
-  
+
   getNumberCases() {
     return this.numberCases;
   }

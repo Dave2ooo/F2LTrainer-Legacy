@@ -6,6 +6,8 @@ import { actions, store } from "./store.js";
 import { bindChecked, bindDisplay, bindText } from "./bindings.js";
 import { bindDialog } from "./dialog/bindDialog.js";
 import "./dialog/closeDialog.js";
+import { bindSelect } from "./bindings.js";
+import { bindGroupVisibility } from "./groups/bindGroups.js";
 
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
@@ -51,7 +53,8 @@ const COLORS_ALG = ["transparent", "#009900"];
 const ELEM_WINDOW_SELECT = document.getElementById("window-select");
 const ELEM_WINDOW_TRAIN = document.querySelector(".window-train");
 
-const ELEM_GROUP_CONTAINER = Array(getGroupCount());
+// const ELEM_GROUP_CONTAINER = Array(getGroupCount());
+const ELEM_GROUP_CONTAINER = Array.from({ length: getGroupCount() }, () => document.createElement("div"));
 const ELEM_SIDE_CONTAINER = document.getElementById("side-container");
 const ELEM_BTN_CHANGE_MODE = document.getElementById("change-mode");
 const ELEM_OVERLAY = document.getElementById("overlay");
@@ -188,9 +191,18 @@ const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
 bindText(ELEM_BTN_CHANGE_MODE, (s) => (s.mode == "select" ? "Train" : "Select cases"));
 bindText(ELEM_BTN_SHOW_HIDE_DEBUG_INFO, (s) => (s.showDetailsFlag == false ? "Show details" : "Hide details"));
 bindDisplay(ELEM_DEBUG_INFO, (s) => s.showDetailsFlag);
-bindDialog(ELEM_WELCOME_CONATINER, (s) => s.dialogInfoOpenFlag);
+bindDialog(ELEM_INFO_CONTAINER, (s) => s.dialogInfoOpenFlag);
 bindDialog(ELEM_CONTAINER_TRAIN_SETTINGS, (s) => s.dialogSettingsOpenFlag);
 bindDialog(ELEM_FEEDBACK_CONTAINER, (s) => s.dialogFeedbackOpenFlag);
+
+bindSelect(ELEM_SELECT_GROUP, (s) => s.visibleGroup, actions.setVisibleGroup);
+const containerById = {
+  basic: ELEM_GROUP_CONTAINER[0],
+  basicBack: ELEM_GROUP_CONTAINER[1],
+  advanced: ELEM_GROUP_CONTAINER[2],
+  expert: ELEM_GROUP_CONTAINER[3],
+};
+bindGroupVisibility(containerById, (s) => s.visibleGroup);
 // #endregion
 
 // #region Event Listeners
@@ -429,11 +441,10 @@ function isSamePoint(point1, point2) {
 function addElementsToDOM() {
   // Iterate over all groups (basic, basic back, advanced, expert)
   forEachGroup((GROUP, INDEX_GROUP, GROUP_ID) => {
-    ELEM_GROUP_CONTAINER[INDEX_GROUP] = document.createElement("div");
+    // ELEM_GROUP_CONTAINER[INDEX_GROUP] = document.createElement("div");
     ELEM_GROUP_CONTAINER[INDEX_GROUP].classList.add("group-container");
-
     // Iterate over all categories (basic inserts, pieces on top/white facing..., ...)
-    // for (let indexCategory = 0; indexCategory < GROUP.categoryCases.length; indexCategory++) {
+    // // for (let indexCategory = 0; indexCategory < GROUP.categoryCases.length; indexCategory++) {
     GROUP.categoryCases.forEach((categoryItems, indexCategory) => {
       GROUP.categoryContainer[indexCategory] = document.createElement("div");
       GROUP.categoryContainer[indexCategory].classList.add("category-container");
@@ -2170,4 +2181,3 @@ function openDialog(ELEM) {
   ELEM_BODY.style.overflow = "hidden";
   flagDialogOpen = true;
 }
-flagDialogOpen = true;

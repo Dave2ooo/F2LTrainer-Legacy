@@ -45,6 +45,7 @@ const initialState = {
   dialogInfoOpenFlag: false,
   dialogSettingsOpenFlag: false,
   dialogFeedbackOpenFlag: false,
+  visibleGroup: "basic",
 };
 
 export const store = new Store(initialState);
@@ -57,4 +58,5 @@ export const actions = {
   setDialogInfoOpenFlag: (open) => store.set({ dialogInfoOpenFlag: open }),
   setDialogSettingsOpenFlag: (open) => store.set({ dialogSettingsOpenFlag: open }),
   setDialogFeedbackOpenFlag: (open) => store.set({ dialogFeedbackOpenFlag: open }),
+  setVisibleGroup: (id) => store.set({ visibleGroup: id }),
 };

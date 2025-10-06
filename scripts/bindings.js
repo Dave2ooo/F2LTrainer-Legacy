@@ -26,3 +26,18 @@ export function bindDisplay(elem, selector, displayWhenTrue = "block") {
   render();
   return store.subscribe(selector, render);
 }
+
+export function bindSelect(select, selector, onChange) {
+  // UI ← state
+  const syncFromState = () => {
+    const val = selector(store.getState());
+    if (select.value !== val) select.value = val;
+  };
+  syncFromState();
+
+  // state ← UI
+  select.addEventListener("change", () => onChange(select.value));
+
+  // keep in sync when state changes elsewhere
+  return store.subscribe(selector, syncFromState);
+}
