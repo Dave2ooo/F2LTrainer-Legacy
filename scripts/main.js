@@ -232,6 +232,18 @@ document.getElementById("btn-open-feedback").addEventListener("click", () => {
   actions.setDialogFeedbackOpenFlag(true);
 });
 
+document.getElementById("btn-confirm-alg").addEventListener("click", () => {
+  updateAlg();
+});
+
+document.getElementById("btn-confirm-settings").addEventListener("click", () => {
+  updateTrainCases();
+});
+
+document.getElementById("btn-change-alg-id").addEventListener("click", () => {
+  editCurrentAlg();
+});
+
 // #endregion
 
 console.log(store.getState());
@@ -734,6 +746,8 @@ function updateAlg() {
  */
 function editCurrentAlg() {
   ELEM_BTN_CHANGE_ALG.blur();
+  console.log("curerntTrainCaseNumber", TrainCase.currentTrainCaseNumber);
+  
   const INDEX_GROUP = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexGroup();
   const INDEX_CASE = trainCaseList[TrainCase.currentTrainCaseNumber].getIndexCase();
   const MIRRORED = trainCaseList[TrainCase.currentTrainCaseNumber].getMirroring();
