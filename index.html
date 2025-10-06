@@ -85,7 +85,8 @@
         <img src="./images/instructions_select_page.png" alt="Select Page Instructions" class="img-instructions" />
       </div>
       <div class="update-cancel-buttons">
-        <input type="button" class="btn-overlay" onclick="closeOverlays()" value="To the Trainer" />
+        <!-- <input type="button" class="btn-overlay" onclick="closeOverlays()" value="To the Trainer" /> -->
+        <input data-dialog-close type="button" class="btn-overlay" value="To the Trainer" />
       </div>
     </dialog>
 
@@ -151,7 +152,8 @@
 
       <div class="update-cancel-buttons">
         <form method="dialog">
-          <button type="button" class="btn-overlay" id="btn-close-info" onclick="closeOverlays()">
+          <!-- <button type="button" class="btn-overlay" id="btn-close-info" onclick="closeOverlays()"> -->
+          <button data-dialog-close type="button" class="btn-overlay" id="btn-close-info">
             Close
             <img src="./images/cancel.svg" alt="Close" class="side-img" title="Close" loading="lazy" />
           </button>
@@ -458,7 +460,8 @@
         <button type="button" class="btn-overlay" onclick="updateTrainCases()">
           Confirm <img src="./images/confirm.svg" alt="Confirm" class="side-img" title="Confirm" loading="lazy" />
         </button>
-        <button type="button" class="btn-overlay" onclick="closeOverlays()">
+        <!-- <button type="button" class="btn-overlay" onclick="closeOverlays()"> -->
+        <button data-dialog-close type="button" class="btn-overlay">
           Cancel <img src="./images/cancel.svg" alt="Close" class="side-img" title="Close" loading="lazy" />
         </button>
       </div>
@@ -571,13 +574,15 @@
     <div id="side-container">
       <div>
         <!-- Button Info -->
-        <button type="button" class="side-button" id="btn-info" onclick="showInfo()" data-tooltip="Info">
+        <!-- <button type="button" class="side-button" id="btn-info" onclick="showInfo()" data-tooltip="Info"> -->
+        <button type="button" class="side-button" id="btn-info" data-tooltip="Info">
           <img src="./images/info.svg" alt="Info" class="side-img" />
         </button>
         <div popover="manual" popover-position="bottom" id="popover-info">Press here to get more info.</div>
 
         <!-- Button Settings Select -->
-        <div class="side-button btn-settings-select" , onclick="showSettingsTrain()" data-tooltip="Settings">
+        <!-- <div class="side-button btn-settings-select" , onclick="showSettingsTrain()" data-tooltip="Settings"> -->
+        <div id="btn-open-settings" class="side-button btn-settings-select" data-tooltip="Settings">
           <img src="./images/settings.svg" alt="Settings" class="side-img" />
         </div>
 

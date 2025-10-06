@@ -4,6 +4,8 @@
 
 import { actions, store } from "./store.js";
 import { bindChecked, bindDisplay, bindText } from "./bindings.js";
+import { bindDialog } from "./dialog/bindDialog.js";
+import "./dialog/closeDialog.js";
 
 //#region Variables
 const ELEM_BODY = document.querySelector("body");
@@ -182,18 +184,38 @@ const ELEM_FEEDBACK_NAME = document.getElementById("feedback-name-id");
 const ELEM_IFRAME_VIDEO = document.getElementById("iframe-video");
 //#endregion
 
-ELEM_BTN_CHANGE_MODE.addEventListener("click", () => {
-  changeMode();
-});
-
+// #region Bindings
+bindText(ELEM_BTN_CHANGE_MODE, (s) => (s.mode == "select" ? "Train" : "Select cases"));
 bindText(ELEM_BTN_SHOW_HIDE_DEBUG_INFO, (s) => (s.showDetailsFlag == false ? "Show details" : "Hide details"));
 bindDisplay(ELEM_DEBUG_INFO, (s) => s.showDetailsFlag);
+bindDialog(ELEM_WELCOME_CONATINER, (s) => s.dialogInfoOpenFlag);
+bindDialog(ELEM_CONTAINER_TRAIN_SETTINGS, (s) => s.dialogSettingsOpenFlag);
+// #endregion
+
+// #region Event Listeners
+store.addEventListener("statechange", (e) => {
+  console.log("🪄 Store updated:", e.detail.next);
+});
+
+ELEM_BTN_CHANGE_MODE.addEventListener("click", () => {
+  actions.toggleMode();
+  changeMode();
+});
 
 ELEM_BTN_SHOW_HIDE_DEBUG_INFO.addEventListener("click", () => {
   const next = store.getState().showDetailsFlag ? 0 : 1;
   actions.setShowDetailsFlag(next);
-  console.log(store.getState());
 });
+
+ELEM_BTN_INFO.addEventListener("click", () => {
+  actions.setDialogInfoOpenFlag(true);
+});
+
+document.getElementById("btn-open-settings").addEventListener("click", () => {
+  actions.setDialogSettingsOpenFlag(true);
+});
+
+// #endregion
 
 console.log(store.getState());
 
@@ -1646,7 +1668,7 @@ function changeMode() {
   if (mode == 0) {
     mode = 1;
     updateTrainCases();
-    ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
+    // ELEM_BTN_CHANGE_MODE.innerHTML = "Select cases";
     ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Select cases");
     ELEM_WINDOW_SELECT.classList.add("display-none");
     ELEM_WINDOW_TRAIN.classList.remove("display-none");
@@ -1660,7 +1682,7 @@ function changeMode() {
     }
   } else {
     mode = 0;
-    ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
+    // ELEM_BTN_CHANGE_MODE.innerHTML = "Train";
     ELEM_BTN_CHANGE_MODE.setAttribute("data-tooltip", "Start training");
     ELEM_WINDOW_SELECT.classList.remove("display-none");
     ELEM_WINDOW_TRAIN.classList.add("display-none");

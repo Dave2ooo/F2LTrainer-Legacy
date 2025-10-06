@@ -40,12 +40,19 @@ class Store extends EventTarget {
 
 // Put ALL former globals here as keys:
 const initialState = {
+  mode: "select",
   showDetailsFlag: false,
+  dialogInfoOpenFlag: false,
+  dialogSettingsOpenFlag: false,
 };
 
 export const store = new Store(initialState);
 
 // Optional: action helpers (keeps writes in one place)
 export const actions = {
-  setShowDetailsFlag: (showDetailsFlag) => store.set({ showDetailsFlag }),
+  setMode: (mode) => store.set({ mode }),
+  toggleMode: () => store.set({ mode: store.getState().mode === "select" ? "train" : "select" }),
+  setShowDetailsFlag: (show) => store.set({ showDetailsFlag: show }),
+  setDialogInfoOpenFlag: (open) => store.set({ dialogInfoOpenFlag: open }),
+  setDialogSettingsOpenFlag: (open) => store.set({ dialogSettingsOpenFlag: open }),
 };
