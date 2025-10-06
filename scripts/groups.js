@@ -404,7 +404,7 @@ const ADVANCED_COLLECTION = new Group({
     "fl",
   ],
   // fr: front-right, fl: front-left, br: back-right, bl: back-left
-  ignoreAUF: [],
+  ignoreAUF: [55, 56, 57, 58, 59, 60],
 });
 
 const EXPERT_COLLECTION = new Group({
