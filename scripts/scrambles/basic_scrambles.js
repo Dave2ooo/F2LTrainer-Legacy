@@ -393,7 +393,7 @@ const basicScrambles = {
     "R U2 R B2 L' B' L B' R2",
     "R U' R' F2 L' U' L U F2",
     "R2 U B U' B' R2 F' U' F",
-    "F2 U2 R' F R U2 F U2 F U'",
+    "F2 U2 R' F R U2 F U2 F",
     "F' U2 F' U' F U' F' U2 F2",
   ],
   40: [
