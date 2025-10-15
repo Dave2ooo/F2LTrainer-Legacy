@@ -248,7 +248,7 @@ function loadUserData() {
 
   forEachGroup((GROUP) => {
     // Load collapse state
-    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, true, GROUP.getNumberCategories());
+    GROUP.collapse = loadList(GROUP, STORAGE_SUFFIXES.COLLAPSE, false, GROUP.getNumberCategories());
     // Load Case Selection
     GROUP.caseSelection = loadList(GROUP, STORAGE_SUFFIXES.CASE_SELECTION, 0, GROUP.getNumberCases());
 
