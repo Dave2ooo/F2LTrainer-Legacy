@@ -5,7 +5,7 @@ We have rebuilt F2L Trainer from the ground up to offer better performance, a mo
 
 ---
 
-Visit the Trainer here -> https://f2l-trainer.top/ <-
+Visit the Trainer here -> https://dave2ooo.github.io/F2LTrainer-Legacy <-
 
 [![Youtube Video](https://github.com/Dave2ooo/F2LTrainer/assets/71500391/b68c205c-536b-401b-954c-063b2f0186e0)](https://www.youtube.com/watch?v=EQbZvKssp7s)
 
