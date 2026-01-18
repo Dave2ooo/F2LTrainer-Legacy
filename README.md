@@ -1,4 +1,9 @@
-# F2L Trainer
+# ⚠️ Legacy Repository
+**This version of F2L Trainer is no longer maintained.**
+We have rebuilt F2L Trainer from the ground up to offer better performance, a modern design, and new features (including Smart Cube support).
+### 🚀 [Click here to visit the new F2L Trainer](https://github.com/Dave2ooo/F2LTrainer)
+
+---
 
 Visit the Trainer here -> https://f2l-trainer.top/ <-
 
